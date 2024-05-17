@@ -7,6 +7,7 @@ import { ThemeProvider } from "styled-components";
 import { useTheme } from "@contexts/themeContext";
 
 const Login = lazy(() => import("@pages/Login"));
+const Register = lazy(() => import("@pages/Register"));
 
 const App = () => {
   const { theme } = useTheme();
@@ -17,6 +18,7 @@ const App = () => {
           <ThemeStyles />
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         </ThemeProvider>
       </NextUIProvider>

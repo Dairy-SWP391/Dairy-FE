@@ -10,7 +10,20 @@ import google from "@assets/icons/google.svg";
 import facebook from "@assets/icons/facebook.svg";
 import classNames from "classnames";
 import PasswordInput from "@components/PasswordInput";
-import { MouseEvent } from "react";
+
+const DefaultValues = {
+  first_name: "",
+  last_name: "",
+  email: "",
+  password: "",
+};
+
+interface RegisterFormProps {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+}
 
 const Login = () => {
   const { width } = useWindowSize();
@@ -20,11 +33,8 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+  } = useForm<RegisterFormProps>({
+    defaultValues: DefaultValues,
   });
 
   const onSubmit = () => {
@@ -35,13 +45,9 @@ const Login = () => {
   //   toast.error(err);
   // };
 
-  const handlePasswordReminder = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-  };
-
   return (
     <>
-      <DocumentTitle title="Login" />
+      <DocumentTitle title="Register" />
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 4xl:grid-cols-[minmax(0,_1030px)_minmax(0,_1fr)]">
         {width >= 1024 && (
           <div className="flex flex-col justify-center bg-gradient-to-r from-[#90A5A7] to-[#DBEAF0] items-center lg:p-[60px]">
@@ -61,13 +67,47 @@ const Login = () => {
             delay={300}
           >
             <div className="flex flex-col gap-2.5 text-center">
-              <h1>Welcome back!</h1>
+              <h1>Become our member!</h1>
               {/* <p className="lg:max-w-[300px] m-auto 4xl:max-w-[unset]">
                 Etiam quis quam urna. Aliquam odio erat, accumsan eu nulla in
               </p> */}
             </div>
             <form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-5">
+                <div className="grid grid-cols-2 gap-5">
+                  <div className="field-wrapper">
+                    <label htmlFor="first_name" className="field-label">
+                      First name
+                    </label>
+                    <input
+                      className={classNames("field-input", {
+                        "field-input--error": errors.first_name,
+                      })}
+                      id="first_name"
+                      type="text"
+                      placeholder="Your first name"
+                      {...register("first_name", {
+                        required: true,
+                      })}
+                    />
+                  </div>
+                  <div className="field-wrapper">
+                    <label htmlFor="last_name" className="field-label">
+                      Last name
+                    </label>
+                    <input
+                      className={classNames("field-input", {
+                        "field-input--error": errors.last_name,
+                      })}
+                      id="last_name"
+                      type="text"
+                      placeholder="Your last name"
+                      {...register("last_name", {
+                        required: true,
+                      })}
+                    />
+                  </div>
+                </div>
                 <div className="field-wrapper">
                   <label htmlFor="email" className="field-label">
                     E-mail
@@ -102,17 +142,14 @@ const Login = () => {
                   )}
                 />
               </div>
-              <div className="flex flex-col items-center gap-6 mt-4 mb-10">
-                <button className="text-btn" onClick={handlePasswordReminder}>
-                  Forgot Password?
-                </button>
-                <button className="btn btn--primary w-full">Log In</button>
+              <div className="flex flex-col items-center gap-6 mt-10 mb-8">
+                <button className="btn btn--primary w-full">Register</button>
               </div>
             </form>
             <div>
               <div className="relative">
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[1px] bg-border" />
-                <span className="flex items-center justify-center relative z-10 w-11 h-[23px] m-auto bg-widget">
+                {/* <span className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[1px] bg-border" /> */}
+                <span className="flex items-center justify-center relative z-10 w-11 h-[3px] m-auto bg-widget">
                   or
                 </span>
               </div>
@@ -140,12 +177,12 @@ const Login = () => {
                 </button>
               </div>
               <div className="flex justify-center gap-2.5 leading-none">
-                <p>Don’t have an account?</p>
+                <p>Already have account?</p>
                 <button
                   className="text-btn"
-                  onClick={() => (window.location.href = "/register")}
+                  onClick={() => (window.location.href = "/login")}
                 >
-                  Sign Up
+                  Log In
                 </button>
               </div>
             </div>
