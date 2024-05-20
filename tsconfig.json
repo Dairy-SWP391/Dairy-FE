@@ -20,6 +20,7 @@
       "@components/*": ["components/*"],
       "@constants/*": ["constants/*"],
       "@contexts/*": ["contexts/*"],
+      "@db/*": ["db/*"],
       "@hooks/*": ["hooks/*"],
       "@layout/*": ["layout/*"],
       "@pages/*": ["pages/*"],

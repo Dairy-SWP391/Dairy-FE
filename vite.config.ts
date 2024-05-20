@@ -19,6 +19,7 @@ const viteConfig: UserConfig = {
       "@components": "/src/components",
       "@constants": "/src/constants",
       "@contexts": "/src/contexts",
+      "@db": "/src/db",
       "@hooks": "/src/hooks",
       "@layout": "/src/layout",
       "@pages": "/src/pages",

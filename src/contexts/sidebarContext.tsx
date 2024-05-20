@@ -13,7 +13,10 @@ type SidebarContextType = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
+const SidebarContext = createContext<SidebarContextType>({
+  open: false,
+  setOpen: () => {},
+});
 
 export const SidebarProvider = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);

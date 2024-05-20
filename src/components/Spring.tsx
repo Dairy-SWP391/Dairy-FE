@@ -5,12 +5,17 @@ import { ReactNode } from "react";
 // hooks
 import { useInView } from "react-intersection-observer";
 
-export type SpringType = "fade" | "slideUp" | "slideLeft" | "zoom";
+export enum SpringType {
+  FADE = "fade",
+  SLIDE_UP = "slideUp",
+  SLIDE_LEFT = "slideLeft",
+  ZOOM = "zoom",
+}
 
 interface SpringProps {
   index?: number;
   className?: string;
-  type: SpringType;
+  type?: SpringType;
   children: ReactNode;
   duration?: number;
   delay?: number;
@@ -21,7 +26,7 @@ const Spring = ({
   children,
   index = 1,
   className,
-  type = "fade",
+  type = SpringType.FADE,
   ...props
 }: SpringProps) => {
   const [ref, inView] = useInView({
