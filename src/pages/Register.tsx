@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 // import { toast } from "react-toastify";
 import { useWindowSize } from "react-use";
 import media from "@assets/login.png";
-import Spring from "@components/Spring";
+import Spring, { SpringType } from "@components/Spring";
 import google from "@assets/icons/google.svg";
 import facebook from "@assets/icons/facebook.svg";
 import classNames from "classnames";
@@ -62,7 +62,7 @@ const Login = () => {
         <div className="bg-widget flex items-center justify-center w-full py-10 px-4 lg:p-[60px]">
           <Spring
             className="max-w-[460px] w-full"
-            type="slideUp"
+            type={SpringType.SLIDE_UP}
             duration={400}
             delay={300}
           >

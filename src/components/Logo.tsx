@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 // utils
 import { memo } from "react";
-import logo from "../assets/logoapp.jpg";
+import logo from "../assets/logo-no-background.png";
 
 const Logo = ({
   imgClass,
