@@ -19,7 +19,7 @@ const Register = lazy(() => import("@pages/Register"));
 const SalesAnalytics = lazy(() => import("@pages/SalesAnalytics"));
 const Homepage = lazy(() => import("@pages/Homepage"));
 const Product = lazy(() => import("@pages/Product"));
-// const Cart = lazy(() => import("@pages/Cart"));
+const Cart = lazy(() => import("@pages/Cart"));
 
 const App = () => {
   const { width } = useWindowSize();
@@ -56,7 +56,7 @@ const App = () => {
                       <Route path="/admin" element={<SalesAnalytics />} />
                       <Route path="/register" element={<Register />} />
                       <Route path="/product" element={<Product />} />
-                      {/* <Route path="/cart" element={<Cart />} /> */}
+                      <Route path="/cart" element={<Cart />} />
                       <Route path="/" element={<Homepage />} />
                     </Routes>
                   </div>
