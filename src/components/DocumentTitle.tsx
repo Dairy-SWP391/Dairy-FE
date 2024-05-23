@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 const DocumentTitle = ({ title }: { title: string }) => {
   return (
     <Helmet>
-      <title>{title} | React E-commerce Dashboard Template</title>
+      <title>{title} | Dairy</title>
     </Helmet>
   );
 };

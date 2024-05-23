@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import MillionLint from "@million/lint";
 import { defineConfig, UserConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
-
 const viteConfig: UserConfig = {
   plugins: [react()],
   server: {
@@ -23,10 +24,11 @@ const viteConfig: UserConfig = {
       "@hooks": "/src/hooks",
       "@layout": "/src/layout",
       "@pages": "/src/pages",
+      "@types": "/src/types",
       "@styles": "/src/styles",
       "@utils": "/src/utils",
     },
   },
 };
-
+const plugins = [MillionLint.vite()];
 export default defineConfig(viteConfig);
