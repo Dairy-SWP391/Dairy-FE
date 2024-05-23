@@ -16,12 +16,15 @@ import AppBar from "@layout/AppBar";
 const Login = lazy(() => import("@pages/Login"));
 const Register = lazy(() => import("@pages/Register"));
 const SalesAnalytics = lazy(() => import("@pages/SalesAnalytics"));
+const Product = lazy(() => import("@pages/Product"));
 
 const App = () => {
   const { width } = useWindowSize();
   const { theme } = useTheme();
   const path = useLocation().pathname;
-  const withSidebar = path !== "/login" && path !== "/404";
+  const withSidebar =
+    path !== "/login" && path !== "/404" && path !== "/register";
+  // path !== "/product";
   return (
     <>
       <NextUIProvider>
@@ -44,6 +47,7 @@ const App = () => {
                       <Route path="/login" element={<Login />} />
                       <Route path="/admin" element={<SalesAnalytics />} />
                       <Route path="/register" element={<Register />} />
+                      <Route path="/product" element={<Product />} />
                     </Routes>
                   </div>
                 </Suspense>

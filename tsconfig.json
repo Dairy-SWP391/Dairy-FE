@@ -24,6 +24,7 @@
       "@hooks/*": ["hooks/*"],
       "@layout/*": ["layout/*"],
       "@pages/*": ["pages/*"],
+      "@types/*": ["types/*"],
       "@styles/*": ["styles/*"],
       "@utils/*": ["utils/*"]
     },

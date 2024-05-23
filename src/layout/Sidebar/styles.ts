@@ -1,3 +1,4 @@
+/* eslint-disable import/no-named-as-default */
 import styled from "styled-components";
 import theme from "styled-theming";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
