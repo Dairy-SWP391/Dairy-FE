@@ -465,7 +465,7 @@ const Product = () => {
                   </div>
                 </CardBody>
               </Card>
-              {productPropsList.map((item, index) => {
+              {productPropsList.map((_item, index) => {
                 return (
                   index <= 3 && (
                     <div className="grid grid-cols-10 gap-5 mt-5 border-b-2 pb-5">
