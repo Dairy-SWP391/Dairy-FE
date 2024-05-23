@@ -125,3 +125,8 @@ export const commaFormatter = (num: number): string => {
 //       return "badge-status-bg";
 //   }
 // };
+
+export const getLocalStorage = (key: string): [] => {
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : null;
+};

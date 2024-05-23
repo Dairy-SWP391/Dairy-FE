@@ -6,16 +6,15 @@ import Trend from "@components/Trend";
 import Submenu from "@components/Submenu";
 
 // hooks
-import { useTheme } from "@contexts/themeContext";
+// import { useTheme } from "@contexts/themeContext";
 import useSubmenu from "@hooks/useSubmenu";
 
 // assets
-import light from "@assets/logo_light.svg";
-import dark from "@assets/logo_dark.svg";
+import Logo from "@assets/logo-no-background.png";
 import { NavLink } from "react-router-dom";
 
 const MainProfileInfo = () => {
-  const { theme } = useTheme();
+  // const { theme } = useTheme();
   const { anchorEl, open, handleClick, handleClose } = useSubmenu();
 
   return (
@@ -24,18 +23,14 @@ const MainProfileInfo = () => {
         className="h-[230px] rounded-md bg-body border border-input-border p-5 flex flex-col items-center
                  justify-center gap-6 shrink-0 md:w-[190px]"
       >
-        <img
-          className="h-20 w-auto ml-2.5"
-          src={theme === "light" ? light.toString() : dark.toString()}
-          alt="ShopPoint"
-        />
-        <span className="font-heading font-bold text-xl leading-[1.1] text-header">
-          ShopPoint
+        <img className="h-50 w-auto ml-2.5" src={Logo} alt="Dairy" />
+        <span className="font-heading font-bold -translate-y-4 text-xl leading-[1.1] text-header">
+          Dairy
         </span>
       </div>
       <div className="flex flex-1 flex-col gap-8">
         <div className="flex flex-col gap-2">
-          <h3>ShopPoint - Retail</h3>
+          <h3>Dairy - Maternity and Baby Milk Store</h3>
           <p>
             Aliquam erat volutpat. Duis molestie ultrices tempus. Mauris sem
             orci, euismod sit amet.
@@ -43,7 +38,7 @@ const MainProfileInfo = () => {
         </div>
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-4">
-            <h5>Average Rate 2023</h5>
+            <h5>Average Rate 2024</h5>
             <InfoBtn onClick={handleClick} />
           </div>
           <div className="flex-1 grid grid-cols-1 gap-6 md:grid-cols-2 lg:flex justify-between xl:max-w-[670px]">
