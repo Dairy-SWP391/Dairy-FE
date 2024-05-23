@@ -1,8 +1,18 @@
 import Spring from "@components/Spring";
 import { ProductType, ProductTarget } from "../types/Product";
-import { Avatar, Button, Card, CardBody, Chip, Image } from "@nextui-org/react";
+import {
+  Avatar,
+  BreadcrumbItem,
+  Breadcrumbs,
+  Button,
+  Card,
+  CardBody,
+  Chip,
+  Image,
+} from "@nextui-org/react";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import { numberToVND } from "@utils/converter";
 const product: ProductType = {
   id: 1,
   name: "Sữa Meiji Infant Formula 800g Sữa Meiji 800g (0-12 tháng)",
@@ -109,7 +119,15 @@ const Product = () => {
 
   return (
     <>
-      <Spring className="mx-auto card flex flex-col lg:col-span-3 xl:col-span-1 w-5/6 ">
+      <div className="mx-auto w-5/6 mt-6 text-lg">
+        <Breadcrumbs>
+          <BreadcrumbItem>Trang Chủ</BreadcrumbItem>
+          <BreadcrumbItem>Sữa, thực phẩm</BreadcrumbItem>
+          <BreadcrumbItem>Sữa bột cao cấp</BreadcrumbItem>
+          <BreadcrumbItem>{product.name}</BreadcrumbItem>
+        </Breadcrumbs>
+      </div>
+      <Spring className="mx-auto card flex flex-col lg:col-span-3 xl:col-span-1 w-5/6 mt-6">
         <div className="grid grid-cols-5 gap-16 h-[80vh]">
           <div className="col-span-2 h-full w-full">
             <div className="grid grid-rows-6 gap-2.5 rounded w-full h-[90%]">
@@ -200,7 +218,9 @@ const Product = () => {
             <Card className="mt-7 px-3 bg-slate-100 w-2/3 ">
               <CardBody>
                 <div className="flex items-center">
-                  <p className="text-3xl mr-5">{product.price * 0.9}đ</p>
+                  <p className="text-3xl mr-5">
+                    {numberToVND(product.price * 0.9)}
+                  </p>
                   <Chip
                     color="default"
                     variant="bordered"
@@ -212,7 +232,9 @@ const Product = () => {
                     - 10%
                   </Chip>
                 </div>
-                <p className="mt-2 text-xl line-through">{product.price}đ</p>
+                <p className="mt-2 text-xl line-through">
+                  {numberToVND(product.price)}
+                </p>
               </CardBody>
             </Card>
             <div className="mt-8 flex items-center">
@@ -502,7 +524,7 @@ const Product = () => {
             </Spring>
           </div>
         </div>
-        <div className="col-span-2 flex flex-col items-center sticky top-5 h-fit">
+        <div className="col-span-2 flex flex-col items-center sticky top-24 h-fit">
           <p className="text-2xl font-bold">Thông Tin Bổ Ích</p>
           <div className="hover:cursor-pointer">
             <Spring className="mt-5 w-full rounded bg-pink-100 p-3">
