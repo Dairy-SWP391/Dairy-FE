@@ -290,7 +290,7 @@ const Product = () => {
                 <span className="fa fa-star checked text-yellow-400 mr-0.5"></span>
                 <p className="ml-1">(289)</p>
               </div>
-              <p className="text-xl font-bold">{product.price}đ</p>
+              <p className="text-xl font-bold">{numberToVND(product.price)}</p>
             </div>
           </div>
           <div className="grid grid-rows-7 gap-3">
@@ -311,7 +311,7 @@ const Product = () => {
                 <span className="fa fa-star checked text-yellow-400 mr-0.5"></span>
                 <p className="ml-1">(289)</p>
               </div>
-              <p className="text-xl font-bold">{product.price}đ</p>
+              <p className="text-xl font-bold">{numberToVND(product.price)}</p>
             </div>
           </div>
           <div className="grid grid-rows-7 gap-3">
@@ -332,7 +332,7 @@ const Product = () => {
                 <span className="fa fa-star checked text-yellow-400 mr-0.5"></span>
                 <p className="ml-1">(289)</p>
               </div>
-              <p className="text-xl font-bold">{product.price}đ</p>
+              <p className="text-xl font-bold">{numberToVND(product.price)}</p>
             </div>
           </div>
           <div className="grid grid-rows-7 gap-3">
@@ -353,7 +353,7 @@ const Product = () => {
                 <span className="fa fa-star checked text-yellow-400 mr-0.5"></span>
                 <p className="ml-1">(289)</p>
               </div>
-              <p className="text-xl font-bold">{product.price}đ</p>
+              <p className="text-xl font-bold">{numberToVND(product.price)}</p>
             </div>
           </div>
           <div className="grid grid-rows-7 gap-3">
@@ -374,7 +374,7 @@ const Product = () => {
                 <span className="fa fa-star checked text-yellow-400 mr-0.5"></span>
                 <p className="ml-1">(289)</p>
               </div>
-              <p className="text-xl font-bold">{product.price}đ</p>
+              <p className="text-xl font-bold">{numberToVND(product.price)}</p>
             </div>
           </div>
         </div>

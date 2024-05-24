@@ -21,17 +21,21 @@ const SalesAnalytics = lazy(() => import("@pages/SalesAnalytics"));
 const Homepage = lazy(() => import("@pages/Homepage"));
 const Product = lazy(() => import("@pages/Product"));
 const Cart = lazy(() => import("@pages/Cart"));
+const ProductsManagement = lazy(() => import("@pages/ProductsManagement"));
 
 const App = () => {
   const { width } = useWindowSize();
   const { theme } = useTheme();
   const path = useLocation().pathname;
-  const withAdminbar = path === "/admin" || path === "/product-editor";
+  const withAdminbar =
+    path === "/admin" ||
+    path === "/product-editor" ||
+    path === "/products-management";
   const withSidebar =
     path !== "/admin" &&
     path !== "/login" &&
     path !== "/register" &&
-    path !== "/product-editor";
+    path !== "/products-management";
   return (
     <>
       <NextUIProvider>
@@ -59,10 +63,14 @@ const App = () => {
                       <Route path="/product" element={<Product />} />
                       <Route path="/cart" element={<Cart />} />
                       <Route path="/" element={<Homepage />} />
+                      <Route
+                        path="/products-management"
+                        element={<ProductsManagement />}
+                      />
                     </Routes>
                   </div>
                 </Suspense>
-                <Footer />
+                {width >= 1280 && withSidebar && <Footer />}
               </div>
             </div>
           </ThemeProvider>

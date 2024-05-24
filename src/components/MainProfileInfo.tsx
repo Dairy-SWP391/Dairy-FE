@@ -43,7 +43,7 @@ const MainProfileInfo = () => {
           </div>
           <div className="flex-1 grid grid-cols-1 gap-6 md:grid-cols-2 lg:flex justify-between xl:max-w-[670px]">
             <div className="flex gap-5">
-              <div className="badge-icon bg-green">
+              <div className="badge-icon bg-green-500">
                 <i className="icon-diamond text-[23px] mt-1" />
               </div>
               <div>
@@ -57,7 +57,7 @@ const MainProfileInfo = () => {
               </div>
             </div>
             <div className="flex gap-5">
-              <div className="badge-icon bg-red">
+              <div className="badge-icon bg-red-500">
                 <i className="icon-tax text-lg" />
               </div>
               <div>
@@ -71,7 +71,7 @@ const MainProfileInfo = () => {
               </div>
             </div>
             <div className="flex gap-5">
-              <div className="badge-icon bg-accent">
+              <div className="badge-icon bg-blue-500">
                 <i className="icon-barcode" />
               </div>
               <div>
