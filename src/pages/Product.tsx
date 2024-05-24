@@ -524,7 +524,7 @@ const Product = () => {
             </Spring>
           </div>
         </div>
-        <div className="col-span-2 flex flex-col items-center sticky top-24 h-fit">
+        <div className="col-span-2 flex flex-col items-center sticky top-32 h-fit">
           <p className="text-2xl font-bold">Thông Tin Bổ Ích</p>
           <div className="hover:cursor-pointer">
             <Spring className="mt-5 w-full rounded bg-pink-100 p-3">
