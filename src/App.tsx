@@ -13,6 +13,7 @@ import Loader from "@components/Loader";
 import { useWindowSize } from "react-use";
 import AppBar from "@layout/AppBar";
 import NavBar from "@layout/NavBar";
+import Footer from "@layout/Footer";
 
 const Login = lazy(() => import("@pages/Login"));
 const Register = lazy(() => import("@pages/Register"));
@@ -61,6 +62,7 @@ const App = () => {
                     </Routes>
                   </div>
                 </Suspense>
+                <Footer />
               </div>
             </div>
           </ThemeProvider>
