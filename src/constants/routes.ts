@@ -15,11 +15,11 @@ const ROUTES = [
     name: "Products",
     icon: "boxes-stacked-regular",
     links: [
-      { name: "Top Products", path: "/top-products" },
-      { name: "Products Grid", path: "/products-grid" },
-      { name: "Products Management", path: "/products-management" },
-      { name: "Product Editor", path: "/product-editor" },
-      { name: "Banners", path: "/banners" },
+      // { name: "Top Products", path: "/top-products" },
+      { name: "Products Grid", path: "/admin/products-grid" },
+      // { name: "Products Management", path: "/products-management" },
+      { name: "Product Editor", path: "/admin/product-editor" },
+      // { name: "Banners", path: "/banners" },
     ],
   },
   {

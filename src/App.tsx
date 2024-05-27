@@ -21,18 +21,15 @@ const SalesAnalytics = lazy(() => import("@pages/SalesAnalytics"));
 const Homepage = lazy(() => import("@pages/Homepage"));
 const Product = lazy(() => import("@pages/Product"));
 const Cart = lazy(() => import("@pages/Cart"));
-const ProductsManagement = lazy(() => import("@pages/ProductsManagement"));
+const ProductsGrid = lazy(() => import("@pages/ProductsGrid"));
 
 const App = () => {
   const { width } = useWindowSize();
   const { theme } = useTheme();
   const path = useLocation().pathname;
-  const withAdminbar =
-    path === "/admin" ||
-    path === "/product-editor" ||
-    path === "/products-management";
+  const withAdminbar = path.startsWith("/admin");
   const withSidebar =
-    path !== "/admin" &&
+    !path.startsWith("/admin") &&
     path !== "/login" &&
     path !== "/register" &&
     path !== "/products-management";
@@ -64,8 +61,8 @@ const App = () => {
                       <Route path="/cart" element={<Cart />} />
                       <Route path="/" element={<Homepage />} />
                       <Route
-                        path="/products-management"
-                        element={<ProductsManagement />}
+                        path="/admin/products-grid"
+                        element={<ProductsGrid />}
                       />
                     </Routes>
                   </div>
