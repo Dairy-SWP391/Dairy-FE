@@ -4,6 +4,8 @@ import { useState, useEffect, MouseEvent } from "react";
 // utils
 import classNames from "classnames";
 import { FieldError, RefCallBack } from "react-hook-form";
+import EyeSlashFilledIcon from "./icons/EyeSlashFilledIcon";
+import EyeFilledIcon from "./icons/EyeFilledIcon";
 
 interface PasswordInputProps {
   innerRef: RefCallBack;
@@ -50,13 +52,15 @@ const PasswordInput = ({
           {...props}
         />
         <button
-          className="field-btn"
+          className="focus:outline-none mb4 fixed right-3 translate-y-1/2"
+          type="button"
           onClick={togglePasswordVisibility}
-          aria-label="Toggle password visibility"
         >
-          <i
-            className={`icon icon-eye${isPasswordVisible ? "-slash-regular" : "-regular"}`}
-          />
+          {isPasswordVisible ? (
+            <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+          ) : (
+            <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+          )}
         </button>
       </div>
     </div>

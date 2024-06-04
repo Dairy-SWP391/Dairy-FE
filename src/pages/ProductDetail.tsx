@@ -2,7 +2,7 @@ import Spring from "../components/Spring";
 import { Avatar, Button, Card, CardBody, Chip, Image } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { numberToVND } from "../utils/converter";
+import { numberToVND, stringToNomalCase } from "../utils/converter";
 import { useParams } from "react-router-dom";
 import { Product, getProductDetail } from "../apis/product";
 import { Rating } from "react-simple-star-rating";
@@ -18,7 +18,8 @@ const relatedPost = {
 type QuantityAction = "increase" | "decrease";
 
 const ProductDetail = () => {
-  const id = useParams<{ id: string }>().id;
+  const params = useParams<{ id: string }>().id;
+  const id = params?.split("-").pop();
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const ProductPropsList = [
@@ -82,6 +83,7 @@ const ProductDetail = () => {
     try {
       const response = await getProductDetail(id as string);
       console.log(response.data.data);
+      // console.log(stringToNomalCase(response.data.data.name));
       setProduct(response.data.data);
     } catch (err) {
       console.log(err);

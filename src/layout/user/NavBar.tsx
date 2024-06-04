@@ -6,9 +6,12 @@ import Search from "../../components/Search";
 import { Badge, User } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { useCategoryStore } from "../../store/category";
+import { useAuthStore } from "../../store/auth";
 
 const NavBar = () => {
   const nav = useNavigate();
+  const auth = useAuthStore((state) => state.auth);
+  const setAuth = useAuthStore((state) => state.setAuth);
   const categories = useCategoryStore((state) => state.category);
 
   // const [isInvisible, setIsInvisible] = useState<boolean>(false);
@@ -49,15 +52,33 @@ const NavBar = () => {
                 <CartIcon size={30} />
               </Badge>
             </button>
-
-            <User
-              name="Sign In"
-              avatarProps={{
-                src: "https://t3.ftcdn.net/jpg/05/53/79/60/360_F_553796090_XHrE6R9jwmBJUMo9HKl41hyHJ5gqt9oz.jpg",
-              }}
-              className="ml-6 w-36 cursor-pointer"
-              onClick={() => nav("/login")}
-            />
+            <div className="flex ml-4 items-center justify-end">
+              <User
+                name={""}
+                avatarProps={{
+                  src: auth?.avatar_url,
+                }}
+                className="cursor-pointer"
+                onClick={() => {
+                  if (auth) nav("/profile");
+                  else window.location.href = "/login";
+                }}
+              />
+              <button
+                onClick={() => {
+                  if (auth) {
+                    setAuth(null);
+                    nav("/");
+                  } else {
+                    window.location.href = "/login";
+                  }
+                }}
+              >
+                <p className="text-base font-medium text-gray-600 ml-6">
+                  {auth ? "Đăng xuất" : "Đăng nhập"}
+                </p>
+              </button>
+            </div>
           </div>
         </div>
         <div className="flex items-center justify-between border h-12 bg-pink-400 w-full text-white text-base font-medium px-44 list-none">

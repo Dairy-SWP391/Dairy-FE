@@ -40,7 +40,7 @@ const DropdownItem = ({ className, category }: DropdownItemProps) => {
         {child_category?.map(({ id, name, path }) => (
           <a
             key={id}
-            href={`/${category.path}/${path}`}
+            onClick={() => nav(`/${category.path}/${path}`)}
             className="block border-b border-slate-400 px-3 bg-gray-200 py-2 font-semibold text-gray-500 hover:text-black"
           >
             {name}

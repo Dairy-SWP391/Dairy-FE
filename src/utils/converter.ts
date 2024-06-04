@@ -4,7 +4,13 @@ export const numberToVND = (number: number) =>
     currency: "VND",
   });
 
-export const stringToNomalCase = (str: string) => {
+export const stringToNomalCase = ({
+  str,
+  id,
+}: {
+  str: string;
+  id?: number;
+}) => {
   str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
   str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
   str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
@@ -47,4 +53,35 @@ export const camelize = (str: string) => {
       return index === 0 ? word.toLowerCase() : word.toUpperCase();
     })
     .replace(/\s+/g, "");
+};
+
+interface NumFormatterProps {
+  num: number;
+  fractionDigits?: number;
+  prefix?: string;
+}
+
+export const numFormatter = ({
+  num,
+  fractionDigits = 0,
+  prefix = "",
+}: NumFormatterProps) => {
+  const options = {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  };
+
+  if (num > 999 && num < 1000000) {
+    const formattedNum = (num / 1000).toLocaleString(undefined, options);
+    return `${prefix}${formattedNum}k`;
+  } else if (num > 1000000) {
+    const formattedNum = (num / 1000000).toLocaleString(undefined, options);
+    return `${prefix}${formattedNum}m`;
+  } else if (num < 900) {
+    return `${prefix}${num}`;
+  }
+};
+
+export const commaFormatter = (num: number): string => {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };

@@ -11,6 +11,7 @@ import { getAllCategories } from "./apis/category";
 import { useCategoryStore } from "./store/category";
 import Loader from "./components/Loader";
 import ChatButton from "./layout/user/ChatButton";
+import useLayout from "./hooks/useLayout";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -19,38 +20,30 @@ const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Category = lazy(() => import("./pages/Category"));
 const Cart = lazy(() => import("./pages/Cart"));
 const Profile = lazy(() => import("./pages/Profile"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 
 function App() {
   // const { width } = useWindowSize();
   const path = useLocation().pathname;
-  const withoutNavBar = ["/login", "/register", "/404"];
-  const withoutBreadcrumb = ["/login", "/register", "/404"];
+  const layout = useLayout();
   const updateCategory = useCategoryStore((state) => state.setCategory);
-  const respone = async () => {
+  const getCategory = async () => {
     const res = await getAllCategories();
     updateCategory(res.data.data);
   };
 
   useEffect(() => {
-    respone();
+    getCategory();
   }, []);
 
   return (
     <NextUIProvider>
-      <ToastContainer
-        // theme={theme}
-        autoClose={2000}
-        style={{ padding: "20px" }}
-      />
-      {path.startsWith("/admin") ? null : withoutNavBar.includes(
-          path,
-        ) ? null : (
-        <NavBar />
-      )}
-      {withoutBreadcrumb.includes(path) || path === "/" ? null : (
+      <ToastContainer autoClose={2000} style={{ padding: "20px" }} />
+      {layout.includes("navbar") && <NavBar />}
+      {layout.includes("breadcrumb") && (
         <BreadCrumbs pathname={path} classNames="mx-auto w-5/6 mt-6 text-lg" />
       )}
-      <div className={`app ${withoutNavBar.includes(path) && "fluid"}`}>
+      <div className={`app ${layout.includes("none") && "fluid"}`}>
         <div className="app_content">
           <Suspense fallback={<Loader />}>
             <div className="main">
@@ -58,23 +51,23 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/product-detail/:id" element={<ProductDetail />} />
+                {/* <Route path="/product-detail/:id" element={<ProductDetail />} /> */}
+                <Route
+                  path="/:category/:category/:id"
+                  element={<ProductDetail />}
+                />
                 <Route path="/:category" element={<Category />} />
                 <Route path="/:category/:category" element={<Category />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/admin" element={<AdminDashboard />} />
               </Routes>
             </div>
           </Suspense>
         </div>
       </div>
-      {path.startsWith("/admin") ? null : withoutNavBar.includes(
-          path,
-        ) ? null : (
-        <Footer />
-      )}
-      <ChatButton />
-      <ToastContainer />
+      {layout.includes("footer") && <Footer />}
+      {layout.includes("chat") && <ChatButton />}
     </NextUIProvider>
   );
 }
