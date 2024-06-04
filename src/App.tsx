@@ -5,6 +5,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import Footer from "./layout/user/Footer";
 import { Suspense, lazy, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import BreadCrumbs from "./components/BreadCrumbs";
 import { getAllCategories } from "./apis/category";
 import { useCategoryStore } from "./store/category";
@@ -59,6 +60,7 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/product-detail/:id" element={<ProductDetail />} />
                 <Route path="/:category" element={<Category />} />
+                <Route path="/:category/:category" element={<Category />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/profile" element={<Profile />} />
               </Routes>
@@ -71,8 +73,8 @@ function App() {
         ) ? null : (
         <Footer />
       )}
-
       <ChatButton />
+      <ToastContainer />
     </NextUIProvider>
   );
 }

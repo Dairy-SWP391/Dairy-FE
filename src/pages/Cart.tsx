@@ -5,11 +5,8 @@ import { numberToVND } from "../utils/converter";
 import { Button } from "@nextui-org/react";
 import { useCartStore } from "../store/cart";
 import { toast } from "react-toastify";
-// import { getLocalStorage } from "@utils/helpers";
 
 const Cart = () => {
-  //   localStorage.setItem("cart", JSON.stringify(cart));
-  //   const cart = getLocalStorage("cart");
   const cart = useCartStore((state) => state.cart);
   const totalPrice = cart.reduce(
     (total, item) =>
@@ -31,9 +28,11 @@ const Cart = () => {
   }) => {
     const newCart = cart.map((item) => {
       if (item.id === id) {
-        item.quantity + 1 > item.max_quantity &&
-          toast.error("Số lượng vượt quá giới hạn");
         if (type === "increase") {
+          if (item.quantity + 1 > item.max_quantity) {
+            toast.error("Số lượng sản phẩm vượt quá giới hạn");
+            return item;
+          }
           return {
             ...item,
             quantity: item.quantity + 1,
@@ -47,7 +46,8 @@ const Cart = () => {
       }
       return item;
     });
-    useCartStore.setState({ cart: newCart });
+    const finalCart = newCart.filter((item) => item.quantity > 0);
+    useCartStore.setState({ cart: finalCart });
   };
 
   return (
@@ -56,7 +56,7 @@ const Cart = () => {
         <Spring className="card min-h-[70vh]">
           {cart ? (
             <div>
-              <div className="flex justify-between items-center border-b-1 pb-5 border-slate-500 ">
+              <div className="flex justify-between items-center pb-5 border-slate-500 ">
                 <p className="text-lg font-bold w-[12%]">Giỏ Hàng</p>
                 <p className="text-lg font-bold w-[38%]"></p>
                 <p className="text-medium text-slate-500 w-[10%] text-center">
@@ -73,7 +73,7 @@ const Cart = () => {
               {cart.map(({ id, image, name, price, quantity, sale }) => {
                 return (
                   <div
-                    className="flex justify-between items-center border-b-1 pb-5 border-slate-500 mt-3"
+                    className="flex justify-between items-center border-t-1 py-5 border-slate-500 mt-3"
                     key={id}
                   >
                     <div className="w-[12%] border rounded">
@@ -208,6 +208,7 @@ const Cart = () => {
           <Button
             fullWidth
             className="mt-4 bg-zinc-400 font-medium text-white text-lg"
+            onClick={() => toast.error("Test error")}
           >
             Mua hàng
           </Button>

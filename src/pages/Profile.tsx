@@ -1,9 +1,11 @@
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 import Spring from "../components/Spring";
+import DocumentTitle from "../components/DocumentTitle";
 
 const Profile = () => {
   return (
     <>
+      <DocumentTitle title="Thông Tin Cá Nhân" />
       <div className="mx-auto w-5/6 grid grid-cols-10 gap-10">
         <div className="col-span-2">
           <Spring className="card">
@@ -13,9 +15,9 @@ const Profile = () => {
         <Spring className="card col-span-8">
           <Tabs aria-label="Options" className="flex justify-center">
             <Tab key="info" title="Thông Tin Cá Nhân">
-              <div className="grid grid-cols-5 gap-10 mt-5">
+              <div className="grid grid-cols-5 gap-10 border-t-1 pt-6">
                 <div className="col-span-3 pl-3">
-                  <p className="text-sm">
+                  <p className="">
                     Vui lòng nhập đầy đủ thông tin bên dưới để nhận ưu đãi đặc
                     biệt
                   </p>

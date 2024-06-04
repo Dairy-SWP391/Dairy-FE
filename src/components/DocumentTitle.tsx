@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 const DocumentTitle = ({ title }: { title: string }) => {
   return (
     <Helmet>
-      <title>{title} | Dairy</title>
+      <title>{title} | DAIRY</title>
     </Helmet>
   );
 };
