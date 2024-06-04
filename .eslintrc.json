@@ -28,7 +28,9 @@
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "eqeqeq": "error",
-    "no-nested-ternary": "error",
+    "no-magic-numbers": "off",
+    "typescript-eslint/no-explicit-any": "off",
+    // "no-nested-ternary": "error",
     "require-await": "error",
     "prettier/prettier": [
       "error",

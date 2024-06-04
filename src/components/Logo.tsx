@@ -13,8 +13,8 @@ const Logo = ({
   textClass?: string;
 }) => {
   return (
-    <NavLink className="inline-flex items-center gap-3" to="/">
-      <span className={`relative w-10 ${imgClass || ""}`}>
+    <NavLink className="logo" to="/">
+      <span className={`logo_img relative ${imgClass || ""}`}>
         <img src={logo} alt="Dairy" />
       </span>
       <h4 className={`logo_text ${textClass || ""}`}>Dairy</h4>

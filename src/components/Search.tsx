@@ -25,10 +25,10 @@ const Search = ({
         onClick={setQuery ? () => setQuery("") : undefined}
         aria-label="Clear all"
       >
-        <i className="fa fa-times" aria-hidden="true"></i>
+        <i className="icon-xmark-regular" />
       </button>
       <button className="field-btn icon" aria-label="Search">
-        <i className="fa fa-search" aria-hidden="true"></i>
+        <i className="icon-magnifying-glass-solid" />
       </button>
     </div>
   );
