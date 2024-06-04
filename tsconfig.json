@@ -13,27 +13,13 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": "./src",
-    "paths": {
-      "@apis/*": ["apis/*"],
-      "@assets/*": ["assets/*"],
-      "@components/*": ["components/*"],
-      "@constants/*": ["constants/*"],
-      "@contexts/*": ["contexts/*"],
-      "@db/*": ["db/*"],
-      "@hooks/*": ["hooks/*"],
-      "@layout/*": ["layout/*"],
-      "@pages/*": ["pages/*"],
-      "@types/*": ["types/*"],
-      "@styles/*": ["styles/*"],
-      "@utils/*": ["utils/*"]
-    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "src/custom.d.ts"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

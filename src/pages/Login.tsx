@@ -1,16 +1,16 @@
-import DocumentTitle from "@components/DocumentTitle";
+import DocumentTitle from "../components/DocumentTitle";
 // import Logo from "@components/Logo";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 // import { toast } from "react-toastify";
-import { useWindowSize } from "react-use";
-import media from "@assets/login.png";
-import Spring, { SpringType } from "@components/Spring";
-import google from "@assets/icons/google.svg";
-import facebook from "@assets/icons/facebook.svg";
+import media from "../assets/login.png";
+import Spring, { SpringType } from "../components/Spring";
+import google from "../assets/icons/google.svg";
+import facebook from "../assets/icons/facebook.svg";
 import classNames from "classnames";
-import PasswordInput from "@components/PasswordInput";
+import PasswordInput from "../components/PasswordInput";
 import { MouseEvent } from "react";
+import useWindowSize from "../hooks/useWindowSize";
 
 const Login = () => {
   const { width } = useWindowSize();

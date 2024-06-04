@@ -1,78 +1,62 @@
-import Spring from "@components/Spring";
-import Navigate from "@assets/navigate.png";
+import Spring from "../components/Spring";
+import Navigate from "../assets/navigate.png";
 import { useNavigate } from "react-router-dom";
-import { numberToVND } from "@utils/converter";
+import { numberToVND } from "../utils/converter";
 import { Button } from "@nextui-org/react";
-// import { getLocalStorage } from "@utils/helpers";
-interface CartProps {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
+import { useCartStore } from "../store/cart";
+import { toast } from "react-toastify";
 
 const Cart = () => {
-  //   localStorage.setItem("cart", JSON.stringify(cart));
-  //   const cart = getLocalStorage("cart");
-  const cart: CartProps[] = [
-    {
-      id: 1,
-      name: "Thực phẩm bổ sung phô mai Con Bò Cười vuông Belcube vị truyền thống 78g",
-      price: 49000,
-      quantity: 1,
-      image:
-        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg",
-    },
-    {
-      id: 2,
-      name: "Váng sữa Mixxi - Vanila Plus 75g - Lốc 4",
-      price: 64000,
-      quantity: 1,
-      image:
-        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg",
-    },
-    {
-      id: 3,
-      name: "Sữa chua trái cây Hoff Organic Vị Chuối 6x55g",
-      price: 49000,
-      quantity: 1,
-      image:
-        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg",
-    },
-    {
-      id: 4,
-      name: "Sữa GrowPLUS+ Sữa non Vàng 800g trên 1 tuổi",
-      price: 49000,
-      quantity: 1,
-      image:
-        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg",
-    },
-    {
-      id: 5,
-      name: "Thực phẩm bổ sung phô mai Con Bò Cười vuông Belcube vị truyền thống 78g",
-      price: 49000,
-      quantity: 1,
-      image:
-        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg",
-    },
-  ];
-
+  const cart = useCartStore((state) => state.cart);
   const totalPrice = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) =>
+      total +
+      (item.sale
+        ? item.price - ((item.sale as number) * item.price) / 100
+        : item.price) *
+        item.quantity,
     0,
   );
-
-  const sale = 0;
-
   const nav = useNavigate();
+  const sale = 0;
+  const handleChangeQuantity = ({
+    type,
+    id,
+  }: {
+    type: "increase" | "decrease";
+    id: number;
+  }) => {
+    const newCart = cart.map((item) => {
+      if (item.id === id) {
+        if (type === "increase") {
+          if (item.quantity + 1 > item.max_quantity) {
+            toast.error("Số lượng sản phẩm vượt quá giới hạn");
+            return item;
+          }
+          return {
+            ...item,
+            quantity: item.quantity + 1,
+          };
+        } else {
+          return {
+            ...item,
+            quantity: item.quantity - 1,
+          };
+        }
+      }
+      return item;
+    });
+    const finalCart = newCart.filter((item) => item.quantity > 0);
+    useCartStore.setState({ cart: finalCart });
+  };
+
   return (
-    <div className="mx-auto w-5/6 mt-6 text-lg flex justify-between">
+    <div className="mx-auto w-5/6 text-lg flex justify-between">
       <div className="w-[66%]">
         <Spring className="card min-h-[70vh]">
           {cart ? (
             <div>
-              <div className="flex justify-between items-center border-b-1 pb-5 border-slate-500 ">
+              <div className="flex justify-between items-center pb-5 border-slate-500 ">
                 <p className="text-lg font-bold w-[12%]">Giỏ Hàng</p>
                 <p className="text-lg font-bold w-[38%]"></p>
                 <p className="text-medium text-slate-500 w-[10%] text-center">
@@ -86,10 +70,10 @@ const Cart = () => {
                 </p>
                 <p className="text-medium text-slate-500 w-[10%] text-center"></p>
               </div>
-              {cart.map(({ id, image, name, price, quantity }) => {
+              {cart.map(({ id, image, name, price, quantity, sale }) => {
                 return (
                   <div
-                    className="flex justify-between items-center border-b-1 pb-5 border-slate-500 mt-3"
+                    className="flex justify-between items-center border-t-1 py-5 border-slate-500 mt-3"
                     key={id}
                   >
                     <div className="w-[12%] border rounded">
@@ -98,13 +82,26 @@ const Cart = () => {
                     <p className="text-sm w-[38%] px-2 -translate-y-7">
                       {name}
                     </p>
-                    <p className="text-medium text-black w-[10%] text-center">
-                      {numberToVND(price)}
-                    </p>
+                    <div>
+                      {sale && (
+                        <p
+                          className={`text-medium text-black w-[10%] text-center`}
+                        >
+                          {numberToVND(price - (price * sale) / 100)}
+                        </p>
+                      )}
+                      <p
+                        className={`text-medium text-black w-[10%] text-center ${sale && "line-through text-sm"}`}
+                      >
+                        {numberToVND(price)}
+                      </p>
+                    </div>
                     <p className="text-medium text-slate-500 w-[20%] flex items-center justify-between px-7 text-center">
                       <Button
                         className="text-xl"
-                        // onClick={() => handleChangeQuantity("decrease")}
+                        onClick={() =>
+                          handleChangeQuantity({ type: "decrease", id })
+                        }
                         size="sm"
                         isIconOnly
                       >
@@ -113,7 +110,9 @@ const Cart = () => {
                       <p className="text-black">{quantity}</p>
                       <Button
                         className="text-xl"
-                        // onClick={() => handleChangeQuantity("increase")}
+                        onClick={() =>
+                          handleChangeQuantity({ type: "increase", id })
+                        }
                         size="sm"
                         isIconOnly
                       >
@@ -121,7 +120,10 @@ const Cart = () => {
                       </Button>
                     </p>
                     <p className="text-medium text-black w-[10%] text-center">
-                      {numberToVND(price)}
+                      {numberToVND(
+                        (sale ? price - (price * sale) / 100 : price) *
+                          quantity,
+                      )}
                     </p>
                     <p className="text-medium text-slate-500 w-[10%] flex justify-end items-center">
                       <button>
@@ -160,7 +162,7 @@ const Cart = () => {
         <Spring className="card row-span-4">
           <h3 className="text-lg text-slate-500">Địa Chỉ Nhận Hàng</h3>
           <button
-            className="rounded-lg border-2 border-red-700 mt-2 w-full h-[65%] flex items-center border-dashed justify-between px-14 bg-[url('../assets/map.png')] cursor-pointer"
+            className="rounded-lg border-2 border-red-700 mt-2 w-full h-[65%] flex items-center border-dashed justify-between px-10 bg-[url('../assets/map.png')] cursor-pointer"
             onClick={() => nav("/dia-chi-khach-hang")}
           >
             <div className="w-2/12">
@@ -173,7 +175,7 @@ const Cart = () => {
         </Spring>
         <Spring className="card row-span-3">
           <h3 className="text-lg text-black">Ưu đãi & mã giảm giá</h3>
-          <button className="rounded-lg border-2 border-yellow-500 mt-3 h-[50%] w-full flex items-center justify-between px-4 cursor-pointer">
+          <button className="rounded-lg border-2 border-yellow-500 mt-3 h-[50%] w-full flex items-center justify-between px-6 cursor-pointer">
             <div className="w-1/12">
               <img
                 src={
@@ -183,7 +185,7 @@ const Cart = () => {
               />
             </div>
             <p className="text-base text-orange-500 font-medium tracking-tight">
-              Bấm vào để Chọn hoặc Nhập Mã ưu đãi
+              Bấm vào để Chọn/Nhập Mã ưu đãi
             </p>
           </button>
         </Spring>
@@ -206,6 +208,7 @@ const Cart = () => {
           <Button
             fullWidth
             className="mt-4 bg-zinc-400 font-medium text-white text-lg"
+            onClick={() => toast.error("Test error")}
           >
             Mua hàng
           </Button>

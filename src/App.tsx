@@ -1,75 +1,82 @@
 import { NextUIProvider } from "@nextui-org/react";
-import { Suspense, lazy } from "react";
-import "@styles/index.scss";
-import "react-toastify/dist/ReactToastify.min.css";
+import "./styles/index.scss";
+import NavBar from "./layout/user/NavBar";
 import { Route, Routes, useLocation } from "react-router-dom";
-import ThemeStyles from "@styles/theme";
-import { ThemeProvider } from "styled-components";
-import { useTheme } from "@contexts/themeContext";
+import Footer from "./layout/user/Footer";
+import { Suspense, lazy, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
-import { SidebarProvider } from "@contexts/sidebarContext";
-import Sidebar from "@layout/Sidebar";
-import Loader from "@components/Loader";
-import { useWindowSize } from "react-use";
-import AppBar from "@layout/AppBar";
-import NavBar from "@layout/NavBar";
-import Footer from "@layout/Footer";
+import "react-toastify/dist/ReactToastify.css";
+import BreadCrumbs from "./components/BreadCrumbs";
+import { getAllCategories } from "./apis/category";
+import { useCategoryStore } from "./store/category";
+import Loader from "./components/Loader";
+import ChatButton from "./layout/user/ChatButton";
 
-const Login = lazy(() => import("@pages/Login"));
-const Register = lazy(() => import("@pages/Register"));
-const SalesAnalytics = lazy(() => import("@pages/SalesAnalytics"));
-const Homepage = lazy(() => import("@pages/Homepage"));
-const Product = lazy(() => import("@pages/Product"));
-const Cart = lazy(() => import("@pages/Cart"));
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const Category = lazy(() => import("./pages/Category"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Profile = lazy(() => import("./pages/Profile"));
 
-const App = () => {
-  const { width } = useWindowSize();
-  const { theme } = useTheme();
+function App() {
+  // const { width } = useWindowSize();
   const path = useLocation().pathname;
-  const withAdminbar = path === "/admin" || path === "/product-editor";
-  const withSidebar =
-    path !== "/admin" &&
-    path !== "/login" &&
-    path !== "/register" &&
-    path !== "/product-editor";
+  const withoutNavBar = ["/login", "/register", "/404"];
+  const withoutBreadcrumb = ["/login", "/register", "/404"];
+  const updateCategory = useCategoryStore((state) => state.setCategory);
+  const respone = async () => {
+    const res = await getAllCategories();
+    updateCategory(res.data.data);
+  };
+
+  useEffect(() => {
+    respone();
+  }, []);
+
   return (
-    <>
-      <NextUIProvider>
-        <SidebarProvider>
-          <ThemeProvider theme={{ theme: theme }}>
-            <ThemeStyles />
-            <ToastContainer
-              theme={theme}
-              autoClose={2000}
-              style={{ padding: "20px" }}
-            />
-            {width < 1280 && withAdminbar && <AppBar />}
-            {width < 1280 && withSidebar && <NavBar />}
-            <div className={`app ${!withAdminbar ? "fluid" : ""}`}>
-              {withAdminbar && <Sidebar />}
-              <div className="app_content">
-                {width >= 1280 && withAdminbar && <AppBar />}
-                {width >= 1280 && withSidebar && <NavBar />}
-                <Suspense fallback={<Loader />}>
-                  <div className="main">
-                    <Routes>
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/admin" element={<SalesAnalytics />} />
-                      <Route path="/register" element={<Register />} />
-                      <Route path="/product" element={<Product />} />
-                      <Route path="/cart" element={<Cart />} />
-                      <Route path="/" element={<Homepage />} />
-                    </Routes>
-                  </div>
-                </Suspense>
-                <Footer />
-              </div>
+    <NextUIProvider>
+      <ToastContainer
+        // theme={theme}
+        autoClose={2000}
+        style={{ padding: "20px" }}
+      />
+      {path.startsWith("/admin") ? null : withoutNavBar.includes(
+          path,
+        ) ? null : (
+        <NavBar />
+      )}
+      {withoutBreadcrumb.includes(path) || path === "/" ? null : (
+        <BreadCrumbs pathname={path} classNames="mx-auto w-5/6 mt-6 text-lg" />
+      )}
+      <div className={`app ${withoutNavBar.includes(path) && "fluid"}`}>
+        <div className="app_content">
+          <Suspense fallback={<Loader />}>
+            <div className="main">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/product-detail/:id" element={<ProductDetail />} />
+                <Route path="/:category" element={<Category />} />
+                <Route path="/:category/:category" element={<Category />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/profile" element={<Profile />} />
+              </Routes>
             </div>
-          </ThemeProvider>
-        </SidebarProvider>
-      </NextUIProvider>
-    </>
+          </Suspense>
+        </div>
+      </div>
+      {path.startsWith("/admin") ? null : withoutNavBar.includes(
+          path,
+        ) ? null : (
+        <Footer />
+      )}
+      <ChatButton />
+      <ToastContainer />
+    </NextUIProvider>
   );
-};
+}
 
 export default App;
