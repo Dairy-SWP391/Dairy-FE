@@ -14,7 +14,7 @@ const DefaultValues = {
   first_name: "",
   last_name: "",
   email: "",
-  password: "",
+  password: ""
 };
 
 interface RegisterFormProps {
@@ -31,9 +31,9 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
-    control,
+    control
   } = useForm<RegisterFormProps>({
-    defaultValues: DefaultValues,
+    defaultValues: DefaultValues
   });
 
   const onSubmit = () => {
@@ -80,13 +80,13 @@ const Login = () => {
                     </label>
                     <input
                       className={classNames("field-input", {
-                        "field-input--error": errors.first_name,
+                        "field-input--error": errors.first_name
                       })}
                       id="first_name"
                       type="text"
                       placeholder="Your first name"
                       {...register("first_name", {
-                        required: true,
+                        required: true
                       })}
                     />
                   </div>
@@ -96,13 +96,13 @@ const Login = () => {
                     </label>
                     <input
                       className={classNames("field-input", {
-                        "field-input--error": errors.last_name,
+                        "field-input--error": errors.last_name
                       })}
                       id="last_name"
                       type="text"
                       placeholder="Your last name"
                       {...register("last_name", {
-                        required: true,
+                        required: true
                       })}
                     />
                   </div>
@@ -113,14 +113,14 @@ const Login = () => {
                   </label>
                   <input
                     className={classNames("field-input", {
-                      "field-input--error": errors.email,
+                      "field-input--error": errors.email
                     })}
                     id="email"
                     type="text"
                     placeholder="Your E-mail address"
                     {...register("email", {
                       required: true,
-                      pattern: /^\S+@\S+$/i,
+                      pattern: /^\S+@\S+$/i
                     })}
                   />
                 </div>

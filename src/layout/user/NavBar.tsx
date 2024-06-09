@@ -31,7 +31,7 @@ const NavBar = () => {
               // isInvisible={isInvisible}
               shape="circle"
               classNames={{
-                base: "mr-6 ml-12",
+                base: "mr-6 ml-12"
               }}
             >
               <NotificationIcon className="fill-current" size={30} />
@@ -46,7 +46,7 @@ const NavBar = () => {
                 // isInvisible={isInvisible}
                 shape="circle"
                 classNames={{
-                  base: "mx-6",
+                  base: "mx-6"
                 }}
               >
                 <CartIcon size={30} />
@@ -56,7 +56,7 @@ const NavBar = () => {
               <User
                 name={""}
                 avatarProps={{
-                  src: auth?.avatar_url,
+                  src: auth?.avatar_url
                 }}
                 className="cursor-pointer"
                 onClick={() => {

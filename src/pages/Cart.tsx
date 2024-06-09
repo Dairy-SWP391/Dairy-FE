@@ -15,13 +15,13 @@ const Cart = () => {
         ? item.price - ((item.sale as number) * item.price) / 100
         : item.price) *
         item.quantity,
-    0,
+    0
   );
   const nav = useNavigate();
   const sale = 0;
   const handleChangeQuantity = ({
     type,
-    id,
+    id
   }: {
     type: "increase" | "decrease";
     id: number;
@@ -35,12 +35,12 @@ const Cart = () => {
           }
           return {
             ...item,
-            quantity: item.quantity + 1,
+            quantity: item.quantity + 1
           };
         } else {
           return {
             ...item,
-            quantity: item.quantity - 1,
+            quantity: item.quantity - 1
           };
         }
       }
@@ -121,8 +121,7 @@ const Cart = () => {
                     </p>
                     <p className="text-medium text-black w-[10%] text-center">
                       {numberToVND(
-                        (sale ? price - (price * sale) / 100 : price) *
-                          quantity,
+                        (sale ? price - (price * sale) / 100 : price) * quantity
                       )}
                     </p>
                     <p className="text-medium text-slate-500 w-[10%] flex justify-end items-center">

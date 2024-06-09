@@ -32,7 +32,7 @@ const Counter = ({ num, className, isFormatted, ...props }: CounterProps) => {
               numFormatter({
                 num: value,
                 fractionDigits: 0,
-                prefix: props.prefix,
+                prefix: props.prefix
               }) || ""
           : undefined
       }
@@ -47,7 +47,7 @@ const Counter = ({ num, className, isFormatted, ...props }: CounterProps) => {
                 ? numFormatter({
                     num,
                     fractionDigits: props.decimals || 0,
-                    prefix: props.prefix,
+                    prefix: props.prefix
                   })
                 : commaFormatter(num)}
               {props.suffix}

@@ -16,7 +16,7 @@ const TotalBalance = ({ wrapperClass, imgClass }: TotalBalanceProps) => {
         className={`rounded-md overflow-hidden shadow flex items-center h-[120px] md:h-[286px] lg:flex-col
                  lg:justify-center xl:flex-row xl:justify-start ${wrapperClass || ""}`}
         style={{
-          background: "var(--linear-sky)",
+          background: "var(--linear-sky)"
         }}
       >
         <img

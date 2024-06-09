@@ -32,5 +32,5 @@ type GetMeResponse = {
 
 export const getMe = (_data: { access_token: string }) =>
   http.get<GetMeResponse>("user/me", {
-    headers: { Authorization: `Bearer ${_data.access_token}` },
+    headers: { Authorization: `Bearer ${_data.access_token}` }
   });

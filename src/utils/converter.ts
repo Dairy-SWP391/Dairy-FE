@@ -1,12 +1,14 @@
+/* eslint-disable no-useless-escape */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export const numberToVND = (number: number) =>
   number.toLocaleString("it-IT", {
     style: "currency",
-    currency: "VND",
+    currency: "VND"
   });
 
 export const stringToNomalCase = ({
   str,
-  id,
+  id
 }: {
   str: string;
   id?: number;
@@ -37,7 +39,7 @@ export const stringToNomalCase = ({
   // Bỏ dấu câu, kí tự đặc biệt
   str = str.replace(
     /!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g,
-    " ",
+    " "
   );
 
   str = str.toLowerCase();
@@ -64,11 +66,11 @@ interface NumFormatterProps {
 export const numFormatter = ({
   num,
   fractionDigits = 0,
-  prefix = "",
+  prefix = ""
 }: NumFormatterProps) => {
   const options = {
     minimumFractionDigits: fractionDigits,
-    maximumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits
   };
 
   if (num > 999 && num < 1000000) {

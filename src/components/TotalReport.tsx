@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 const data = [
   { dataKey: "revenue", title: "Revenue", amount: 176120, trend: 45 },
   { dataKey: "expense", title: "Expense", amount: 310452, trend: -12 },
-  { dataKey: "profit", title: "Profit", amount: 342558, trend: 14.56 },
+  { dataKey: "profit", title: "Profit", amount: 342558, trend: 14.56 }
 ];
 
 const TotalReport = () => {

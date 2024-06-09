@@ -27,15 +27,16 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
-    control,
+    control
   } = useForm({
     defaultValues: {
       email: "",
-      password: "",
-    },
+      password: ""
+    }
   });
 
-  const onSubmit = async (_data: any) => {
+  const onSubmit = async (_data: { email: string; password: string }) => {
+    console.log(_data);
     console.log(auth);
     try {
       const result = await login(_data);
@@ -44,7 +45,7 @@ const Login = () => {
           JwtPayload & { user_id: string; verify: "VERIFIED" | "UNVERIFIED" }
         >(result.data.result.access_token);
         const user_info = await getMe({
-          access_token: result.data.result.access_token,
+          access_token: result.data.result.access_token
         });
         console.log(user_info);
         setAuth({
@@ -61,7 +62,7 @@ const Login = () => {
           role: user_info.data.result.role,
           updated_at: user_info.data.result.updated_at,
           avatar_url:
-            "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/avatar.png?alt=media",
+            "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/avatar.png?alt=media"
         });
         toast.success("Login successful");
         localStorage.setItem("refresh_token", result.data.result.refresh_token);
@@ -130,14 +131,14 @@ const Login = () => {
                   </label>
                   <input
                     className={classNames("field-input", {
-                      "field-input--error": errors.email,
+                      "field-input--error": errors.email
                     })}
                     id="email"
                     type="text"
                     placeholder="Your E-mail address"
                     {...register("email", {
                       required: true,
-                      pattern: /^\S+@\S+$/i,
+                      pattern: /^\S+@\S+$/i
                     })}
                   />
                 </div>

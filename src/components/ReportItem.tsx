@@ -12,7 +12,7 @@ import wallet from "../assets/wallet.webp";
 const icons = [
   { dataKey: "revenue", icon: coins },
   { dataKey: "expense", icon: credit },
-  { dataKey: "profit", icon: wallet },
+  { dataKey: "profit", icon: wallet }
 ];
 
 interface ReportItemProps {

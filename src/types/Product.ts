@@ -24,5 +24,5 @@ export interface ProductType {
 
 export enum ProductTarget {
   Baby = "Trẻ em",
-  Adult = "Người lớn",
+  Adult = "Người lớn"
 }

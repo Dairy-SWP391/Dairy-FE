@@ -3,7 +3,7 @@ import DocumentTitle from "../../components/DocumentTitle";
 
 // hooks
 import { useState, useEffect } from "react";
-import useWindowSize  from "../../hooks/useWindowSize";
+import useWindowSize from "../../hooks/useWindowSize";
 
 // utils
 import dayjs from "dayjs";
@@ -33,10 +33,10 @@ const PageHeader = ({ title }: { title: string }) => {
                         text-header text-sm"
         >
           Data Refresh
-          <i className="icon icon-arrows-rotate-regular text-[20px] group-hover:animate-spin-slow" />
+          <i className="fa fa-refresh icon text-[20px]" aria-hidden="true"></i>
         </button>
         <div
-          className="h-11 bg-body flex items-center justify-center rounded-md px-9 font-heading font-bold
+          className="h-11 bg-[#f9f9f9] flex items-center justify-center rounded-md px-9 font-heading font-bold
                     text-header text-sm border border-input-border lg:w-[310px]"
         >
           {dayjs(currentTime).format(`${dateFormat} HH`)}

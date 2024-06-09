@@ -25,17 +25,16 @@ const BreadCrumbs = ({ pathname, classNames }: BreadCrumbsProps) => {
       { name: "GIỎ HÀNG", path: "cart" },
       {
         name: "CÁ NHÂN",
-        path: "profile",
-      },
-    ],
+        path: "profile"
+      }
+    ]
   );
 
   let currentLink = "";
 
   useEffect(() => {
     setCategoryPath(categoryPath);
-    console.log(categoryPath);
-  }, []);
+  }, [categoryPath, setCategoryPath]);
 
   const crumbs = pathname
     .split("/")
@@ -44,9 +43,9 @@ const BreadCrumbs = ({ pathname, classNames }: BreadCrumbsProps) => {
       currentLink += `/${crumb}`;
       return {
         name: categoryPath.find(
-          (cate) => cate.path === currentLink.split("/").pop(),
+          (cate) => cate.path === currentLink.split("/").pop()
         )?.name,
-        link: currentLink,
+        link: currentLink
       };
     });
 

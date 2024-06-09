@@ -15,7 +15,7 @@ const Carousel = ({
   slides,
   className,
   subSlide = "NONE",
-  numberOfSubSlides = 4,
+  numberOfSubSlides = 4
   // hideBsChevron = false,
 }: CarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -39,36 +39,38 @@ const Carousel = ({
     setCurrentIndex(slideIndex);
   };
 
-  const handleRenderSubSlide = () => {
-    const totalSlides = slides.length;
-    let startIdx, endIdx;
-    if (numberOfSubSlides % 2 === 1) {
-      // Nếu numberOfSubSlides là số lẻ
-      startIdx = Math.max(0, currentIndex - Math.floor(numberOfSubSlides / 2));
-      endIdx = startIdx + numberOfSubSlides;
-      if (endIdx > totalSlides) {
-        startIdx = totalSlides - numberOfSubSlides;
-        endIdx = totalSlides;
-      }
-    } else {
-      startIdx = Math.max(
-        0,
-        currentIndex - Math.floor(numberOfSubSlides / 2) + 1,
-      );
-      endIdx = startIdx + numberOfSubSlides;
-      if (endIdx > totalSlides) {
-        startIdx = totalSlides - numberOfSubSlides;
-        endIdx = totalSlides;
-      }
-    }
-    console.log({ startIdx, endIdx: endIdx - 1 });
-    console.log(currentIndex);
-    setSubSlideIndex({ startIdx, endIdx: endIdx - 1 });
-  };
-
   useEffect(() => {
+    const handleRenderSubSlide = () => {
+      const totalSlides = slides.length;
+      let startIdx, endIdx;
+      if (numberOfSubSlides % 2 === 1) {
+        // Nếu numberOfSubSlides là số lẻ
+        startIdx = Math.max(
+          0,
+          currentIndex - Math.floor(numberOfSubSlides / 2)
+        );
+        endIdx = startIdx + numberOfSubSlides;
+        if (endIdx > totalSlides) {
+          startIdx = totalSlides - numberOfSubSlides;
+          endIdx = totalSlides;
+        }
+      } else {
+        startIdx = Math.max(
+          0,
+          currentIndex - Math.floor(numberOfSubSlides / 2) + 1
+        );
+        endIdx = startIdx + numberOfSubSlides;
+        if (endIdx > totalSlides) {
+          startIdx = totalSlides - numberOfSubSlides;
+          endIdx = totalSlides;
+        }
+      }
+      console.log({ startIdx, endIdx: endIdx - 1 });
+      console.log(currentIndex);
+      setSubSlideIndex({ startIdx, endIdx: endIdx - 1 });
+    };
     handleRenderSubSlide();
-  }, [currentIndex, slides.length]);
+  }, [currentIndex, slides.length, numberOfSubSlides]);
 
   return (
     <div

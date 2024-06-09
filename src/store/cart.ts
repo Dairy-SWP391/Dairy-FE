@@ -24,7 +24,7 @@ export const useCartStore = create<CartStore>((set) => ({
       quantity: 1,
       max_quantity: 10,
       image:
-        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg",
+        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg"
     },
     {
       id: 2,
@@ -34,7 +34,7 @@ export const useCartStore = create<CartStore>((set) => ({
       sale: 10,
       max_quantity: 10,
       image:
-        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg",
+        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg"
     },
     {
       id: 3,
@@ -44,7 +44,7 @@ export const useCartStore = create<CartStore>((set) => ({
       sale: 20,
       max_quantity: 10,
       image:
-        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg",
+        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg"
     },
     {
       id: 4,
@@ -53,7 +53,7 @@ export const useCartStore = create<CartStore>((set) => ({
       quantity: 1,
       max_quantity: 10,
       image:
-        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg",
+        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg"
     },
     {
       id: 5,
@@ -62,8 +62,8 @@ export const useCartStore = create<CartStore>((set) => ({
       quantity: 1,
       max_quantity: 10,
       image:
-        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg",
-    },
+        "https://cdn1.concung.com/2022/03/46889-83329-large_mobile/thuc-pham-bo-sung-pho-mai-con-bo-cuoi-vuong-le-cube-vi-truyen-thong-78g.jpg"
+    }
   ],
-  setCart: (cart) => set({ cart }),
+  setCart: (cart) => set({ cart })
 }));

@@ -18,7 +18,7 @@ export interface ResponseApi<Data> {
 }
 
 export function isAxiosUnprocessableEntityError<FormError>(
-  error: unknown,
+  error: unknown
 ): error is AxiosError<FormError> {
   return isAxiosError(error) && error.response?.status === 422;
 }

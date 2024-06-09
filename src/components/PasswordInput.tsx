@@ -44,7 +44,7 @@ const PasswordInput = ({
       <div className="relative">
         <input
           className={classNames("field-input !pr-10", {
-            "field-input--error": isInvalid,
+            "field-input--error": isInvalid
           })}
           id={id}
           type={isPasswordVisible ? "text" : "password"}

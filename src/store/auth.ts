@@ -23,5 +23,5 @@ type AuthStore = {
 
 export const useAuthStore = create<AuthStore>((set) => ({
   auth: null,
-  setAuth: (auth) => set({ auth }),
+  setAuth: (auth) => set({ auth })
 }));

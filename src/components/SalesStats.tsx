@@ -6,8 +6,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
+  ResponsiveContainer
 } from "recharts";
 
 // hooks
@@ -26,7 +25,7 @@ const data = [
   { name: "Sep", revenue: 5600, expense: 10000 },
   { name: "Oct", revenue: 6450, expense: 1200 },
   { name: "Nov", revenue: 7840, expense: 3000 },
-  { name: "Dec", revenue: 3490, expense: 4300 },
+  { name: "Dec", revenue: 3490, expense: 4300 }
 ];
 
 // const CustomTooltip = ({ active, payload, label }) => {
@@ -100,7 +99,7 @@ const SalesStats = () => {
                 fontSize: 14,
                 fontFamily: "var(--heading-font)",
                 fontWeight: 700,
-                fill: "var(--header)",
+                fill: "var(--header)"
               }}
             />
             <YAxis
@@ -111,7 +110,7 @@ const SalesStats = () => {
                 ""
               }
               tick={{
-                fill: "var(--header)",
+                fill: "var(--header)"
               }}
               hide={width < 768}
             />

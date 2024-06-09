@@ -14,7 +14,7 @@ interface ProductImageDetailProps {
 
 const ProductImageDetail = ({
   images = [],
-  className,
+  className
 }: ProductImageDetailProps) => {
   return (
     <>

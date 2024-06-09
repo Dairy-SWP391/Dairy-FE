@@ -2,17 +2,17 @@ import Spring from "../components/Spring";
 import { Avatar, Button, Card, CardBody, Chip, Image } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { numberToVND, stringToNomalCase } from "../utils/converter";
+import { numberToVND } from "../utils/converter";
 import { useParams } from "react-router-dom";
 import { Product, getProductDetail } from "../apis/product";
 import { Rating } from "react-simple-star-rating";
 import ProductImageDetail from "../components/ProductImageDetail";
-import RelatedProductCard from "../components/RelatedProductCard";
+// import RelatedProductCard from "../components/RelatedProductCard";
 
 const relatedPost = {
   img: "https://yingcool.com.vn/wp-content/uploads/2023/11/yingcool-super-size-L.png",
   title: "Top 8 bỉm thấm hút tốt ban đêm cho bé ngủ ngon hơn",
-  view_count: 100,
+  view_count: 100
 };
 
 type QuantityAction = "increase" | "decrease";
@@ -25,44 +25,44 @@ const ProductDetail = () => {
   const ProductPropsList = [
     {
       name: "Tên sản phẩm",
-      value: "name",
+      value: "name"
     },
     {
       name: "Thương hiệu",
-      value: product?.brand,
+      value: product?.brand
     },
     {
       name: "Xuất xứ thương hiệu",
-      value: product?.origin,
+      value: product?.origin
     },
     {
       name: "Sản xuất tại",
-      value: product?.manufactured_at,
+      value: product?.manufactured_at
     },
     {
       name: "Trọng lượng sản phẩm",
-      value: product?.weight,
+      value: product?.weight
     },
     {
       name: "Thể tích sản phẩm",
-      value: product?.volume,
+      value: product?.volume
     },
     {
       name: "Độ tuổi phù hợp",
-      value: product?.target,
+      value: product?.target
     },
     {
       name: "Cảnh báo",
-      value: product?.caution,
+      value: product?.caution
     },
     {
       name: "Hướng dẫn sử dụng",
-      value: product?.instruction,
+      value: product?.instruction
     },
     {
       name: "Hướng dẫn bảo quản",
-      value: product?.preservation,
-    },
+      value: product?.preservation
+    }
   ];
   const [showDescription, setShowDescription] = useState<boolean>(false);
   const productPropsList = ProductPropsList.reduce<
@@ -75,20 +75,20 @@ const ProductDetail = () => {
   }, []);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getProductDetail(id as string);
+        console.log(response.data.data);
+        // console.log(stringToNomalCase(response.data.data.name));
+        setProduct(response.data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     fetchData();
     console.log(product);
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await getProductDetail(id as string);
-      console.log(response.data.data);
-      // console.log(stringToNomalCase(response.data.data.name));
-      setProduct(response.data.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  }, [id, product]);
 
   const handleChangeQuantity = (action: QuantityAction) => {
     if (action === "increase" && product) {
@@ -165,7 +165,7 @@ const ProductDetail = () => {
                     variant="bordered"
                     classNames={{
                       content: "font-normal text-xl text-pink-600",
-                      base: "bg-transparent border-pink-600",
+                      base: "bg-transparent border-pink-600"
                     }}
                   >
                     - 10%
@@ -368,7 +368,7 @@ const ProductDetail = () => {
                           size="lg"
                           classNames={{
                             base: "border border-pink-400 bg-pink-200",
-                            name: "text-slate-500 text-2xl font-bold",
+                            name: "text-slate-500 text-2xl font-bold"
                           }}
                         />
                       </div>

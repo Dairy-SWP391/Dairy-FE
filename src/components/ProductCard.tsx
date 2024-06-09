@@ -21,7 +21,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const nav = useNavigate();
   return (
     <>
-      <div
+      <button
         onClick={() => nav(`/product-detail/${product.id}`)}
         className="flex flex-col border border-slate-500 bg-slate-100 rounded p-2 cursor-pointer"
       >
@@ -54,7 +54,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               variant="bordered"
               classNames={{
                 content: "font-semibold text-xs text-pink-600",
-                base: "bg-transparent border-pink-600 px-0 ml-2",
+                base: "bg-transparent border-pink-600 px-0 ml-2"
               }}
               size="sm"
             >
@@ -65,7 +65,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <CartIcon size={30} />
           </button>
         </div>
-      </div>
+      </button>
     </>
   );
 };

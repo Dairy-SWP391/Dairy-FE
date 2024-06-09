@@ -1,5 +1,5 @@
 const InfoBtn = ({
-  onClick,
+  onClick
 }: {
   onClick: React.MouseEventHandler<HTMLButtonElement>;
 }) => {
