@@ -41,10 +41,12 @@ const BreadCrumbs = ({ pathname, classNames }: BreadCrumbsProps) => {
     .filter((crumb) => crumb !== "")
     .map((crumb) => {
       currentLink += `/${crumb}`;
+      const name = categoryPath.find(
+        (cate) => cate.path === currentLink.split("/").pop()
+      )?.name;
+      if (!name) nav("/404");
       return {
-        name: categoryPath.find(
-          (cate) => cate.path === currentLink.split("/").pop()
-        )?.name,
+        name: name,
         link: currentLink
       };
     });

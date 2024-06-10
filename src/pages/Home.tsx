@@ -2,8 +2,12 @@ import { Card, Image } from "@nextui-org/react";
 import Spring from "../components/Spring";
 import ProductCard from "../components/ProductCard";
 import { useCategoryStore } from "../store/category";
+import { useEffect, useState } from "react";
+import { getProductByCategory } from "../apis/category";
+import { ProductType } from "../types/Product";
+import { stringToNomalCase } from "../utils/converter";
 
-const product = {
+const productTemplate = {
   id: 2,
   name: "Thực phẩm dinh dưỡng y học cho trẻ 1-10 tuổi: Pediasure vani",
   price: 500000,
@@ -11,11 +15,45 @@ const product = {
     "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/combo-3-lon-sua-abbott-pediasure-1-10-tuoi-850g.png?alt=media&token=12d90d31-d13f-46ef-b21b-032aed33424a",
   rating_point: 5,
   sold: 100,
-  sale: 10
+  sale: 10,
+  url_detail: "/"
 };
 
 const Home = () => {
+  const [productsByCate1, setProductsByCate1] = useState<ProductType[]>();
+  const [productsByCate2, setProductsByCate2] = useState<ProductType[]>();
+  const [productsByCate3, setProductsByCate3] = useState<ProductType[]>();
+  const [productsByCate4, setProductsByCate4] = useState<ProductType[]>();
+  // const [productsByCate5, setProductsByCate5] = useState<ProductType[]>();
   const category = useCategoryStore((state) => state.category);
+
+  useEffect(() => {
+    const fetchData = async (id: number) => {
+      const response = await getProductByCategory({
+        num_of_product: 5,
+        parent_category_id: id,
+        page: 1
+      });
+      // console.log(response.data.data);
+      if (id === 1) setProductsByCate1(response.data.data);
+      if (id === 2) setProductsByCate2(response.data.data);
+      if (id === 3) setProductsByCate3(response.data.data);
+      if (id === 4) setProductsByCate4(response.data.data);
+      // if (id === 5) setProductsByCate5(response.data.data);
+    };
+    category.forEach((cate) => {
+      fetchData(cate.id);
+    });
+    console.log(category);
+    console.log("ahihi");
+    console.log(productsByCate1);
+    // for (const property in productsByCate) {
+    //   productsByCate[property].map((product) => {
+    //     console.log(product.name);
+    //   });
+    // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category]);
 
   return (
     <>
@@ -75,11 +113,11 @@ const Home = () => {
             </p>
           </div>
           <div className="mt-3 grid grid-cols-5 gap-2">
-            <ProductCard product={product} />
-            <ProductCard product={product} />
-            <ProductCard product={product} />
-            <ProductCard product={product} />
-            <ProductCard product={product} />
+            <ProductCard product={productTemplate} />
+            <ProductCard product={productTemplate} />
+            <ProductCard product={productTemplate} />
+            <ProductCard product={productTemplate} />
+            <ProductCard product={productTemplate} />
           </div>
         </Spring>
 
@@ -91,11 +129,11 @@ const Home = () => {
             </p>
           </div>
           <div className="mt-3 grid grid-cols-5 gap-2">
-            <ProductCard product={product} />
-            <ProductCard product={product} />
-            <ProductCard product={product} />
-            <ProductCard product={product} />
-            <ProductCard product={product} />
+            <ProductCard product={productTemplate} />
+            <ProductCard product={productTemplate} />
+            <ProductCard product={productTemplate} />
+            <ProductCard product={productTemplate} />
+            <ProductCard product={productTemplate} />
           </div>
         </Spring>
 
@@ -110,11 +148,101 @@ const Home = () => {
                   </p>
                 </div>
                 <div className="mt-3 grid grid-cols-5 gap-2">
-                  <ProductCard product={product} />
-                  <ProductCard product={product} />
-                  <ProductCard product={product} />
-                  <ProductCard product={product} />
-                  <ProductCard product={product} />
+                  {cate.id === 1 &&
+                    productsByCate1?.map((product) => {
+                      return (
+                        <ProductCard
+                          product={{
+                            id: product.id,
+                            name: product.name,
+                            price: product.ProductPricing[0].price,
+                            image_url:
+                              "https://cdn1.concung.com/2023/03/61836-99104-large_mobile/tpddyh-varna-complete-si-lon-850g.png",
+                            rating_point: product.rating_point,
+                            sold: product.sold,
+                            sale: 0,
+                            url_detail: `/${cate.path}/${cate.child_category.find((subCate) => (subCate.id = product.category_id))?.path}/${stringToNomalCase({ str: product.name, id: product.id })}`
+                          }}
+                          key={product.id}
+                        />
+                      );
+                    })}
+                  {cate.id === 2 &&
+                    productsByCate2?.map((product) => {
+                      return (
+                        <ProductCard
+                          product={{
+                            id: product.id,
+                            name: product.name,
+                            price: product.ProductPricing[0].price,
+                            image_url:
+                              "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/combo-3-lon-sua-abbott-pediasure-1-10-tuoi-850g.png?alt=media",
+                            rating_point: product.rating_point,
+                            sold: product.sold,
+                            sale: 10,
+                            url_detail: `/${cate.path}/${cate.child_category.find((subCate) => (subCate.id = product.category_id))?.path}/${product.id}`
+                          }}
+                          key={product.id}
+                        />
+                      );
+                    })}
+                  {cate.id === 3 &&
+                    productsByCate3?.map((product) => {
+                      return (
+                        <ProductCard
+                          product={{
+                            id: product.id,
+                            name: product.name,
+                            price: product.ProductPricing[0].price,
+                            image_url:
+                              "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/combo-3-lon-sua-abbott-pediasure-1-10-tuoi-850g.png?alt=media",
+                            rating_point: product.rating_point,
+                            sold: product.sold,
+                            sale: 10,
+                            url_detail: `/${cate.path}/${cate.child_category.find((subCate) => (subCate.id = product.category_id))?.path}/${product.id}`
+                          }}
+                          key={product.id}
+                        />
+                      );
+                    })}
+                  {cate.id === 4 &&
+                    productsByCate4?.map((product) => {
+                      return (
+                        <ProductCard
+                          product={{
+                            id: product.id,
+                            name: product.name,
+                            price: product.ProductPricing[0].price,
+                            image_url:
+                              "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/combo-3-lon-sua-abbott-pediasure-1-10-tuoi-850g.png?alt=media",
+                            rating_point: product.rating_point,
+                            sold: product.sold,
+                            sale: 10,
+                            url_detail: `/${cate.path}/${cate.child_category.find((subCate) => (subCate.id = product.category_id))?.path}/${product.id}`
+                          }}
+                          key={product.id}
+                        />
+                      );
+                    })}
+                  {/* {productsByCate.map((cate) => {
+                    return cate.map((product) => {
+                      return (
+                        <ProductCard
+                          product={{
+                            id: product.id,
+                            name: product.name,
+                            price: product.ProductPricing[0].price,
+                            image_url:
+                              "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/combo-3-lon-sua-abbott-pediasure-1-10-tuoi-850g.png?alt=media",
+                            rating_point: product.rating_point,
+                            sold: product.sold,
+                            sale: 10
+                          }}
+                          key={product.id}
+                        />
+                      );
+                    });
+                  })} */}
                 </div>
               </Spring>
             )

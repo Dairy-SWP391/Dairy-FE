@@ -14,6 +14,7 @@ interface ProductCardProps {
     rating_point: number;
     sold: number;
     sale: number;
+    url_detail: string;
   };
 }
 
@@ -22,16 +23,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <>
       <button
-        onClick={() => nav(`/product-detail/${product.id}`)}
+        onClick={() => nav(product.url_detail)}
         className="flex flex-col border border-slate-500 bg-slate-100 rounded p-2 cursor-pointer"
       >
         <Image src={product.image_url} />
-        <TruncatedText
-          // className="text-center"
-          text={product.name}
-          width={200}
-        />
-        <div className="flex items-center">
+        <TruncatedText className="text-left" text={product.name} width={200} />
+        <div className="flex items-center justify-between w-full">
           <Rating
             initialValue={product.rating_point}
             readonly
@@ -44,25 +41,27 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </p>
         </div>
 
-        <div className="flex items-center mt-1 justify-between">
+        <div className="flex items-center mt-1 justify-between w-full">
           <div className="flex items-center">
-            <p className="text-lg font-semibold tracking-tight">
+            <p className="text-base font-semibold tracking-tight">
               {numberToVND(product.price)}
             </p>
-            <Chip
-              color="default"
-              variant="bordered"
-              classNames={{
-                content: "font-semibold text-xs text-pink-600",
-                base: "bg-transparent border-pink-600 px-0 ml-2"
-              }}
-              size="sm"
-            >
-              - {product.sale}%
-            </Chip>
+            {product.sale > 0 && (
+              <Chip
+                color="default"
+                variant="bordered"
+                classNames={{
+                  content: "font-semibold text-xs text-pink-600",
+                  base: "bg-transparent border-pink-600 px-0 ml-3"
+                }}
+                size="sm"
+              >
+                - {product.sale}%
+              </Chip>
+            )}
           </div>
           <button className="flex items-center cursor-pointer">
-            <CartIcon size={30} />
+            <CartIcon size={25} />
           </button>
         </div>
       </button>

@@ -7,12 +7,14 @@ import { Badge, User } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { useCategoryStore } from "../../store/category";
 import { useAuthStore } from "../../store/auth";
+import { useCartStore } from "../../store/cart";
 
 const NavBar = () => {
   const nav = useNavigate();
   const auth = useAuthStore((state) => state.auth);
   const setAuth = useAuthStore((state) => state.setAuth);
   const categories = useCategoryStore((state) => state.category);
+  const cart = useCartStore((state) => state.cart);
 
   // const [isInvisible, setIsInvisible] = useState<boolean>(false);
   return (
@@ -42,7 +44,7 @@ const NavBar = () => {
             >
               <Badge
                 color="danger"
-                content={0}
+                content={cart.length}
                 // isInvisible={isInvisible}
                 shape="circle"
                 classNames={{

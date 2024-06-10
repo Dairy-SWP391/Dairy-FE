@@ -52,9 +52,9 @@ const Cart = () => {
 
   return (
     <div className="mx-auto w-5/6 text-lg flex justify-between">
-      <div className="w-[66%]">
+      <div className="w-[68%]">
         <Spring className="card min-h-[70vh]">
-          {cart ? (
+          {cart.length > 0 ? (
             <div>
               <div className="flex justify-between items-center pb-5 border-slate-500 ">
                 <p className="text-lg font-bold w-[12%]">Giỏ Hàng</p>
@@ -119,7 +119,7 @@ const Cart = () => {
                         +
                       </Button>
                     </p>
-                    <p className="text-medium text-black w-[10%] text-center">
+                    <p className="text-medium text-black w-[10%] text-center tracking-tighter">
                       {numberToVND(
                         (sale ? price - (price * sale) / 100 : price) * quantity
                       )}

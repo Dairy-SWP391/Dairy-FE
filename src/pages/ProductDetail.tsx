@@ -1,12 +1,17 @@
 import Spring from "../components/Spring";
 import { Avatar, Button, Card, CardBody, Chip, Image } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { numberToVND } from "../utils/converter";
-import { useParams } from "react-router-dom";
+import { numberToVND, stringToNomalCase } from "../utils/converter";
+import { useNavigate, useParams } from "react-router-dom";
 import { Product, getProductDetail } from "../apis/product";
 import { Rating } from "react-simple-star-rating";
 import ProductImageDetail from "../components/ProductImageDetail";
+import { useCartStore } from "../store/cart";
+import RelatedProductCard from "../components/RelatedProductCard";
+import { getProductByCategory } from "../apis/category";
+import { useCategoryStore } from "../store/category";
+import { ProductType } from "../types/Product";
 // import RelatedProductCard from "../components/RelatedProductCard";
 
 const relatedPost = {
@@ -18,14 +23,20 @@ const relatedPost = {
 type QuantityAction = "increase" | "decrease";
 
 const ProductDetail = () => {
+  const nav = useNavigate();
   const params = useParams<{ id: string }>().id;
+  const [relatedProduct, setRelatedProduct] = useState<ProductType[]>([]);
+  const setRelatedProductMemoized = useCallback((data: ProductType[]) => {
+    setRelatedProduct(data);
+  }, []);
+  const [parent_category_id, setParent_category_id] = useState<number>(0);
   const id = params?.split("-").pop();
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const ProductPropsList = [
     {
       name: "Tên sản phẩm",
-      value: "name"
+      value: product?.name
     },
     {
       name: "Thương hiệu",
@@ -73,22 +84,57 @@ const ProductDetail = () => {
     }
     return acc;
   }, []);
+  const addToCart = useCartStore((state) => state.setCart);
+  const cart = useCartStore((state) => state.cart);
+  const category = useCategoryStore((state) => state.category);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await getProductDetail(id as string);
-        console.log(response.data.data);
-        // console.log(stringToNomalCase(response.data.data.name));
+        if (
+          params !==
+          stringToNomalCase({
+            str: response.data.data.name,
+            id: response.data.data.id
+          })
+        ) {
+          nav("/404");
+        }
         setProduct(response.data.data);
       } catch (err) {
         console.log(err);
       }
     };
 
+    const getParentCategoryId = (category_id: number) => {
+      category.forEach((cate) => {
+        cate.child_category.forEach((subCate) => {
+          if (subCate.id === category_id) {
+            setParent_category_id(subCate.parent_category_id);
+          }
+        });
+      });
+    };
+    getParentCategoryId(product?.category_id as number);
+    const getRelatedProduct = async () => {
+      try {
+        const response = await getProductByCategory({
+          page: 1,
+          num_of_product: 5,
+          parent_category_id: parent_category_id,
+          category_id: product?.category_id
+        });
+        setRelatedProductMemoized(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    window.scrollTo(0, 0);
     fetchData();
-    console.log(product);
-  }, [id, product]);
+    getRelatedProduct();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, setRelatedProductMemoized, product?.id, parent_category_id]);
 
   const handleChangeQuantity = (action: QuantityAction) => {
     if (action === "increase" && product) {
@@ -100,9 +146,44 @@ const ProductDetail = () => {
     }
   };
 
+  const handleAddToCart = () => {
+    const ahihi = cart.find((item) => item.id === product?.id);
+    if (ahihi) {
+      const newCart = cart.map((item) => {
+        if (item.id === product?.id) {
+          if (item.quantity + quantity > item.max_quantity) {
+            toast.error("Số lượng sản phẩm không đủ");
+            return item;
+          }
+          return {
+            ...item,
+            quantity: item.quantity + quantity
+          };
+        }
+        return item;
+      });
+      addToCart(newCart);
+      toast.success("Thêm sản phẩm vào giỏ hàng thành công");
+    } else {
+      addToCart([
+        ...cart,
+        {
+          id: product?.id as number,
+          name: product?.name as string,
+          price: product?.price as number,
+          sale: 10,
+          quantity: quantity,
+          max_quantity: product?.quantity as number,
+          image: product?.images[0].image_url as string
+        }
+      ]);
+      toast.success("Thêm sản phẩm vào giỏ hàng thành công");
+    }
+  };
+
   return (
     <>
-      <Spring className="mx-auto card flex flex-col lg:col-span-3 xl:col-span-1 w-5/6 mt-6">
+      <Spring className="mx-auto card flex flex-col lg:col-span-3 xl:col-span-1 w-5/6">
         <div className="grid grid-cols-5 gap-16 h-[80vh]">
           <div className="col-span-2 h-full w-full">
             <ProductImageDetail images={product?.images} />
@@ -197,7 +278,13 @@ const ProductDetail = () => {
               </Button>
             </div>
             <div className="w-2/3 grid grid-cols-2 gap-5 mt-7 ">
-              <Button className="text-white text-xl" size="lg" color="warning">
+              <Button
+                className="text-white text-xl"
+                size="lg"
+                color="warning"
+                onClick={handleAddToCart}
+                type="button"
+              >
                 Thêm Vào Giỏ Hàng
               </Button>
               <Button className="text-white text-xl" size="lg" color="danger">
@@ -210,43 +297,18 @@ const ProductDetail = () => {
 
       <Spring className="mx-auto card w-5/6 mt-10 h-auto">
         <h3>Sản Phẩm Tương Tự</h3>
-        {/* <div className="grid grid-cols-5 gap-4 mt-5 h-[48vh]">
-          <RelatedProductCard
-            image_url={product?.images[0].image_url as string}
-            name={product?.name as string}
-            price={product?.price as number}
-            rating_point={product?.rating_point as number}
-            rating_number={289}
-          />
-          <RelatedProductCard
-            image_url={product?.images[0].image_url as string}
-            name={product?.name as string}
-            price={product?.price as number}
-            rating_point={product?.rating_point as number}
-            rating_number={289}
-          />
-          <RelatedProductCard
-            image_url={product?.images[0].image_url as string}
-            name={product?.name as string}
-            price={product?.price as number}
-            rating_point={product?.rating_point as number}
-            rating_number={289}
-          />
-          <RelatedProductCard
-            image_url={product?.images[0].image_url as string}
-            name={product?.name as string}
-            price={product?.price as number}
-            rating_point={product?.rating_point as number}
-            rating_number={289}
-          />
-          <RelatedProductCard
-            image_url={product?.images[0].image_url as string}
-            name={product?.name as string}
-            price={product?.price as number}
-            rating_point={product?.rating_point as number}
-            rating_number={289}
-          />
-        </div> */}
+        <div className="grid grid-cols-5 gap-4 mt-5 h-[48vh]">
+          {relatedProduct.map((item) => (
+            <RelatedProductCard
+              key={item.id}
+              image_url={product?.images[0].image_url as string}
+              name={item?.name as string}
+              price={item?.ProductPricing[0].price as number}
+              rating_point={item?.rating_point as number}
+              rating_number={item.rating_number}
+            />
+          ))}
+        </div>
       </Spring>
 
       <div className="mx-auto w-5/6 grid grid-cols-7 gap-10 mt-10">
