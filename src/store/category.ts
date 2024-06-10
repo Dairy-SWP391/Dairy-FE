@@ -20,5 +20,5 @@ export const useCategoryStore = create<CategoryStore>((set) => ({
   category: [],
   categoryPath: [],
   setCategory: (category) => set({ category }),
-  setCategoryPath: (categoryPath) => set({ categoryPath }),
+  setCategoryPath: (categoryPath) => set({ categoryPath })
 }));

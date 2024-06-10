@@ -14,7 +14,7 @@ const RelatedProductCard = ({
   name,
   price,
   rating_point,
-  rating_number,
+  rating_number
 }: RelatedProductCardProps) => {
   return (
     <>

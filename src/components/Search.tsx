@@ -9,7 +9,7 @@ const Search = ({
   placeholder = "Search...",
   query,
   setQuery,
-  wrapperClass,
+  wrapperClass
 }: SearchProps) => {
   return (
     <div className={`relative ${wrapperClass || ""}`}>

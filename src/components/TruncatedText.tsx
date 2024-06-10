@@ -15,7 +15,7 @@ const TruncatedText = ({
   text,
   lines = 2,
   className,
-  width,
+  width
 }: TruncatedTextProps) => {
   const [truncated, setTruncated] = useState(false);
   const [mounted, setMounted] = useState(false);

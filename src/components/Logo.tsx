@@ -7,7 +7,7 @@ import logo from "../assets/logo-no-background.png";
 
 const Logo = ({
   imgClass,
-  textClass,
+  textClass
 }: {
   imgClass?: string;
   textClass?: string;

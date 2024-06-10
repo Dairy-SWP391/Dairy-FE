@@ -1,6 +1,7 @@
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/react";
 import { useCategoryStore } from "../store/category";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 type BreadCrumbsProps = {
   pathname: string;
@@ -8,6 +9,7 @@ type BreadCrumbsProps = {
 };
 
 const BreadCrumbs = ({ pathname, classNames }: BreadCrumbsProps) => {
+  const nav = useNavigate();
   const category = useCategoryStore((state) => state.category);
   const setCategoryPath = useCategoryStore((state) => state.setCategoryPath);
   const categoryPath = category.reduce(
@@ -21,38 +23,45 @@ const BreadCrumbs = ({ pathname, classNames }: BreadCrumbsProps) => {
     [
       { name: "TRANG CHỦ", path: "/" },
       { name: "GIỎ HÀNG", path: "cart" },
-    ],
+      {
+        name: "CÁ NHÂN",
+        path: "profile"
+      }
+    ]
   );
 
   let currentLink = "";
 
   useEffect(() => {
     setCategoryPath(categoryPath);
-    console.log(categoryPath);
-  }, []);
+  }, [categoryPath, setCategoryPath]);
 
   const crumbs = pathname
     .split("/")
     .filter((crumb) => crumb !== "")
     .map((crumb) => {
       currentLink += `/${crumb}`;
+      const name = categoryPath.find(
+        (cate) => cate.path === currentLink.split("/").pop()
+      )?.name;
+      if (!name) nav("/404");
       return {
-        name: categoryPath.find(
-          (cate) => cate.path === currentLink.split("/").pop(),
-        )?.name,
-        link: currentLink,
+        name: name,
+        link: currentLink
       };
     });
 
   return (
     <div className={`${classNames}`}>
-      <Breadcrumbs>
+      <Breadcrumbs key="main-breadcrumbs">
         {crumbs.length >= 1 && (
-          <BreadcrumbItem href="/">TRANG CHỦ</BreadcrumbItem>
+          <BreadcrumbItem href="/" key="homepage">
+            TRANG CHỦ
+          </BreadcrumbItem>
         )}
         {crumbs.map((crumb) => {
           return (
-            <BreadcrumbItem key={crumb.name} href={crumb.link}>
+            <BreadcrumbItem key={crumb.name} onClick={() => nav(crumb.link)}>
               {crumb.name}
             </BreadcrumbItem>
           );

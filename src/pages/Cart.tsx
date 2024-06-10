@@ -15,13 +15,13 @@ const Cart = () => {
         ? item.price - ((item.sale as number) * item.price) / 100
         : item.price) *
         item.quantity,
-    0,
+    0
   );
   const nav = useNavigate();
   const sale = 0;
   const handleChangeQuantity = ({
     type,
-    id,
+    id
   }: {
     type: "increase" | "decrease";
     id: number;
@@ -35,12 +35,12 @@ const Cart = () => {
           }
           return {
             ...item,
-            quantity: item.quantity + 1,
+            quantity: item.quantity + 1
           };
         } else {
           return {
             ...item,
-            quantity: item.quantity - 1,
+            quantity: item.quantity - 1
           };
         }
       }
@@ -52,9 +52,9 @@ const Cart = () => {
 
   return (
     <div className="mx-auto w-5/6 text-lg flex justify-between">
-      <div className="w-[66%]">
+      <div className="w-[68%]">
         <Spring className="card min-h-[70vh]">
-          {cart ? (
+          {cart.length > 0 ? (
             <div>
               <div className="flex justify-between items-center pb-5 border-slate-500 ">
                 <p className="text-lg font-bold w-[12%]">Giỏ Hàng</p>
@@ -119,10 +119,9 @@ const Cart = () => {
                         +
                       </Button>
                     </p>
-                    <p className="text-medium text-black w-[10%] text-center">
+                    <p className="text-medium text-black w-[10%] text-center tracking-tighter">
                       {numberToVND(
-                        (sale ? price - (price * sale) / 100 : price) *
-                          quantity,
+                        (sale ? price - (price * sale) / 100 : price) * quantity
                       )}
                     </p>
                     <p className="text-medium text-slate-500 w-[10%] flex justify-end items-center">

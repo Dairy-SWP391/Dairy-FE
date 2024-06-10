@@ -38,13 +38,13 @@ const DropdownItem = ({ className, category }: DropdownItemProps) => {
       </button>
       <div className="invisible absolute z-50 flex flex-col py-0 min-w-48 text-gray-800 shadow-xl group-hover:visible">
         {child_category?.map(({ id, name, path }) => (
-          <a
+          <button
             key={id}
-            href={`/${category.path}/${path}`}
+            onClick={() => nav(`/${category.path}/${path}`)}
             className="block border-b border-slate-400 px-3 bg-gray-200 py-2 font-semibold text-gray-500 hover:text-black"
           >
             {name}
-          </a>
+          </button>
         ))}
       </div>
     </div>

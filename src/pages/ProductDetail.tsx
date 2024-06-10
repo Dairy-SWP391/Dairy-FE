@@ -1,67 +1,79 @@
 import Spring from "../components/Spring";
 import { Avatar, Button, Card, CardBody, Chip, Image } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { numberToVND } from "../utils/converter";
-import { useParams } from "react-router-dom";
+import { numberToVND, stringToNomalCase } from "../utils/converter";
+import { useNavigate, useParams } from "react-router-dom";
 import { Product, getProductDetail } from "../apis/product";
 import { Rating } from "react-simple-star-rating";
 import ProductImageDetail from "../components/ProductImageDetail";
+import { useCartStore } from "../store/cart";
 import RelatedProductCard from "../components/RelatedProductCard";
+import { getProductByCategory } from "../apis/category";
+import { useCategoryStore } from "../store/category";
+import { ProductType } from "../types/Product";
+// import RelatedProductCard from "../components/RelatedProductCard";
 
 const relatedPost = {
   img: "https://yingcool.com.vn/wp-content/uploads/2023/11/yingcool-super-size-L.png",
   title: "Top 8 bỉm thấm hút tốt ban đêm cho bé ngủ ngon hơn",
-  view_count: 100,
+  view_count: 100
 };
 
 type QuantityAction = "increase" | "decrease";
 
 const ProductDetail = () => {
-  const id = useParams<{ id: string }>().id;
+  const nav = useNavigate();
+  const params = useParams<{ id: string }>().id;
+  const [relatedProduct, setRelatedProduct] = useState<ProductType[]>([]);
+  const setRelatedProductMemoized = useCallback((data: ProductType[]) => {
+    setRelatedProduct(data);
+  }, []);
+  const [parent_category_id, setParent_category_id] = useState<number>(0);
+  const id = params?.split("-").pop();
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const ProductPropsList = [
     {
       name: "Tên sản phẩm",
-      value: "name",
+      value: product?.name
     },
     {
       name: "Thương hiệu",
-      value: product?.brand,
+      value: product?.brand
     },
     {
       name: "Xuất xứ thương hiệu",
-      value: product?.origin,
+      value: product?.origin
     },
     {
       name: "Sản xuất tại",
-      value: product?.manufactured_at,
+      value: product?.manufactured_at
     },
     {
       name: "Trọng lượng sản phẩm",
-      value: product?.weight,
+      value: product?.weight
     },
     {
       name: "Thể tích sản phẩm",
-      value: product?.volume,
+      value: product?.volume
     },
     {
       name: "Độ tuổi phù hợp",
-      value: product?.target,
+      value: product?.target
     },
     {
       name: "Cảnh báo",
-      value: product?.caution,
+      value: product?.caution
     },
     {
       name: "Hướng dẫn sử dụng",
-      value: product?.instruction,
+      value: product?.instruction
     },
     {
       name: "Hướng dẫn bảo quản",
-      value: product?.preservation,
-    },
+      value: product?.preservation
+    }
   ];
   const [showDescription, setShowDescription] = useState<boolean>(false);
   const productPropsList = ProductPropsList.reduce<
@@ -72,21 +84,57 @@ const ProductDetail = () => {
     }
     return acc;
   }, []);
+  const addToCart = useCartStore((state) => state.setCart);
+  const cart = useCartStore((state) => state.cart);
+  const category = useCategoryStore((state) => state.category);
 
   useEffect(() => {
-    fetchData();
-    console.log(product);
-  }, []);
+    const fetchData = async () => {
+      try {
+        const response = await getProductDetail(id as string);
+        if (
+          params !==
+          stringToNomalCase({
+            str: response.data.data.name,
+            id: response.data.data.id
+          })
+        ) {
+          nav("/404");
+        }
+        setProduct(response.data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
-  const fetchData = async () => {
-    try {
-      const response = await getProductDetail(id as string);
-      console.log(response.data.data);
-      setProduct(response.data.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    const getParentCategoryId = (category_id: number) => {
+      category.forEach((cate) => {
+        cate.child_category.forEach((subCate) => {
+          if (subCate.id === category_id) {
+            setParent_category_id(subCate.parent_category_id);
+          }
+        });
+      });
+    };
+    getParentCategoryId(product?.category_id as number);
+    const getRelatedProduct = async () => {
+      try {
+        const response = await getProductByCategory({
+          page: 1,
+          num_of_product: 5,
+          parent_category_id: parent_category_id,
+          category_id: product?.category_id
+        });
+        setRelatedProductMemoized(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    window.scrollTo(0, 0);
+    fetchData();
+    getRelatedProduct();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, setRelatedProductMemoized, product?.id, parent_category_id]);
 
   const handleChangeQuantity = (action: QuantityAction) => {
     if (action === "increase" && product) {
@@ -98,9 +146,44 @@ const ProductDetail = () => {
     }
   };
 
+  const handleAddToCart = () => {
+    const ahihi = cart.find((item) => item.id === product?.id);
+    if (ahihi) {
+      const newCart = cart.map((item) => {
+        if (item.id === product?.id) {
+          if (item.quantity + quantity > item.max_quantity) {
+            toast.error("Số lượng sản phẩm không đủ");
+            return item;
+          }
+          return {
+            ...item,
+            quantity: item.quantity + quantity
+          };
+        }
+        return item;
+      });
+      addToCart(newCart);
+      toast.success("Thêm sản phẩm vào giỏ hàng thành công");
+    } else {
+      addToCart([
+        ...cart,
+        {
+          id: product?.id as number,
+          name: product?.name as string,
+          price: product?.price as number,
+          sale: 10,
+          quantity: quantity,
+          max_quantity: product?.quantity as number,
+          image: product?.images[0].image_url as string
+        }
+      ]);
+      toast.success("Thêm sản phẩm vào giỏ hàng thành công");
+    }
+  };
+
   return (
     <>
-      <Spring className="mx-auto card flex flex-col lg:col-span-3 xl:col-span-1 w-5/6 mt-6">
+      <Spring className="mx-auto card flex flex-col lg:col-span-3 xl:col-span-1 w-5/6">
         <div className="grid grid-cols-5 gap-16 h-[80vh]">
           <div className="col-span-2 h-full w-full">
             <ProductImageDetail images={product?.images} />
@@ -163,7 +246,7 @@ const ProductDetail = () => {
                     variant="bordered"
                     classNames={{
                       content: "font-normal text-xl text-pink-600",
-                      base: "bg-transparent border-pink-600",
+                      base: "bg-transparent border-pink-600"
                     }}
                   >
                     - 10%
@@ -195,7 +278,13 @@ const ProductDetail = () => {
               </Button>
             </div>
             <div className="w-2/3 grid grid-cols-2 gap-5 mt-7 ">
-              <Button className="text-white text-xl" size="lg" color="warning">
+              <Button
+                className="text-white text-xl"
+                size="lg"
+                color="warning"
+                onClick={handleAddToCart}
+                type="button"
+              >
                 Thêm Vào Giỏ Hàng
               </Button>
               <Button className="text-white text-xl" size="lg" color="danger">
@@ -208,43 +297,18 @@ const ProductDetail = () => {
 
       <Spring className="mx-auto card w-5/6 mt-10 h-auto">
         <h3>Sản Phẩm Tương Tự</h3>
-        {/* <div className="grid grid-cols-5 gap-4 mt-5 h-[48vh]">
-          <RelatedProductCard
-            image_url={product?.images[0].image_url as string}
-            name={product?.name as string}
-            price={product?.price as number}
-            rating_point={product?.rating_point as number}
-            rating_number={289}
-          />
-          <RelatedProductCard
-            image_url={product?.images[0].image_url as string}
-            name={product?.name as string}
-            price={product?.price as number}
-            rating_point={product?.rating_point as number}
-            rating_number={289}
-          />
-          <RelatedProductCard
-            image_url={product?.images[0].image_url as string}
-            name={product?.name as string}
-            price={product?.price as number}
-            rating_point={product?.rating_point as number}
-            rating_number={289}
-          />
-          <RelatedProductCard
-            image_url={product?.images[0].image_url as string}
-            name={product?.name as string}
-            price={product?.price as number}
-            rating_point={product?.rating_point as number}
-            rating_number={289}
-          />
-          <RelatedProductCard
-            image_url={product?.images[0].image_url as string}
-            name={product?.name as string}
-            price={product?.price as number}
-            rating_point={product?.rating_point as number}
-            rating_number={289}
-          />
-        </div> */}
+        <div className="grid grid-cols-5 gap-4 mt-5 h-[48vh]">
+          {relatedProduct.map((item) => (
+            <RelatedProductCard
+              key={item.id}
+              image_url={product?.images[0].image_url as string}
+              name={item?.name as string}
+              price={item?.ProductPricing[0].price as number}
+              rating_point={item?.rating_point as number}
+              rating_number={item.rating_number}
+            />
+          ))}
+        </div>
       </Spring>
 
       <div className="mx-auto w-5/6 grid grid-cols-7 gap-10 mt-10">
@@ -366,7 +430,7 @@ const ProductDetail = () => {
                           size="lg"
                           classNames={{
                             base: "border border-pink-400 bg-pink-200",
-                            name: "text-slate-500 text-2xl font-bold",
+                            name: "text-slate-500 text-2xl font-bold"
                           }}
                         />
                       </div>
