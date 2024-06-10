@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 
-const usePagination = ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const usePagination = <T extends Array<any>>({
   data,
   itemsPerPage = 10
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any;
+  data: T;
   itemsPerPage: number;
 }) => {
   const [currentPage, setCurrentPage] = useState<number>(0);
