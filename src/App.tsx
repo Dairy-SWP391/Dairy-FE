@@ -1,7 +1,7 @@
 import { NextUIProvider } from "@nextui-org/react";
 import "./styles/index.scss";
 import NavBar from "./layout/user/NavBar";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Footer from "./layout/user/Footer";
 import { Suspense, lazy, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
@@ -26,6 +26,8 @@ const Profile = lazy(() => import("./pages/Profile"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const ProductsGrid = lazy(() => import("./pages/ProductsGrid"));
 const ProductManagement = lazy(() => import("./pages/ProductManagement"));
+const ProductEditor = lazy(() => import("./pages/ProductEditor"));
+const PageNotFound = lazy(() => import("./pages/PageNotFound"));
 
 function App() {
   // const { width } = useWindowSize();
@@ -79,9 +81,15 @@ function App() {
                     element={<ProductsGrid />}
                   />
                   <Route
-                    path="/admin/product-management"
+                    path="/admin/products-management"
                     element={<ProductManagement />}
                   />
+                  <Route
+                    path="/admin/product-editor"
+                    element={<ProductEditor />}
+                  />
+                  <Route path="/404" element={<PageNotFound />} />
+                  <Route path="*" element={<Navigate to={"/404"} />} />
                 </Routes>
               </div>
             </Suspense>

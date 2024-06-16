@@ -17,7 +17,8 @@ const ROUTES = [
     icon: "fa-archive",
     links: [
       { name: "Products Grid", path: "/admin/products-grid" },
-      { name: "Products Management", path: "/admin/products-management" }
+      { name: "Products Management", path: "/admin/products-management" },
+      { name: "Product Editor", path: "/admin/product-editor" }
     ]
   },
   {
