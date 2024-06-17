@@ -137,3 +137,6 @@ export const numFormatter = ({
 export const commaFormatter = (num: number): string => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
+
+export const getSalesRatio = (total: number, sales: number) =>
+  Math.round(((total - sales) / total) * 100);
