@@ -15,6 +15,10 @@ import useLayout from "./hooks/useLayout";
 import AppBar from "./layout/admin/AppBar";
 import { SidebarProvider } from "./context/sidebarContext";
 import Sidebar from "./layout/admin/Sidebar";
+import { JwtPayload, jwtDecode } from "jwt-decode";
+import { getMe } from "./apis/user";
+import { useAuthStore } from "./store/auth";
+import { unix } from "dayjs";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -33,6 +37,8 @@ function App() {
   // const { width } = useWindowSize();
   const path = useLocation().pathname;
   const layout = useLayout();
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const auth = useAuthStore((state) => state.auth);
   const updateCategory = useCategoryStore((state) => state.setCategory);
 
   useEffect(() => {
@@ -42,6 +48,41 @@ function App() {
     };
     getCategory();
   }, [updateCategory]);
+
+  useEffect(() => {
+    (async () => {
+      const user: { access_token: string; refresh_token: string } = JSON.parse(
+        localStorage.getItem("user") as string
+      );
+      console.log(user);
+      if (user) {
+        const decoded = jwtDecode<
+          JwtPayload & { user_id: string; verify: "VERIFIED" | "UNVERIFIED" }
+        >(user.access_token);
+        const user_info = await getMe({
+          access_token: user.access_token
+        });
+        console.log(user_info);
+        setAuth({
+          access_token: user.access_token,
+          exp: unix(decoded.exp as number).toDate(),
+          iat: unix(decoded.exp as number).toDate(),
+          id: decoded.user_id as string,
+          status: decoded.verify,
+          created_at: user_info.data.result.created_at,
+          email: user_info.data.result.email,
+          first_name: user_info.data.result.first_name,
+          last_name: user_info.data.result.last_name,
+          phone_number: user_info.data.result.phone_number,
+          role: user_info.data.result.role,
+          updated_at: user_info.data.result.updated_at,
+          avatar_url:
+            "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/avatar.png?alt=media"
+        });
+      }
+    })();
+    console.log(auth);
+  }, []);
 
   return (
     <NextUIProvider>

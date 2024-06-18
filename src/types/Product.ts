@@ -33,6 +33,7 @@ export interface ProductType {
   category: {
     parent_category_id: number;
   };
+  parent_category_id: number;
   category_id: 6;
   caution: string | null;
   description: string | null;
