@@ -5,54 +5,51 @@ import { useCategoryStore } from "../store/category";
 import { useEffect, useState } from "react";
 import { getProductByCategory } from "../apis/category";
 import { ProductType } from "../types/Product";
-import { stringToNomalCase } from "../utils/converter";
-
-const productTemplate = {
-  id: 2,
-  name: "Thực phẩm dinh dưỡng y học cho trẻ 1-10 tuổi: Pediasure vani",
-  price: 500000,
-  image_url:
-    "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/combo-3-lon-sua-abbott-pediasure-1-10-tuoi-850g.png?alt=media&token=12d90d31-d13f-46ef-b21b-032aed33424a",
-  rating_point: 5,
-  sold: 100,
-  sale: 10,
-  url_detail: "/"
-};
+import { getSalesRatio, stringToNomalCase } from "../utils/converter";
 
 const Home = () => {
+  const [hotDeal, setHotDeal] = useState<ProductType[]>();
+  const [bestSeller, setBestSeller] = useState<ProductType[]>();
   const [productsByCate1, setProductsByCate1] = useState<ProductType[]>();
   const [productsByCate2, setProductsByCate2] = useState<ProductType[]>();
   const [productsByCate3, setProductsByCate3] = useState<ProductType[]>();
   const [productsByCate4, setProductsByCate4] = useState<ProductType[]>();
-  // const [productsByCate5, setProductsByCate5] = useState<ProductType[]>();
+
   const category = useCategoryStore((state) => state.category);
 
   useEffect(() => {
-    const fetchData = async (id: number) => {
+    const fetchData = async ({
+      id,
+      order_by,
+      sort_by
+    }: {
+      id: number;
+      order_by?: "ASC" | "DESC";
+      sort_by?: "price" | "rating_point" | "sold" | "discount";
+    }) => {
       const response = await getProductByCategory({
         num_of_product: 5,
         parent_category_id: id,
-        page: 1
+        page: 1,
+        order_by: order_by,
+        sort_by: sort_by
       });
       // console.log(response.data.data);
       if (id === 1) setProductsByCate1(response.data.data);
       if (id === 2) setProductsByCate2(response.data.data);
       if (id === 3) setProductsByCate3(response.data.data);
       if (id === 4) setProductsByCate4(response.data.data);
+      if (id === 0 && order_by === "DESC" && sort_by === "discount")
+        setHotDeal(response.data.data);
+      if (id === 0 && order_by === "DESC" && sort_by === "sold")
+        setBestSeller(response.data.data);
       // if (id === 5) setProductsByCate5(response.data.data);
     };
     category.forEach((cate) => {
-      fetchData(cate.id);
+      fetchData({ id: cate.id });
     });
-    console.log(category);
-    console.log("ahihi");
-    console.log(productsByCate1);
-    // for (const property in productsByCate) {
-    //   productsByCate[property].map((product) => {
-    //     console.log(product.name);
-    //   });
-    // }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchData({ id: 0, order_by: "DESC", sort_by: "discount" });
+    fetchData({ id: 0, order_by: "DESC", sort_by: "sold" });
   }, [category]);
 
   return (
@@ -113,11 +110,26 @@ const Home = () => {
             </p>
           </div>
           <div className="mt-3 grid grid-cols-5 gap-2">
-            <ProductCard product={productTemplate} />
-            <ProductCard product={productTemplate} />
-            <ProductCard product={productTemplate} />
-            <ProductCard product={productTemplate} />
-            <ProductCard product={productTemplate} />
+            {hotDeal?.map((product) => {
+              return (
+                <ProductCard
+                  product={{
+                    id: product.id,
+                    name: product.name,
+                    price: product.sale_price || product.price,
+                    image_url: product.image_urls[0],
+                    rating_point: product.rating_point,
+                    sold: product.sold,
+                    sale: getSalesRatio(
+                      product.price,
+                      product.sale_price || product.price
+                    ),
+                    url_detail: `/${category.find((item) => item.id === product.parent_category_id)?.path}/${category.find((item) => item.id === product.parent_category_id)?.child_category.find((subCate) => (subCate.id = product.category_id))?.path}/${stringToNomalCase({ str: product.name, id: product.id })}`
+                  }}
+                  key={product.id}
+                />
+              );
+            })}
           </div>
         </Spring>
 
@@ -129,11 +141,26 @@ const Home = () => {
             </p>
           </div>
           <div className="mt-3 grid grid-cols-5 gap-2">
-            <ProductCard product={productTemplate} />
-            <ProductCard product={productTemplate} />
-            <ProductCard product={productTemplate} />
-            <ProductCard product={productTemplate} />
-            <ProductCard product={productTemplate} />
+            {bestSeller?.map((product) => {
+              return (
+                <ProductCard
+                  product={{
+                    id: product.id,
+                    name: product.name,
+                    price: product.sale_price || product.price,
+                    image_url: product.image_urls[0],
+                    rating_point: product.rating_point,
+                    sold: product.sold,
+                    sale: getSalesRatio(
+                      product.price,
+                      product.sale_price || product.price
+                    ),
+                    url_detail: `/${category.find((item) => item.id === product.parent_category_id)?.path}/${category.find((item) => item.id === product.parent_category_id)?.child_category.find((subCate) => (subCate.id = product.category_id))?.path}/${stringToNomalCase({ str: product.name, id: product.id })}`
+                  }}
+                  key={product.id}
+                />
+              );
+            })}
           </div>
         </Spring>
 
@@ -155,12 +182,14 @@ const Home = () => {
                           product={{
                             id: product.id,
                             name: product.name,
-                            price: product.ProductPricing[0].price,
-                            image_url:
-                              "https://cdn1.concung.com/2023/03/61836-99104-large_mobile/tpddyh-varna-complete-si-lon-850g.png",
+                            price: product.sale_price || product.price,
+                            image_url: product.image_urls[0],
                             rating_point: product.rating_point,
                             sold: product.sold,
-                            sale: 0,
+                            sale: getSalesRatio(
+                              product.price,
+                              product.sale_price || product.price
+                            ),
                             url_detail: `/${cate.path}/${cate.child_category.find((subCate) => (subCate.id = product.category_id))?.path}/${stringToNomalCase({ str: product.name, id: product.id })}`
                           }}
                           key={product.id}
@@ -174,13 +203,15 @@ const Home = () => {
                           product={{
                             id: product.id,
                             name: product.name,
-                            price: product.ProductPricing[0].price,
-                            image_url:
-                              "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/combo-3-lon-sua-abbott-pediasure-1-10-tuoi-850g.png?alt=media",
+                            price: product.sale_price || product.price,
+                            image_url: product.image_urls[0],
                             rating_point: product.rating_point,
                             sold: product.sold,
-                            sale: 10,
-                            url_detail: `/${cate.path}/${cate.child_category.find((subCate) => (subCate.id = product.category_id))?.path}/${product.id}`
+                            sale: getSalesRatio(
+                              product.price,
+                              product.sale_price || product.price
+                            ),
+                            url_detail: `/${cate.path}/${cate.child_category.find((subCate) => (subCate.id = product.category_id))?.path}/${stringToNomalCase({ str: product.name, id: product.id })}`
                           }}
                           key={product.id}
                         />
@@ -193,13 +224,15 @@ const Home = () => {
                           product={{
                             id: product.id,
                             name: product.name,
-                            price: product.ProductPricing[0].price,
-                            image_url:
-                              "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/combo-3-lon-sua-abbott-pediasure-1-10-tuoi-850g.png?alt=media",
+                            price: product.sale_price || product.price,
+                            image_url: product.image_urls[0],
                             rating_point: product.rating_point,
                             sold: product.sold,
-                            sale: 10,
-                            url_detail: `/${cate.path}/${cate.child_category.find((subCate) => (subCate.id = product.category_id))?.path}/${product.id}`
+                            sale: getSalesRatio(
+                              product.price,
+                              product.sale_price || product.price
+                            ),
+                            url_detail: `/${cate.path}/${cate.child_category.find((subCate) => (subCate.id = product.category_id))?.path}/${stringToNomalCase({ str: product.name, id: product.id })}`
                           }}
                           key={product.id}
                         />
@@ -212,13 +245,15 @@ const Home = () => {
                           product={{
                             id: product.id,
                             name: product.name,
-                            price: product.ProductPricing[0].price,
-                            image_url:
-                              "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/combo-3-lon-sua-abbott-pediasure-1-10-tuoi-850g.png?alt=media",
+                            price: product.sale_price || product.price,
+                            image_url: product.image_urls[0],
                             rating_point: product.rating_point,
                             sold: product.sold,
-                            sale: 10,
-                            url_detail: `/${cate.path}/${cate.child_category.find((subCate) => (subCate.id = product.category_id))?.path}/${product.id}`
+                            sale: getSalesRatio(
+                              product.price,
+                              product.sale_price || product.price
+                            ),
+                            url_detail: `/${cate.path}/${cate.child_category.find((subCate) => (subCate.id = product.category_id))?.path}/${stringToNomalCase({ str: product.name, id: product.id })}`
                           }}
                           key={product.id}
                         />

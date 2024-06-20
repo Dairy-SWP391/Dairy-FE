@@ -26,8 +26,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
         onClick={() => nav(product.url_detail)}
         className="flex flex-col border border-slate-500 bg-slate-100 rounded p-2 cursor-pointer"
       >
-        <Image src={product.image_url} />
-        <TruncatedText className="text-left" text={product.name} width={200} />
+        <Image className="max-h-[200px]" src={product.image_url} />
+        <TruncatedText
+          className="text-left min-h-12"
+          text={product.name}
+          width={200}
+        />
         <div className="flex items-center justify-between w-full">
           <Rating
             initialValue={product.rating_point}
@@ -60,9 +64,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
               </Chip>
             )}
           </div>
-          <button className="flex items-center cursor-pointer">
+          <div className="flex items-center cursor-pointer">
             <CartIcon size={25} />
-          </button>
+          </div>
         </div>
       </button>
     </>

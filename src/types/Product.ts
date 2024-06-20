@@ -26,10 +26,14 @@ export interface ProductType {
   id: number;
   name: string;
   brand_id: number;
-  ProductPricing: [{ price: number }];
+  price: number;
+  sale_price: number | null;
+  starting_timestamp: Date | null;
+  ending_timestamp: Date | null;
   category: {
     parent_category_id: number;
   };
+  parent_category_id: number;
   category_id: 6;
   caution: string | null;
   description: string | null;
@@ -42,12 +46,7 @@ export interface ProductType {
   rating_number: number;
   rating_point: number;
   sold: number;
-  images: {
-    id: number;
-    parent_id: number;
-    parent_type: "PRODUCT" | "POST";
-    image_url: string;
-  };
+  image_urls: string[];
   status: "ACTIVE" | "INACTIVE";
   target: string | null;
   volumn: number | null;

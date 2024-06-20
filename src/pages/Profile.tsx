@@ -1,8 +1,34 @@
-import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 import Spring from "../components/Spring";
 import DocumentTitle from "../components/DocumentTitle";
+import { SubmitHandler, useForm } from "react-hook-form";
+import InputControl from "../components/InputControl";
+import { Avatar, Button } from "@nextui-org/react";
+import SingleFileUploader from "../components/SingleFileUploader";
+
+type ProfileForm = {
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  avatar_url: string;
+};
 
 const Profile = () => {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors }
+  } = useForm<ProfileForm>();
+
+  const handleUploadImage = (url: string) => {
+    setValue("avatar_url", url);
+  };
+
+  const onSubmit: SubmitHandler<ProfileForm> = (data) => {
+    console.log(data);
+  };
+
   return (
     <>
       <DocumentTitle title="Thông Tin Cá Nhân" />
@@ -13,31 +39,60 @@ const Profile = () => {
           </Spring>
         </div>
         <Spring className="card col-span-8">
-          <Tabs aria-label="Options" className="flex justify-center">
-            <Tab key="info" title="Thông Tin Cá Nhân">
-              <div className="grid grid-cols-5 gap-10 border-t-1 pt-6">
-                <div className="col-span-3 pl-3">
-                  <p className="">
-                    Vui lòng nhập đầy đủ thông tin bên dưới để nhận ưu đãi đặc
-                    biệt
-                  </p>
+          <div className="border-b-1 pb-3 border-b-slate-500">
+            <h3 className="text-xl">Hồ Sơ Của Tôi</h3>
+            <p className="">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
+          </div>
+          <form
+            className="grid grid-cols-5 gap-10 mt-5"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <div className="col-span-3 pl-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="pl-2">Họ</p>
+                  <InputControl
+                    register={register}
+                    name="first_name"
+                    isError={!!errors.first_name}
+                    errorMessage={errors.first_name?.message}
+                  />
                 </div>
-                <div className="col-span-2 border flex items-center justify-center">
-                  Avatar
+                <div>
+                  <p className="pl-2">Tên</p>
+                  <InputControl
+                    register={register}
+                    name="last_name"
+                    isError={!!errors.last_name}
+                    errorMessage={errors.last_name?.message}
+                  />
                 </div>
               </div>
-            </Tab>
-            <Tab key="address" title="Sổ Địa Chỉ">
-              <Card>
-                <CardBody>
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-                  irure dolor in reprehenderit in voluptate velit esse cillum
-                  dolore eu fugiat nulla pariatur.
-                </CardBody>
-              </Card>
-            </Tab>
-          </Tabs>
+              <div className="mt-3">
+                <p className="pl-2">Số điện thoại</p>
+                <InputControl
+                  register={register}
+                  name="phone_number"
+                  isError={!!errors.phone_number}
+                  errorMessage={errors.phone_number?.message}
+                />
+              </div>
+              <Button className="mt-5" color="primary" type="submit">
+                Lưu
+              </Button>
+            </div>
+            <div className="col-span-2 border flex flex-col items-center justify-center">
+              <Avatar
+                size="lg"
+                showFallback
+                src={watch("avatar_url") || "/avatar.png"}
+              />
+              <SingleFileUploader
+                placeholder="Chọn Ảnh"
+                handleGetUrl={handleUploadImage}
+              />
+            </div>
+          </form>
         </Spring>
       </div>
     </>

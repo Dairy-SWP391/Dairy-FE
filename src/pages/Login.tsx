@@ -65,7 +65,13 @@ const Login = () => {
             "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/avatar.png?alt=media"
         });
         toast.success("Login successful");
-        localStorage.setItem("refresh_token", result.data.result.refresh_token);
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            access_token: result.data.result.access_token,
+            refresh_token: result.data.result.refresh_token
+          })
+        );
         setTimeout(() => navigate("/"), 2000);
       }
     } catch (err) {

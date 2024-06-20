@@ -15,7 +15,7 @@ type GetProductByCateProps = {
   num_of_product?: number;
   num_of_items_per_page?: number;
   page: number;
-  sort_by?: "price" | "rating_point" | "sold";
+  sort_by?: "price" | "rating_point" | "sold" | "discount";
   order_by?: "ASC" | "DESC";
   parent_category_id: number;
 };

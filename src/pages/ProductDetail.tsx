@@ -2,7 +2,11 @@ import Spring from "../components/Spring";
 import { Avatar, Button, Card, CardBody, Chip, Image } from "@nextui-org/react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { numberToVND, stringToNomalCase } from "../utils/converter";
+import {
+  getSalesRatio,
+  numberToVND,
+  stringToNomalCase
+} from "../utils/converter";
 import { useNavigate, useParams } from "react-router-dom";
 import { Product, getProductDetail } from "../apis/product";
 import { Rating } from "react-simple-star-rating";
@@ -301,11 +305,12 @@ const ProductDetail = () => {
           {relatedProduct.map((item) => (
             <RelatedProductCard
               key={item.id}
-              image_url={product?.images[0].image_url as string}
+              image_url={item?.image_urls[0]}
               name={item?.name as string}
-              price={item?.ProductPricing[0].price as number}
+              price={item.sale_price || item?.price}
               rating_point={item?.rating_point as number}
               rating_number={item.rating_number}
+              sale={getSalesRatio(item?.price, item.sale_price || item.price)}
             />
           ))}
         </div>
