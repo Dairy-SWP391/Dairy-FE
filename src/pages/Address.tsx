@@ -15,7 +15,7 @@ type ProfileForm = {
   avatar_url: string;
 };
 
-const Profile = () => {
+const Address = () => {
   const location = useLocation();
   const {
     register,
@@ -39,7 +39,7 @@ const Profile = () => {
 
   return (
     <>
-      <DocumentTitle title="Thông Tin Cá Nhân" />
+      <DocumentTitle title="Địa Chỉ" />
       <div className="mx-auto w-5/6 grid grid-cols-12 gap-10">
         <div className="col-span-3">
           <ProfileBar />
@@ -113,4 +113,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default Address;

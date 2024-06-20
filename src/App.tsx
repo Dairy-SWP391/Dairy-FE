@@ -33,6 +33,7 @@ const ProductsGrid = lazy(() => import("./pages/ProductsGrid"));
 const ProductManagement = lazy(() => import("./pages/ProductManagement"));
 const ProductEditor = lazy(() => import("./pages/ProductEditor"));
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
+const Address = lazy(() => import("./pages/Address"));
 
 function App() {
   // const { width } = useWindowSize();
@@ -169,6 +170,7 @@ function App() {
                   <Route path="/:category/:category" element={<Category />} />
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/me" element={<Profile />} />
+                  <Route path="/me/address" element={<Address />} />
                   <Route path="/admin" element={<AdminDashboard />} />
                   <Route
                     path="/admin/products-grid"

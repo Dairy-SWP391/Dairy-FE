@@ -62,7 +62,7 @@ const NavBar = () => {
                 }}
                 className="cursor-pointer"
                 onClick={() => {
-                  if (auth) nav("/profile");
+                  if (auth) nav("/me");
                   else window.location.href = "/login";
                 }}
               />
