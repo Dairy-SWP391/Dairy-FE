@@ -2,7 +2,7 @@ import Spring from "../components/Spring";
 import DocumentTitle from "../components/DocumentTitle";
 import { SubmitHandler, useForm } from "react-hook-form";
 import InputControl from "../components/InputControl";
-import { Avatar, Button } from "@nextui-org/react";
+import { Avatar, Button, Link } from "@nextui-org/react";
 import SingleFileUploader from "../components/SingleFileUploader";
 
 type ProfileForm = {
@@ -35,7 +35,12 @@ const Profile = () => {
       <div className="mx-auto w-5/6 grid grid-cols-10 gap-10">
         <div className="col-span-2">
           <Spring className="card">
-            <div></div>
+            <div className="flex flex-col">
+              <h5>Tài Khoản Của Tôi</h5>
+              <Link href="/me">Hồ Sơ</Link>
+              <Link href="/me/address">Địa chỉ</Link>
+              <Link href="/me/password">Đổi mật khẩu</Link>
+            </div>
           </Spring>
         </div>
         <Spring className="card col-span-8">

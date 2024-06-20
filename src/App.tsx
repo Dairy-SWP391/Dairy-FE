@@ -168,7 +168,7 @@ function App() {
                   <Route path="/:category" element={<Category />} />
                   <Route path="/:category/:category" element={<Category />} />
                   <Route path="/cart" element={<Cart />} />
-                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/me" element={<Profile />} />
                   <Route path="/admin" element={<AdminDashboard />} />
                   <Route
                     path="/admin/products-grid"
