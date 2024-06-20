@@ -1,8 +1,6 @@
-import { DateRangePicker, Select, SelectItem } from "@nextui-org/react";
+import { Select, SelectItem } from "@nextui-org/react";
 import { Controller, useForm } from "react-hook-form";
 import dayjs from "dayjs";
-import DropFiles from "../components/DropFiles";
-import MediaDropPlaceholder from "../components/MediaDropPlaceholder";
 import classNames from "classnames";
 import { toast } from "react-toastify";
 import Spring from "../components/Spring";

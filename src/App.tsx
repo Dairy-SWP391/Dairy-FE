@@ -16,9 +16,10 @@ import AppBar from "./layout/admin/AppBar";
 import { SidebarProvider } from "./context/sidebarContext";
 import Sidebar from "./layout/admin/Sidebar";
 import { JwtPayload, jwtDecode } from "jwt-decode";
-import { getMe } from "./apis/user";
+import { getMe, renewToken } from "./apis/user";
 import { useAuthStore } from "./store/auth";
 import { unix } from "dayjs";
+import { isAxiosError } from "./utils/utils";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -38,7 +39,6 @@ function App() {
   const path = useLocation().pathname;
   const layout = useLayout();
   const setAuth = useAuthStore((state) => state.setAuth);
-  const auth = useAuthStore((state) => state.auth);
   const updateCategory = useCategoryStore((state) => state.setCategory);
 
   useEffect(() => {
@@ -54,34 +54,87 @@ function App() {
       const user: { access_token: string; refresh_token: string } = JSON.parse(
         localStorage.getItem("user") as string
       );
-      console.log(user);
       if (user) {
         const decoded = jwtDecode<
           JwtPayload & { user_id: string; verify: "VERIFIED" | "UNVERIFIED" }
         >(user.access_token);
-        const user_info = await getMe({
-          access_token: user.access_token
-        });
-        console.log(user_info);
-        setAuth({
-          access_token: user.access_token,
-          exp: unix(decoded.exp as number).toDate(),
-          iat: unix(decoded.exp as number).toDate(),
-          id: decoded.user_id as string,
-          status: decoded.verify,
-          created_at: user_info.data.result.created_at,
-          email: user_info.data.result.email,
-          first_name: user_info.data.result.first_name,
-          last_name: user_info.data.result.last_name,
-          phone_number: user_info.data.result.phone_number,
-          role: user_info.data.result.role,
-          updated_at: user_info.data.result.updated_at,
-          avatar_url:
-            "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/avatar.png?alt=media"
-        });
+        try {
+          const user_info = await getMe({
+            access_token: user.access_token
+          });
+          setAuth({
+            access_token: user.access_token,
+            exp: unix(decoded.exp as number).toDate(),
+            iat: unix(decoded.exp as number).toDate(),
+            id: decoded.user_id as string,
+            status: decoded.verify,
+            created_at: user_info.data.result.created_at,
+            email: user_info.data.result.email,
+            first_name: user_info.data.result.first_name,
+            last_name: user_info.data.result.last_name,
+            phone_number: user_info.data.result.phone_number,
+            role: user_info.data.result.role,
+            updated_at: user_info.data.result.updated_at,
+            avatar_url:
+              "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/avatar.png?alt=media"
+          });
+        } catch (error) {
+          if (
+            isAxiosError<{
+              message: string;
+            }>(error)
+          ) {
+            if (
+              error.response?.status === 401 &&
+              error.response?.data.message === "jwt expired"
+            ) {
+              try {
+                console.log(user.refresh_token);
+                const res = await renewToken({
+                  refresh_token: user.refresh_token
+                });
+                const { access_token: access, refresh_token: refresh } =
+                  res.data.result;
+                const nDecoded = jwtDecode<
+                  JwtPayload & {
+                    user_id: string;
+                    verify: "VERIFIED" | "UNVERIFIED";
+                  }
+                >(access);
+                const user_info = await getMe({
+                  access_token: access
+                });
+                setAuth({
+                  access_token: access,
+                  exp: unix(nDecoded.exp as number).toDate(),
+                  iat: unix(nDecoded.exp as number).toDate(),
+                  id: nDecoded.user_id as string,
+                  status: nDecoded.verify,
+                  created_at: user_info.data.result.created_at,
+                  email: user_info.data.result.email,
+                  first_name: user_info.data.result.first_name,
+                  last_name: user_info.data.result.last_name,
+                  phone_number: user_info.data.result.phone_number,
+                  role: user_info.data.result.role,
+                  updated_at: user_info.data.result.updated_at,
+                  avatar_url:
+                    "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/avatar.png?alt=media"
+                });
+                localStorage.setItem(
+                  "user",
+                  JSON.stringify({
+                    access_token: access,
+                    refresh_token: refresh
+                  })
+                );
+              } catch (error) {
+                console.log(error);
+              }
+            }
+          }
+        }
       }
     })();
-    console.log(auth);
   }, []);
 
   return (

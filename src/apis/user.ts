@@ -34,3 +34,15 @@ export const getMe = (_data: { access_token: string }) =>
   http.get<GetMeResponse>("user/me", {
     headers: { Authorization: `Bearer ${_data.access_token}` }
   });
+
+type UpdateMeProps = {
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  avatar_url: string;
+};
+
+export const updateMe = (_data: UpdateMeProps) => http.patch("user/me", _data);
+
+export const renewToken = (_data: { refresh_token: string }) =>
+  http.post<TokenResponse>("user/refresh-token", _data);

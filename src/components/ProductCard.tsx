@@ -64,9 +64,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
               </Chip>
             )}
           </div>
-          <button className="flex items-center cursor-pointer">
+          <div className="flex items-center cursor-pointer">
             <CartIcon size={25} />
-          </button>
+          </div>
         </div>
       </button>
     </>
