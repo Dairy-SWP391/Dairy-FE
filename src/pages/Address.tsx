@@ -2,17 +2,16 @@ import Spring from "../components/Spring";
 import DocumentTitle from "../components/DocumentTitle";
 import { SubmitHandler, useForm } from "react-hook-form";
 import InputControl from "../components/InputControl";
-import { Avatar, Button, Input } from "@nextui-org/react";
-import SingleFileUploader from "../components/SingleFileUploader";
+import { Button } from "@nextui-org/react";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import ProfileBar from "../layout/user/ProfileBar";
 
 type ProfileForm = {
-  first_name: string;
-  last_name: string;
+  name: string;
+  address: string;
+  default_address: boolean;
   phone_number: string;
-  avatar_url: string;
 };
 
 const Address = () => {
@@ -20,14 +19,8 @@ const Address = () => {
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors }
   } = useForm<ProfileForm>();
-
-  const handleUploadImage = (url: string) => {
-    setValue("avatar_url", url);
-  };
 
   const onSubmit: SubmitHandler<ProfileForm> = (data) => {
     console.log(data);
@@ -54,58 +47,32 @@ const Address = () => {
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="col-span-4 pl-3">
-              <div className="">
-                <p className="pl-2">Email</p>
-                <Input disabled value="ahihi123@gmail.com" />
+              <div className="mt-3">
+                <p className="pl-2">Họ Và Tên Người Nhận</p>
+                <InputControl
+                  register={register}
+                  name="name"
+                  isError={!!errors.name}
+                  errorMessage={errors.name?.message}
+                />
               </div>
-
-              <div className="grid grid-cols-2 gap-3 mt-3">
-                <div className="">
-                  <p className="pl-2">Họ</p>
-                  <InputControl
-                    register={register}
-                    name="first_name"
-                    isError={!!errors.first_name}
-                    errorMessage={errors.first_name?.message}
-                  />
-                </div>
-                <div>
-                  <p className="pl-2">Tên</p>
-                  <InputControl
-                    register={register}
-                    name="last_name"
-                    isError={!!errors.last_name}
-                    errorMessage={errors.last_name?.message}
-                  />
-                </div>
+              <div className="mt-3">
+                <p className="pl-2">Số điện thoại</p>
+                <InputControl
+                  register={register}
+                  name="phone_number"
+                  isError={!!errors.phone_number}
+                  errorMessage={errors.phone_number?.message}
+                />
               </div>
-              <div className="grid grid-cols-4 mt-3 gap-3">
-                <div className="col-span-3">
-                  <p className="pl-2">Số điện thoại</p>
-                  <InputControl
-                    register={register}
-                    name="phone_number"
-                    isError={!!errors.phone_number}
-                    errorMessage={errors.phone_number?.message}
-                  />
-                </div>
-                <Button className="col-span-1 translate-y-6">Verify</Button>
+              <div className="mt-3">
+                <p className="pl-2">Địa Chỉ</p>
               </div>
               <Button className="mt-5 " color="primary" type="submit">
                 Lưu
               </Button>
             </div>
-            <div className="col-span-2 border flex flex-col items-center justify-center">
-              <Avatar
-                size="lg"
-                showFallback
-                src={watch("avatar_url") || "/avatar.png"}
-              />
-              <SingleFileUploader
-                placeholder="Chọn Ảnh"
-                handleGetUrl={handleUploadImage}
-              />
-            </div>
+            <div className="col-span-2 border flex flex-col items-center justify-center"></div>
           </form>
         </Spring>
       </div>
