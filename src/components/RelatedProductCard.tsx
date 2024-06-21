@@ -1,7 +1,10 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Rating } from "react-simple-star-rating";
 import { numberToVND } from "../utils/converter";
 import { Chip } from "@nextui-org/react";
 import TruncatedText from "./TruncatedText";
+import { useNavigate } from "react-router-dom";
 
 interface RelatedProductCardProps {
   image_url: string;
@@ -10,6 +13,7 @@ interface RelatedProductCardProps {
   rating_number: number;
   price: number;
   sale: number;
+  url: string;
 }
 
 const RelatedProductCard = ({
@@ -18,11 +22,13 @@ const RelatedProductCard = ({
   price,
   rating_point,
   rating_number,
-  sale
+  sale,
+  url
 }: RelatedProductCardProps) => {
+  const nav = useNavigate();
   return (
     <>
-      <div className="gap-3 cursor-pointer">
+      <div className="gap-3 cursor-pointer" onClick={() => nav(url)}>
         <div className="mx-auto">
           <img
             className="rounded"
@@ -31,8 +37,9 @@ const RelatedProductCard = ({
           />
         </div>
         <div className="mt-5">
-          <TruncatedText text={name ? name : ""} width={200} />
-          <p className="text-sm">{}</p>
+          <div className="min-h-12">
+            <TruncatedText text={name ? name : ""} width={200} />
+          </div>
           <div className="flex items-start text-sm">
             <Rating
               initialValue={rating_point ? rating_point : 0}
@@ -41,7 +48,9 @@ const RelatedProductCard = ({
               allowFraction
               SVGclassName={`inline-block`}
             />
-            <p className="ml-1">({rating_number ? rating_number : 0})</p>
+            <p className="ml-1 translate-y-[2px]">
+              ({rating_number ? rating_number : 0})
+            </p>
           </div>
           <div className="flex items-center">
             <p className="text-xl font-bold pr-5">

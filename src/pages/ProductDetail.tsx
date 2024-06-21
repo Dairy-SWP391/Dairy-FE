@@ -105,6 +105,7 @@ const ProductDetail = () => {
         ) {
           nav("/404");
         }
+        console.log(response.data.data);
         setProduct(response.data.data);
       } catch (err) {
         console.log(err);
@@ -130,6 +131,7 @@ const ProductDetail = () => {
           category_id: product?.category_id
         });
         setRelatedProductMemoized(response.data.data);
+        console.log(response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -190,7 +192,7 @@ const ProductDetail = () => {
       <Spring className="mx-auto card flex flex-col lg:col-span-3 xl:col-span-1 w-5/6">
         <div className="grid grid-cols-5 gap-16 h-[80vh]">
           <div className="col-span-2 h-full w-full">
-            <ProductImageDetail images={product?.images} />
+            {product && <ProductImageDetail images={product?.images} />}
             <div className="h-[10%] flex items-end justify-center">
               <div className="flex items-center">
                 <p className="mr-2">Chia sẻ:</p>
@@ -234,29 +236,37 @@ const ProductDetail = () => {
               </p>
               đánh giá
             </div>
-            <Card className="mt-7 bg-pink-600 w-2/3 ">
-              <CardBody className="text-white font-normal text-sm">
-                Kết thúc sau: 12:27:45
-              </CardBody>
-            </Card>
+            {product?.sale_price && (
+              <Card className="mt-7 bg-pink-600 w-2/3 ">
+                <CardBody className="text-white font-normal text-sm">
+                  Kết thúc sau: 12:27:45
+                </CardBody>
+              </Card>
+            )}
             <Card className="mt-7 px-3 bg-slate-100 w-2/3 ">
               <CardBody>
                 <div className="flex items-center">
-                  <p className="text-3xl mr-5">
-                    {product?.price && numberToVND(product?.price * 0.9)}
-                  </p>
-                  <Chip
-                    color="default"
-                    variant="bordered"
-                    classNames={{
-                      content: "font-normal text-xl text-pink-600",
-                      base: "bg-transparent border-pink-600"
-                    }}
-                  >
-                    - 10%
-                  </Chip>
+                  {product?.sale_price && (
+                    <p className="text-3xl mr-5">
+                      {numberToVND(product?.sale_price)}
+                    </p>
+                  )}
+                  {product?.price && product?.sale_price && (
+                    <Chip
+                      color="default"
+                      variant="bordered"
+                      classNames={{
+                        content: "font-normal text-xl text-pink-600",
+                        base: "bg-transparent border-pink-600"
+                      }}
+                    >
+                      - {getSalesRatio(product?.price, product?.sale_price)}%
+                    </Chip>
+                  )}
                 </div>
-                <p className="mt-2 text-xl line-through">
+                <p
+                  className={`mt-2 ${product?.sale_price ? "line-through text-xl" : "text-3xl"}`}
+                >
                   {product?.price && numberToVND(product?.price)}
                 </p>
               </CardBody>
@@ -311,6 +321,7 @@ const ProductDetail = () => {
               rating_point={item?.rating_point as number}
               rating_number={item.rating_number}
               sale={getSalesRatio(item?.price, item.sale_price || item.price)}
+              url={`/${category.find((cate) => cate.id === item.parent_category_id)?.path}/${category.find((cate) => cate.id === item.parent_category_id)?.child_category.find((subCate) => (subCate.id = item.category_id))?.path}/${stringToNomalCase({ str: item.name, id: item.id })}`}
             />
           ))}
         </div>
@@ -332,7 +343,12 @@ const ProductDetail = () => {
                         {name}
                       </td>
                       <td className="border border-slate-300 w-3/4 p-3">
-                        {value}
+                        {value.toString().includes("|")
+                          ? value
+                              .toString()
+                              .split("|")
+                              .map((item, index) => <p key={index}>{item}</p>)
+                          : value}
                       </td>
                     </tr>
                   )
