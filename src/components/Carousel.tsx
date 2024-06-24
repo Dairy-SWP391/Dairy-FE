@@ -78,21 +78,24 @@ const Carousel = ({
     >
       <div
         // style={{ backgroundImage: `url(${slides[currentIndex]})` }}
-        className="w-full h-[26rem] rounded-2xl border z-0 border-slate-500 flex justify-center duration-500"
+        className="w-full h-[25rem] rounded-2xl border z-0 border-slate-500 flex justify-center duration-500"
       >
-        <Image src={slides[currentIndex]} className="w-full h-full z-0" />
+        <Image
+          src={slides[currentIndex]}
+          className="w-full h-full z-0 object-cover"
+        />
         {/* Left Arrow */}
-        <div className="hidden group-hover:block absolute top-[30%] -translate-x-0 translate-y-[50%] text-2xl left-5 rounded-full p-2 bg-black/20 text-white cursor-pointer">
+        <div className="hidden group-hover:block absolute top-[30%] -translate-x-0 translate-y-[50%] text-2xl left-2 rounded-full p-2 bg-black/20 text-white cursor-pointer">
           <BsChevronCompactLeft onClick={prevSlide} size={30} />
         </div>
         {/* Right Arrow */}
-        <div className="hidden group-hover:block absolute top-[30%] -translate-x-0 translate-y-[50%] text-2xl right-5 rounded-full p-2 bg-black/20 text-white cursor-pointer">
+        <div className="hidden group-hover:block absolute top-[30%] -translate-x-0 translate-y-[50%] text-2xl right-2 rounded-full p-2 bg-black/20 text-white cursor-pointer">
           <BsChevronCompactRight onClick={nextSlide} size={30} />
         </div>
       </div>
 
       <div
-        className={`flex top-4 gap-3 justify-center py-2 ${subSlide === "NONE" && "hidden"} ${subSlide === "IMAGE" && ``}`}
+        className={`flex top-4 gap-3 justify-center mt-3 ${subSlide === "NONE" && "hidden"} ${subSlide === "IMAGE" && ``}`}
       >
         {slides.map((slide, slideIndex) => (
           <div
@@ -109,7 +112,7 @@ const Carousel = ({
                   <Image
                     src={`${slide}`}
                     onClick={() => goToSlide(slideIndex)}
-                    className="z-0 h-[99px] w-[99px]"
+                    className="z-0 h-[99px] w-[99px] object-contain"
                   />
                 </div>
               )}

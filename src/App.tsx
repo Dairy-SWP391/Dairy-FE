@@ -20,6 +20,7 @@ import { getMe, renewToken } from "./apis/user";
 import { useAuthStore } from "./store/auth";
 import { unix } from "dayjs";
 import { isAxiosError } from "./utils/utils";
+import Ahihi from "./pages/Ahihi";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -160,6 +161,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />
+                  <Route path="/ahihi" element={<Ahihi />} />
                   <Route path="/register" element={<Register />} />
                   {/* <Route path="/product-detail/:id" element={<ProductDetail />} /> */}
                   <Route

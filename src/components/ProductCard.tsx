@@ -26,7 +26,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         onClick={() => nav(product.url_detail)}
         className="flex flex-col border border-slate-500 bg-slate-100 rounded p-2 cursor-pointer"
       >
-        <Image className="h-[200px]" src={product.image_url} />
+        <Image className="h-[200px] object-center" src={product.image_url} />
         <TruncatedText
           className="text-left min-h-12"
           text={product.name}

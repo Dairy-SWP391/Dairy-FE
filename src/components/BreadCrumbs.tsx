@@ -44,7 +44,7 @@ const BreadCrumbs = ({ pathname, classNames }: BreadCrumbsProps) => {
       const name = categoryPath.find(
         (cate) => cate.path === currentLink.split("/").pop()
       )?.name;
-      if (!name && index < 2) nav("/404");
+      // if (!name && index < 2) nav("/404");
       return {
         name: name,
         link: currentLink

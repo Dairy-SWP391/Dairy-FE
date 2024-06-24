@@ -25,6 +25,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@faker-js/faker": "^8.4.1",
+    "@mdxeditor/editor": "^3.6.1",
     "@mui/material": "^5.15.19",
     "@nextui-org/react": "^2.3.6",
     "@re-dev/react-truncate": "^0.4.1",

@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Rating } from "react-simple-star-rating";
 import { numberToVND } from "../utils/converter";
-import { Chip } from "@nextui-org/react";
+import { Chip, Image } from "@nextui-org/react";
 import TruncatedText from "./TruncatedText";
 import { useNavigate } from "react-router-dom";
 
@@ -30,8 +30,8 @@ const RelatedProductCard = ({
     <>
       <div className="gap-3 cursor-pointer" onClick={() => nav(url)}>
         <div className="mx-auto">
-          <img
-            className="rounded"
+          <Image
+            className="rounded h-56 w-56 object-contain z-0"
             src={image_url ? image_url : ""}
             alt="img1"
           />
