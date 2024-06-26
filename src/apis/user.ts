@@ -26,13 +26,15 @@ type GetMeResponse = {
     role: "MEMBER" | "ADMIN";
     status: "UNVERIFIED" | "VERIFIED";
     updated_at: Date;
-    // avatar_url: string;
+    avatar_url: string;
   };
 };
 
-export const getMe = (_data: { access_token: string }) =>
+export const getMe = (access_token: string) =>
   http.get<GetMeResponse>("user/me", {
-    headers: { Authorization: `Bearer ${_data.access_token}` }
+    headers: {
+      Authorization: `Bearer ${access_token}`
+    }
   });
 
 type UpdateMeProps = {

@@ -12,13 +12,7 @@ const ProductImageDetail = ({ images, className }: ProductImageDetailProps) => {
   }, []);
   return (
     <>
-      {imagesUrl.length > 0 && (
-        <Carousel
-          slides={imagesUrl}
-          numberOfSubSlides={imagesUrl.length}
-          subSlide="IMAGE"
-        />
-      )}
+      {imagesUrl.length > 0 && <Carousel slides={imagesUrl} subSlide="IMAGE" />}
     </>
   );
 };

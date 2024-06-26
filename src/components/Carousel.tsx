@@ -66,7 +66,6 @@ const Carousel = ({
         }
       }
       console.log({ startIdx, endIdx: endIdx - 1 });
-      console.log(currentIndex);
       setSubSlideIndex({ startIdx, endIdx: endIdx - 1 });
     };
     handleRenderSubSlide();
@@ -95,7 +94,7 @@ const Carousel = ({
       </div>
 
       <div
-        className={`flex top-4 gap-3 justify-center mt-3 ${subSlide === "NONE" && "hidden"} ${subSlide === "IMAGE" && ``}`}
+        className={`flex top-4 items-center justify-between mt-3 ${subSlide === "NONE" && "hidden"} ${subSlide === "IMAGE" && ""}`}
       >
         {slides.map((slide, slideIndex) => (
           <div
@@ -108,7 +107,9 @@ const Carousel = ({
             {subSlide === "IMAGE" &&
               slideIndex >= subSlideIndex.startIdx &&
               slideIndex <= subSlideIndex.endIdx && (
-                <div className="border rounded h-[100px] border-slate-500">
+                <div
+                  className={`border rounded h-[100px] w-[100px] border-slate-500`}
+                >
                   <Image
                     src={`${slide}`}
                     onClick={() => goToSlide(slideIndex)}

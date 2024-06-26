@@ -22,7 +22,10 @@ type GetProductByCateProps = {
 
 type GetProductByCateResponse = {
   message: string;
-  data: ProductType[];
+  data: {
+    products: ProductType[];
+    totalPage: number;
+  };
 };
 
 export const getProductByCategory = ({

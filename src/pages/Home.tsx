@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { getProductByCategory } from "../apis/category";
 import { ProductType } from "../types/Product";
 import { getSalesRatio, stringToNomalCase } from "../utils/converter";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [hotDeal, setHotDeal] = useState<ProductType[]>();
@@ -14,6 +15,8 @@ const Home = () => {
   const [productsByCate2, setProductsByCate2] = useState<ProductType[]>();
   const [productsByCate3, setProductsByCate3] = useState<ProductType[]>();
   const [productsByCate4, setProductsByCate4] = useState<ProductType[]>();
+
+  const nav = useNavigate();
 
   const category = useCategoryStore((state) => state.category);
 
@@ -35,14 +38,14 @@ const Home = () => {
         sort_by: sort_by
       });
       // console.log(response.data.data);
-      if (id === 1) setProductsByCate1(response.data.data);
-      if (id === 2) setProductsByCate2(response.data.data);
-      if (id === 3) setProductsByCate3(response.data.data);
-      if (id === 4) setProductsByCate4(response.data.data);
+      if (id === 1) setProductsByCate1(response.data.data.products);
+      if (id === 2) setProductsByCate2(response.data.data.products);
+      if (id === 3) setProductsByCate3(response.data.data.products);
+      if (id === 4) setProductsByCate4(response.data.data.products);
       if (id === 0 && order_by === "DESC" && sort_by === "discount")
-        setHotDeal(response.data.data);
+        setHotDeal(response.data.data.products);
       if (id === 0 && order_by === "DESC" && sort_by === "sold")
-        setBestSeller(response.data.data);
+        setBestSeller(response.data.data.products);
       // if (id === 5) setProductsByCate5(response.data.data);
     };
     category.forEach((cate) => {
@@ -259,25 +262,6 @@ const Home = () => {
                         />
                       );
                     })}
-                  {/* {productsByCate.map((cate) => {
-                    return cate.map((product) => {
-                      return (
-                        <ProductCard
-                          product={{
-                            id: product.id,
-                            name: product.name,
-                            price: product.ProductPricing[0].price,
-                            image_url:
-                              "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/combo-3-lon-sua-abbott-pediasure-1-10-tuoi-850g.png?alt=media",
-                            rating_point: product.rating_point,
-                            sold: product.sold,
-                            sale: 10
-                          }}
-                          key={product.id}
-                        />
-                      );
-                    });
-                  })} */}
                 </div>
               </Spring>
             )

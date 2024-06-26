@@ -30,6 +30,7 @@
     "@nextui-org/react": "^2.3.6",
     "@re-dev/react-truncate": "^0.4.1",
     "@react-spring/web": "^9.7.3",
+    "@react-stately/data": "^3.11.4",
     "@types/lint-staged": "^13.3.0",
     "@types/react-helmet": "^6.1.11",
     "axios": "^1.7.2",
@@ -54,6 +55,7 @@
     "react-visibility-sensor": "^5.1.1",
     "recharts": "^2.12.7",
     "sass": "^1.77.2",
+    "socket.io-client": "^4.7.5",
     "styled-components": "^6.1.11",
     "zustand": "^4.5.2"
   },

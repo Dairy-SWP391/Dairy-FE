@@ -130,7 +130,7 @@ const ProductDetail = () => {
           parent_category_id: parent_category_id,
           category_id: product?.category_id
         });
-        setRelatedProductMemoized(response.data.data);
+        setRelatedProductMemoized(response.data.data.products);
         console.log(response.data.data);
       } catch (error) {
         console.log(error);

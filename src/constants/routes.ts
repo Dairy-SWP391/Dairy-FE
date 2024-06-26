@@ -27,14 +27,19 @@ const ROUTES = [
     path: "/admin/orders"
   },
   {
-    name: "Reviews",
-    icon: "fa-star-half-o",
-    path: "/admin/reviews"
+    name: "Chats",
+    icon: "fa-comments-o",
+    path: "/admin/chats"
   },
   {
     name: "Accounts",
     icon: "fa-users",
-    path: "/admin/customers"
+    path: "/admin/accounts"
+  },
+  {
+    name: "Reviews",
+    icon: "fa-star-half-o",
+    path: "/admin/reviews"
   },
   {
     name: "Transactions",

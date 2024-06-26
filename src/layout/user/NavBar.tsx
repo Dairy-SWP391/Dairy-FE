@@ -6,17 +6,17 @@ import Search from "../../components/Search";
 import { Badge, User } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { useCategoryStore } from "../../store/category";
-import { useAuthStore } from "../../store/auth";
 import { useCartStore } from "../../store/cart";
+import { UserType } from "../../store/user";
+import { useAuth } from "../../provider/AuthProvider";
 
-const NavBar = () => {
+const NavBar = ({ user }: { user: UserType | null }) => {
   const nav = useNavigate();
-  const auth = useAuthStore((state) => state.auth);
-  const setAuth = useAuthStore((state) => state.setAuth);
+  const { clearToken } = useAuth();
   const categories = useCategoryStore((state) => state.category);
   const cart = useCartStore((state) => state.cart);
+  console.log(user);
 
-  // const [isInvisible, setIsInvisible] = useState<boolean>(false);
   return (
     <>
       <div className="text-base sticky top-0 z-10 w-full">
@@ -58,18 +58,19 @@ const NavBar = () => {
               <User
                 name={""}
                 avatarProps={{
-                  src: auth?.avatar_url
+                  src: user?.avatar_url
                 }}
                 className="cursor-pointer"
                 onClick={() => {
-                  if (auth) nav("/me");
+                  if (user) nav("/me");
                   else window.location.href = "/login";
                 }}
               />
               <button
                 onClick={() => {
-                  if (auth) {
-                    setAuth(null);
+                  if (user) {
+                    localStorage.removeItem("user");
+                    clearToken();
                     nav("/");
                   } else {
                     window.location.href = "/login";
@@ -77,7 +78,7 @@ const NavBar = () => {
                 }}
               >
                 <p className="text-base font-medium text-gray-600 ml-6">
-                  {auth ? "Đăng xuất" : "Đăng nhập"}
+                  {user ? "Đăng xuất" : "Đăng nhập"}
                 </p>
               </button>
             </div>
