@@ -66,7 +66,6 @@ const Carousel = ({
         }
       }
       console.log({ startIdx, endIdx: endIdx - 1 });
-      console.log(currentIndex);
       setSubSlideIndex({ startIdx, endIdx: endIdx - 1 });
     };
     handleRenderSubSlide();
@@ -74,36 +73,48 @@ const Carousel = ({
 
   return (
     <div
-      className={`relative group max-w-[1400px] h-[78 0px] w-full m-auto py-16 px-4 ${className}`}
+      className={`relative group max-w-[1400px] h-[78 0px] w-full m-auto ${className}`}
     >
       <div
         // style={{ backgroundImage: `url(${slides[currentIndex]})` }}
-        className="w-full h-full rounded-2xl border border-slate-500 flex justify-center duration-500"
+        className="w-full h-[25rem] rounded-2xl border z-0 border-slate-500 flex justify-center duration-500"
       >
-        <Image src={slides[currentIndex]} className="w-full h-full" />
+        <Image
+          src={slides[currentIndex]}
+          className="w-full h-full z-0 object-cover"
+        />
         {/* Left Arrow */}
-        <div className="hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[50%] text-2xl left-5 rounded-full p-2 bg-black/20 text-white cursor-pointer">
+        <div className="hidden group-hover:block absolute top-[30%] -translate-x-0 translate-y-[50%] text-2xl left-2 rounded-full p-2 bg-black/20 text-white cursor-pointer">
           <BsChevronCompactLeft onClick={prevSlide} size={30} />
         </div>
         {/* Right Arrow */}
-        <div className="hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[50%] text-2xl right-5 rounded-full p-2 bg-black/20 text-white cursor-pointer">
+        <div className="hidden group-hover:block absolute top-[30%] -translate-x-0 translate-y-[50%] text-2xl right-2 rounded-full p-2 bg-black/20 text-white cursor-pointer">
           <BsChevronCompactRight onClick={nextSlide} size={30} />
         </div>
       </div>
 
       <div
-        className={`flex top-4 gap-3 justify-center py-2 ${subSlide === "NONE" && "hidden"} ${subSlide === "IMAGE" && `grid grid-cols-${numberOfSubSlides}`}`}
+        className={`flex top-4 items-center justify-between mt-3 ${subSlide === "NONE" && "hidden"} ${subSlide === "IMAGE" && ""}`}
       >
         {slides.map((slide, slideIndex) => (
-          <div key={slideIndex} className="text-2xl cursor-pointer col-span-1">
+          <div
+            key={slideIndex}
+            className="text-2xl cursor-pointer col-span-1 max-h-[100px] max-w-[100px]"
+          >
             {subSlide === "DOT" && (
               <RxDotFilled onClick={() => goToSlide(slideIndex)} />
             )}
             {subSlide === "IMAGE" &&
               slideIndex >= subSlideIndex.startIdx &&
               slideIndex <= subSlideIndex.endIdx && (
-                <div className="border rounded border-slate-500">
-                  <Image src={slide} onClick={() => goToSlide(slideIndex)} />
+                <div
+                  className={`border rounded h-[100px] w-[100px] border-slate-500`}
+                >
+                  <Image
+                    src={`${slide}`}
+                    onClick={() => goToSlide(slideIndex)}
+                    className="z-0 h-[99px] w-[99px] object-contain"
+                  />
                 </div>
               )}
           </div>

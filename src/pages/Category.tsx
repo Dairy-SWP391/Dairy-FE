@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import DocumentTitle from "../components/DocumentTitle";
 // import { useCategoryStore } from "../store/category";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useCategoryStore } from "../store/category";
 import Spring from "../components/Spring";
 import { Checkbox, CheckboxGroup } from "@nextui-org/react";

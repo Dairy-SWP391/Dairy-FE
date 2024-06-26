@@ -1,8 +1,6 @@
 import DocumentTitle from "../components/DocumentTitle";
-// import Logo from "@components/Logo";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
 import media from "../assets/login.png";
 import Spring, { SpringType } from "../components/Spring";
 import google from "../assets/icons/google.svg";
@@ -11,18 +9,15 @@ import classNames from "classnames";
 import PasswordInput from "../components/PasswordInput";
 import { MouseEvent } from "react";
 import useWindowSize from "../hooks/useWindowSize";
-import { getMe, login } from "../apis/user";
+import { login } from "../apis/user";
 import { toast } from "react-toastify";
 import { ResponseApi, isAxiosUnprocessableEntityError } from "../utils/utils";
-import { JwtPayload, jwtDecode } from "jwt-decode";
-import { unix } from "dayjs";
-import { useAuthStore } from "../store/auth";
+import { useAuth } from "../provider/AuthProvider";
 
 const Login = () => {
   const { width } = useWindowSize();
+  const { addToken } = useAuth();
   const navigate = useNavigate();
-  const auth = useAuthStore((state) => state.auth);
-  const setAuth = useAuthStore((state) => state.setAuth);
   const {
     register,
     handleSubmit,
@@ -36,43 +31,12 @@ const Login = () => {
   });
 
   const onSubmit = async (_data: { email: string; password: string }) => {
-    console.log(_data);
-    console.log(auth);
     try {
       const result = await login(_data);
       if (result.status === 200) {
-        const decoded = jwtDecode<
-          JwtPayload & { user_id: string; verify: "VERIFIED" | "UNVERIFIED" }
-        >(result.data.result.access_token);
-        const user_info = await getMe({
-          access_token: result.data.result.access_token
-        });
-        console.log(user_info);
-        setAuth({
-          access_token: result.data.result.access_token,
-          exp: unix(decoded.exp as number).toDate(),
-          iat: unix(decoded.exp as number).toDate(),
-          id: decoded.user_id as string,
-          status: decoded.verify,
-          created_at: user_info.data.result.created_at,
-          email: user_info.data.result.email,
-          first_name: user_info.data.result.first_name,
-          last_name: user_info.data.result.last_name,
-          phone_number: user_info.data.result.phone_number,
-          role: user_info.data.result.role,
-          updated_at: user_info.data.result.updated_at,
-          avatar_url:
-            "https://firebasestorage.googleapis.com/v0/b/dairy-7d363.appspot.com/o/avatar.png?alt=media"
-        });
+        addToken(result.data.result);
         toast.success("Login successful");
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            access_token: result.data.result.access_token,
-            refresh_token: result.data.result.refresh_token
-          })
-        );
-        setTimeout(() => navigate("/"), 2000);
+        navigate("/");
       }
     } catch (err) {
       if (

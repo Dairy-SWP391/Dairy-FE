@@ -17,5 +17,15 @@ type CartStore = {
 
 export const useCartStore = create<CartStore>((set) => ({
   cart: [],
-  setCart: (cart) => set({ cart })
+  setCart: (cart) => {
+    set({ cart });
+    const cartLocal = cart.reduce(
+      (acc, item) => {
+        acc.push({ id: item.id, quantity: item.quantity });
+        return acc;
+      },
+      [] as { id: number; quantity: number }[]
+    );
+    localStorage.setItem("cart", JSON.stringify(cartLocal));
+  }
 }));

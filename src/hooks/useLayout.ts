@@ -11,7 +11,9 @@ const useLayout = () => {
       setLayout(["none"]);
     } else {
       setLayout(["navbar", "footer", "chat"]);
-      path !== "/" && setLayout((prev) => [...prev, "breadcrumb"]);
+      path !== "/" &&
+        !path.startsWith("/me") &&
+        setLayout((prev) => [...prev, "breadcrumb"]);
     }
   }, [path]);
   return layout;
