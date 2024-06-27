@@ -70,15 +70,12 @@ const ChatDetail = () => {
   return (
     <>
       <PageHeader title={`To ${user_id}`} />
-      <div
-        className="card no-hover flex flex-col gap-5 !p-5 mb-5 md:mb-[26px] md:!p-[26px] lg:!py-5 lg:flex-row
-                 lg:items-center lg:gap-4"
-      >
+      <div className="card no-hover flex flex-col gap-5 !p-5 mb-5 md:mb-[26px] md:!p-[26px] lg:!py-5">
         <div className="min-h-[70vh]">
           {conversations.map((conversation, index) => (
             <div key={index}>
               <Card
-                className={`max-w-[75%] mt-3 text-sm ${conversation.sender === "STAFF" && "ml-20 bg-blue-500"}`}
+                className={`max-w-[75%] mt-3 text-sm ${conversation.sender === "STAFF" && "ml-80 bg-blue-500"}`}
               >
                 <CardBody>
                   <p>{conversation.content}</p>

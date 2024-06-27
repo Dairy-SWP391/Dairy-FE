@@ -15,7 +15,6 @@ const NavBar = ({ user }: { user: UserType | null }) => {
   const { clearToken } = useAuth();
   const categories = useCategoryStore((state) => state.category);
   const cart = useCartStore((state) => state.cart);
-  console.log(user);
 
   return (
     <>

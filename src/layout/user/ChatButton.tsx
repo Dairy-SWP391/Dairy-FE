@@ -22,8 +22,6 @@ const ChatButton = () => {
   const { token } = useAuth();
   const [conversations, setConversations] = useState<ConversationType[]>([]);
   const user = JSON.parse((localStorage.getItem("user") as string) || "{}");
-  console.log(user);
-
   useEffect(() => {
     const fetchConversations = async () => {
       try {

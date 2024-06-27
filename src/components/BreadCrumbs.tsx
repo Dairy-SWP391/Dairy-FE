@@ -26,6 +26,10 @@ const BreadCrumbs = ({ pathname, classNames }: BreadCrumbsProps) => {
       {
         name: "CÁ NHÂN",
         path: "me"
+      },
+      {
+        name: "CONFIRM ORDER",
+        path: "confirm-order"
       }
     ]
   );

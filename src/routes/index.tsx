@@ -4,10 +4,12 @@ import {
   Account,
   Address,
   AdminDashboard,
+  BlogEditor,
   Cart,
   Category,
   Chat,
   ChatDetail,
+  ConfirmOrder,
   Home,
   Login,
   PageNotFound,
@@ -59,6 +61,10 @@ const authenticatedRoutes: RouteType[] = [
   {
     path: "/me/address",
     element: <Address />
+  },
+  {
+    path: "/confirm-order",
+    element: <ConfirmOrder />
   }
 ];
 
@@ -75,6 +81,10 @@ const adminRoutes: RouteType[] = [
   {
     path: "/admin/product-editor",
     element: <ProductEditor />
+  },
+  {
+    path: "/admin/blog-editor",
+    element: <BlogEditor />
   },
   {
     path: "/admin/chats",

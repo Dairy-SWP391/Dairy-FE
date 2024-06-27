@@ -7,6 +7,9 @@ import SingleFileUploader from "../components/SingleFileUploader";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import ProfileBar from "../layout/user/ProfileBar";
+import { updateMe } from "../apis/user";
+import { useAuth } from "../provider/AuthProvider";
+import { toast } from "react-toastify";
 
 type ProfileForm = {
   first_name: string;
@@ -25,12 +28,29 @@ const Profile = () => {
     formState: { errors }
   } = useForm<ProfileForm>();
 
+  const { token } = useAuth();
+
   const handleUploadImage = (url: string) => {
     setValue("avatar_url", url);
   };
 
-  const onSubmit: SubmitHandler<ProfileForm> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<ProfileForm> = async (data) => {
+    try {
+      console.log({
+        ...data,
+        access_token: token.access_token as string
+      });
+      const response = await updateMe({
+        ...data,
+        access_token: token.access_token as string
+      });
+      console.log(response);
+      if (response.status === 200) {
+        toast.success("Update Me Successfully");
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {

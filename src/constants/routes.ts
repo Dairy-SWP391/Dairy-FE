@@ -42,6 +42,11 @@ const ROUTES = [
     path: "/admin/reviews"
   },
   {
+    name: "Blog",
+    icon: "fa-clipboard",
+    path: "/admin/blog-editor"
+  },
+  {
     name: "Transactions",
     icon: "fa-credit-card-alt",
     path: "/transactions",
