@@ -4,8 +4,8 @@ class Http {
   instance: AxiosInstance;
   constructor() {
     this.instance = axios.create({
-      // baseURL: "https://dairy-be-j2x39.ondigitalocean.app/",
-      baseURL: "http://localhost:8000/",
+      baseURL: import.meta.env.VITE_URL_BE,
+      // baseURL: "http://localhost:8000/",
       timeout: 10000,
       headers: {
         "Content-Type": "application/json"
