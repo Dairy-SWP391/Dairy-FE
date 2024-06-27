@@ -19,7 +19,7 @@ type UserStore = {
 };
 
 export const useUserStore = create<UserStore>((set) => ({
-  user: null,
+  user: JSON.parse(localStorage.getItem("user") || "null"),
   setUser: (user) => {
     set({ user });
   }

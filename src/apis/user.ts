@@ -48,3 +48,96 @@ export const updateMe = (_data: UpdateMeProps) => http.patch("user/me", _data);
 
 export const renewToken = (_data: { refresh_token: string }) =>
   http.post<TokenResponse>("user/refresh-token", _data);
+
+export type AccountType = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  email: string;
+  point: number;
+  role: "MEMBER" | "STAFF" | "ADMIN";
+  status: "UNVERIFIED" | "VERIFIED";
+};
+
+interface GetAllUserResponse {
+  message: string;
+  result: AccountType[];
+}
+
+export const getAllUser = (access_token: string) =>
+  http.get<GetAllUserResponse>("user/users", {
+    headers: {
+      Authorization: `Bearer ${access_token}`
+    }
+  });
+
+export const deleteUser = ({
+  access_token,
+  user_id
+}: {
+  access_token: string;
+  user_id: string;
+}) =>
+  http.delete("user/delete-user", {
+    headers: {
+      Authorization: `Bearer ${access_token}`
+    },
+    data: {
+      user_id
+    }
+  });
+
+type getALlMessagesResponse = {
+  message: string;
+  result: {
+    chatLines: {
+      id: number | string;
+      content: string;
+      sender: "MEMBER" | "STAFF";
+      created_at: number;
+    }[];
+    total: number;
+    limit: number;
+    page: number;
+    total_page: number;
+  };
+};
+
+export const getALlMessages = ({
+  access_token,
+  limit = 20,
+  page
+}: {
+  access_token: string;
+  limit?: number;
+  page: number;
+}) =>
+  http.get<getALlMessagesResponse>(
+    `conversations/me?limit=${limit}&page=${page}`,
+    {
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
+    }
+  );
+
+export const getMessageByUser = ({
+  access_token,
+  limit = 20,
+  page,
+  user_id
+}: {
+  access_token: string;
+  limit?: number;
+  page: number;
+  user_id: string;
+}) =>
+  http.get<getALlMessagesResponse>(
+    `conversations/user/${user_id}?limit=${limit}&page=${page}`,
+    {
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
+    }
+  );

@@ -3,58 +3,83 @@ import { LuMessageCircle } from "react-icons/lu";
 import { FaXmark } from "react-icons/fa6";
 import { AiOutlineSend } from "react-icons/ai";
 import { Card, CardBody } from "@nextui-org/react";
-import { UserType } from "../../store/user";
 import socket from "../../utils/socket";
 import { useNavigate } from "react-router-dom";
+import { getALlMessages } from "../../apis/user";
+import { useAuth } from "../../provider/AuthProvider";
 
-const ChatButton = ({ user }: { user: UserType | null }) => {
+export type ConversationType = {
+  id: number | string;
+  content: string;
+  sender: "MEMBER" | "STAFF";
+  created_at: number;
+};
+
+const ChatButton = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [value, setValue] = useState("");
   const nav = useNavigate();
-  const [conversations, setConversations] = useState<
-    { content: string; isSender: boolean }[]
-  >([]);
+  const { token } = useAuth();
+  const [conversations, setConversations] = useState<ConversationType[]>([]);
+  const user = JSON.parse((localStorage.getItem("user") as string) || "{}");
+  console.log(user);
 
   useEffect(() => {
-    socket.auth = { _id: user?.id };
-
-    socket.connect();
-
-    socket.on("receive_message", (data) => {
-      console.log(data);
-      const { content } = data;
-      console.log(content);
-      setConversations((prev) => [
-        ...prev,
-        {
-          content,
-          isSender: false
+    const fetchConversations = async () => {
+      try {
+        const res = await getALlMessages({
+          access_token: token.access_token as string,
+          page: 1
+        });
+        if (res.status === 200) {
+          const { chatLines } = res.data.result;
+          setConversations(chatLines);
         }
-      ]);
-    });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchConversations();
+  }, []);
+
+  useEffect(() => {
+    if (user?.id) {
+      socket.on("receive_message", (data) => {
+        const { payload } = data;
+        setConversations((prev) => [...prev, payload]);
+      });
+    }
 
     //clean up function : khi component bị unmount thì sẽ disconnect| phần này cho chắc vậy thôi chứ thật ra k có vẫn tự disconnect
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [user?.id]);
 
   const send = (event: FormEvent) => {
     event.preventDefault();
+
+    const conversation = {
+      sender_id: user?.id,
+      receiver_id: "staff001",
+      content: value,
+      sender: "MEMBER"
+    };
 
     setValue(""); //reset lại giá trị về rỗng
 
     setConversations((prev) => [
       ...prev,
       {
-        content: value,
-        isSender: true
+        id: new Date().getTime(),
+        content: conversation.content,
+        sender: conversation.sender as "MEMBER" | "STAFF",
+        created_at: new Date().getTime()
       }
     ]);
 
     socket.emit("send_message", {
-      content: value,
-      to: "staff001"
+      payload: conversation
     });
   };
 
@@ -70,10 +95,10 @@ const ChatButton = ({ user }: { user: UserType | null }) => {
           </div>
           <div className="w-full h-72 flex-col bg-white px-2 overflow-auto pb-2">
             <p className="text-center py-3">Bạn cần hỗ trợ?</p>
-            {conversations.map((conversation, index) => (
-              <div key={index}>
+            {conversations.map((conversation) => (
+              <div key={conversation.id}>
                 <Card
-                  className={`max-w-[75%] mt-3 text-sm ${conversation.isSender && "ml-20 bg-blue-500"}`}
+                  className={`max-w-[75%] mt-3 text-sm ${conversation.sender === "MEMBER" && "ml-20 bg-blue-500"}`}
                 >
                   <CardBody>
                     <p>{conversation.content}</p>
