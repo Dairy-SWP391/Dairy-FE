@@ -2,12 +2,36 @@ import Spring from "../components/Spring";
 import Navigate from "../assets/navigate.png";
 import { useNavigate } from "react-router-dom";
 import { numberToVND } from "../utils/converter";
-import { Button } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  Divider,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Radio,
+  RadioGroup,
+  useDisclosure
+} from "@nextui-org/react";
 import { useCartStore } from "../store/cart";
 import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { AddressType, getDefaultAddress } from "../apis/user";
+import { useAuth } from "../provider/AuthProvider";
+import { getPackageService } from "../apis/ship";
 
 const Cart = () => {
   const cart = useCartStore((state) => state.cart);
+  const [address, setAddress] = useState<AddressType | null>(null);
+  const [selectedService, setSelectedService] = useState<number>();
+  const [service, setService] = useState<
+    { service_id: number; short_name: string }[]
+  >([]);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { token } = useAuth();
   const totalPrice = cart.reduce(
     (total, item) =>
       total +
@@ -48,6 +72,45 @@ const Cart = () => {
     });
     const finalCart = newCart.filter((item) => item.quantity > 0);
     useCartStore.setState({ cart: finalCart });
+  };
+
+  useEffect(() => {
+    const fetchAddress = async () => {
+      try {
+        const response = await getDefaultAddress(token.access_token as string);
+        if (response.status === 200) {
+          setAddress(response.data.result);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchAddress();
+  }, []);
+
+  const handleGetService = async () => {
+    try {
+      const response = await getPackageService(
+        address?.district_id.toString() as string
+      );
+      if (response.status === 200) {
+        setService(response.data);
+        onOpen();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (selectedService === undefined) {
+      toast.error("Vui lòng chọn phương thức vận chuyển");
+      return;
+    }
+    localStorage.setItem("address", JSON.stringify(address));
+    nav("/confirm-order", {
+      state: { service_id: selectedService, address }
+    });
   };
 
   return (
@@ -161,15 +224,29 @@ const Cart = () => {
         <Spring className="card row-span-4">
           <h3 className="text-lg text-slate-500">Địa Chỉ Nhận Hàng</h3>
           <button
-            className="rounded-lg border-2 border-red-700 mt-2 w-full h-[65%] flex items-center border-dashed justify-between px-10 bg-[url('../assets/map.png')] cursor-pointer"
+            className="rounded-lg border-2 border-red-700 mt-2 w-full h-[65%] border-dashed justify-between bg-[url('../assets/map.png')] cursor-pointer"
             onClick={() => nav("/dia-chi-khach-hang")}
           >
-            <div className="w-2/12">
-              <img src={Navigate} alt="Navigate" className="w-6/12" />
-            </div>
-            <p className="text-base text-red-700 font-medium">
-              Xác định địa chỉ nhận hàng
-            </p>
+            {address ? (
+              <Card className="w-full bg-transparent h-full">
+                <CardBody className="overflow-hidden">
+                  <p className="text-base">
+                    {address.name} - {address.phone_number}
+                  </p>
+                  <p className="text-base">{address.address}</p>
+                </CardBody>
+                <Divider />
+              </Card>
+            ) : (
+              <div className="flex items-center px-7 justify-between w-full">
+                <div className="w-2/12">
+                  <img src={Navigate} alt="Navigate" className="w-6/12" />
+                </div>
+                <p className="text-base text-red-700 font-medium">
+                  Xác định địa chỉ nhận hàng
+                </p>
+              </div>
+            )}
           </button>
         </Spring>
         <Spring className="card row-span-3">
@@ -206,12 +283,47 @@ const Cart = () => {
           </div>
           <Button
             fullWidth
+            isDisabled={cart.length === 0 || !address}
             className="mt-4 bg-zinc-400 font-medium text-white text-lg"
-            onClick={() => toast.error("Test error")}
+            onClick={handleGetService}
+            // onPress={onOpen}
           >
             Mua hàng
           </Button>
         </Spring>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Hình Thức Vận Chuyển
+                </ModalHeader>
+                <ModalBody>
+                  <RadioGroup
+                    label="Vui lòng chọn phương thức vận chuyển"
+                    value={selectedService?.toString()}
+                    onChange={(e) => setSelectedService(+e.target.value)}
+                    isRequired
+                  >
+                    {service.map(({ service_id, short_name }) => (
+                      <Radio value={service_id.toString()} key={service_id}>
+                        {short_name}
+                      </Radio>
+                    ))}
+                  </RadioGroup>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Close
+                  </Button>
+                  <Button color="primary" onPress={handleSubmit}>
+                    Confirm
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </div>
     </div>
   );

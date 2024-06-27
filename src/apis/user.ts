@@ -37,15 +37,6 @@ export const getMe = (access_token: string) =>
     }
   });
 
-type UpdateMeProps = {
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-  avatar_url: string;
-};
-
-export const updateMe = (_data: UpdateMeProps) => http.patch("user/me", _data);
-
 export const renewToken = (_data: { refresh_token: string }) =>
   http.post<TokenResponse>("user/refresh-token", _data);
 
@@ -141,3 +132,81 @@ export const getMessageByUser = ({
       }
     }
   );
+
+type UpdateMeProps = {
+  first_name?: string;
+  last_name?: string;
+  phone_number?: string;
+  avatar_url?: string;
+  access_token: string;
+};
+
+type UpdateMeResponse = {
+  message: string;
+};
+
+export const updateMe = ({
+  access_token,
+  first_name,
+  last_name,
+  phone_number,
+  avatar_url
+}: UpdateMeProps) =>
+  http.patch<UpdateMeResponse>(
+    "user/me",
+    {
+      avatar_url,
+      first_name,
+      last_name,
+      phone_number
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
+    }
+  );
+
+type GetAllAddressResponse = {
+  message: string;
+  result: AddressType[];
+};
+
+export type AddressType = {
+  id: number;
+  name: string;
+  phone_number: string;
+  address: string;
+  default_address: boolean;
+  province_id: number;
+  district_id: number;
+  ward_code: number;
+  user_id: string;
+};
+
+export const getAllAddress = (access_token: string) =>
+  http.get<GetAllAddressResponse>("user/addresses", {
+    headers: {
+      Authorization: `Bearer ${access_token}`
+    }
+  });
+
+export const addNewAddress = ({
+  access_token,
+  address
+}: {
+  access_token: string;
+  address: Omit<AddressType, "id">;
+}) =>
+  http.post("user/add-address", address, {
+    headers: {
+      Authorization: `Bearer ${access_token}`
+    }
+  });
+
+export const getDefaultAddress = (access_token: string) =>
+  http.get<{ message: string; result: AddressType }>("user/default-address", {
+    headers: {
+      Authorization: `Bearer ${access_token}`
+    }
+  });

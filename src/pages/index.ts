@@ -14,3 +14,5 @@ export { default as Register } from "./Register";
 export { default as Account } from "./Account";
 export { default as Chat } from "./Chat";
 export { default as ChatDetail } from "./ChatDetail";
+export { default as BlogEditor } from "./BlogEditor";
+export { default as ConfirmOrder } from "./ConfirmOrder";

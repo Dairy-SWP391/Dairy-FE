@@ -5,11 +5,13 @@ type SingleFileUploaderProps = {
   onUpload?: (file: File) => void;
   placeholder?: string;
   handleGetUrl: (url: string) => void;
+  className?: string;
 };
 
 const SingleFileUploader = ({
   placeholder,
-  handleGetUrl
+  handleGetUrl,
+  className
 }: SingleFileUploaderProps) => {
   const fileUploadRef = useRef<HTMLInputElement | null>(null);
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,25 +30,27 @@ const SingleFileUploader = ({
 
   return (
     <>
-      <div>
-        <label htmlFor="file" className="sr-only">
-          Choose a file
-        </label>
-        <input
-          id="file"
-          type="file"
-          onChange={handleFileChange}
-          ref={fileUploadRef}
-          hidden
-          accept="image/*"
-        />
+      <div className={`${className}`}>
+        <div>
+          <label htmlFor="file" className="sr-only text-xl">
+            Choose a file
+          </label>
+          <input
+            id="file"
+            type="file"
+            onChange={handleFileChange}
+            ref={fileUploadRef}
+            hidden
+            accept="image/*"
+          />
+        </div>
+        <button
+          className="border px-5 py-2 text-lg"
+          onClick={(e) => handleUpload(e)}
+        >
+          {placeholder}
+        </button>
       </div>
-      <button
-        className="border px-5 py-2 text-lg"
-        onClick={(e) => handleUpload(e)}
-      >
-        {placeholder}
-      </button>
     </>
   );
 };

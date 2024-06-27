@@ -16,6 +16,7 @@ import RelatedProductCard from "../components/RelatedProductCard";
 import { getProductByCategory } from "../apis/category";
 import { useCategoryStore } from "../store/category";
 import { ProductType } from "../types/Product";
+import dayjs from "dayjs";
 // import RelatedProductCard from "../components/RelatedProductCard";
 
 const relatedPost = {
@@ -91,6 +92,16 @@ const ProductDetail = () => {
   const addToCart = useCartStore((state) => state.setCart);
   const cart = useCartStore((state) => state.cart);
   const category = useCategoryStore((state) => state.category);
+  const [remainingTime, setRemainingTime] = useState<number>(0);
+
+  useEffect(() => {
+    if (product) {
+      setTimeout(() => {
+        const duration = dayjs(product.ending_timestamp);
+        setRemainingTime(duration.diff(dayjs(), "second"));
+      }, 1000);
+    }
+  }, [remainingTime]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -106,6 +117,11 @@ const ProductDetail = () => {
           nav("/404");
         }
         console.log(response.data.data);
+        if (response.data.data.sale_price) {
+          const duration = dayjs(response.data.data.ending_timestamp);
+          setRemainingTime(duration.diff(dayjs(), "second"));
+        }
+
         setProduct(response.data.data);
       } catch (err) {
         console.log(err);
@@ -239,7 +255,8 @@ const ProductDetail = () => {
             {product?.sale_price && (
               <Card className="mt-7 bg-pink-600 w-2/3 ">
                 <CardBody className="text-white font-normal text-sm">
-                  Kết thúc sau: 12:27:45
+                  Kết thúc sau:{" "}
+                  {`${remainingTime > 60 * 60 * 24 && Math.floor(remainingTime / (60 * 60 * 24))} ngày ${dayjs.unix(remainingTime).format("HH:mm:ss")}`}
                 </CardBody>
               </Card>
             )}
