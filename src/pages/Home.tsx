@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { getProductByCategory } from "../apis/category";
 import { ProductType } from "../types/Product";
 import { getSalesRatio, stringToNomalCase } from "../utils/converter";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [hotDeal, setHotDeal] = useState<ProductType[]>();
@@ -16,7 +16,7 @@ const Home = () => {
   const [productsByCate3, setProductsByCate3] = useState<ProductType[]>();
   const [productsByCate4, setProductsByCate4] = useState<ProductType[]>();
 
-  const nav = useNavigate();
+  // const nav = useNavigate();
 
   const category = useCategoryStore((state) => state.category);
 
