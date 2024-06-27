@@ -1,31 +1,32 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useLocation } from "react-router-dom";
 import DocumentTitle from "../components/DocumentTitle";
 // import { useCategoryStore } from "../store/category";
 import { useEffect, useState } from "react";
 import { useCategoryStore } from "../store/category";
-import Spring from "../components/Spring";
-import { Checkbox, CheckboxGroup } from "@nextui-org/react";
+// import Spring from "../components/Spring";
+// import { Checkbox, CheckboxGroup } from "@nextui-org/react";
 
 const Category = () => {
   const path = useLocation()
     .pathname.split("/")
     .filter((item) => item !== "");
   const Category = useCategoryStore((state) => state.category);
-  const [category, setCategory] = useState(0);
+  // const [category, setCategory] = useState(0);
   const [title, setTitle] = useState("");
-  const [selected, setSelected] = useState<number[]>([0]);
+  // const [selected, setSelected] = useState<number[]>([0]);
 
   useEffect(() => {
     Category.forEach((item) => {
       if (item.path === path[path.length - 1]) {
-        setCategory(item.id);
+        // setCategory(item.id);
         setTitle(item.name);
       } else {
         item.child_category.forEach((child) => {
           if (child.path === path[path.length - 1]) {
             console.log(child);
-            setCategory(child.parent_category_id);
-            setSelected([child.id]);
+            // setCategory(child.parent_category_id);
+            // setSelected([child.id]);
             setTitle(child.name);
           }
         });
@@ -36,7 +37,7 @@ const Category = () => {
   return (
     <>
       <DocumentTitle title={title} />
-      <div className="mx-auto w-5/6 flex justify-between">
+      {/* <div className="mx-auto w-5/6 flex justify-between">
         <div className="w-[20%]">
           <Spring className="card ">AHihi</Spring>
           <Spring className="card ">
@@ -65,7 +66,7 @@ const Category = () => {
           <Spring className="card">AHihi</Spring>
           <Spring className="card">AHihi</Spring>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

@@ -3,10 +3,9 @@ import Carousel from "./Carousel";
 
 interface ProductImageDetailProps {
   images: ImageType[];
-  className?: string;
 }
 
-const ProductImageDetail = ({ images, className }: ProductImageDetailProps) => {
+const ProductImageDetail = ({ images }: ProductImageDetailProps) => {
   const imagesUrl = images?.reduce((acc: string[], cur: ImageType) => {
     return [...acc, cur.image_url];
   }, []);
