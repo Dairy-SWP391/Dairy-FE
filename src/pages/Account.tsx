@@ -9,35 +9,17 @@ import {
   TableRow
 } from "@nextui-org/react";
 import PageHeader from "../layout/admin/PageHeader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAsyncList } from "@react-stately/data";
-
-type AccountType = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-  email: string;
-  point: number;
-  role: "MEMBER" | "STAFF" | "ADMIN";
-  status: "UNVERIFIED" | "VERIFIED";
-};
+import { AccountType, deleteUser, getAllUser } from "../apis/user";
+import { useAuth } from "../provider/AuthProvider";
+import { toast } from "react-toastify";
 
 const Account = () => {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [accounts, setAccounts] = useState<AccountType[] | null>([
-    {
-      id: "staff001",
-      first_name: "Phạm Quốc",
-      last_name: "Quyền",
-      phone_number: "0868515009",
-      email: "gobyysamaaaaaa@gmail.com",
-      point: 100,
-      role: "MEMBER",
-      status: "UNVERIFIED"
-    }
-  ]);
+  const { token } = useAuth();
+  const [accounts, setAccounts] = useState<AccountType[] | null>();
 
   const list = useAsyncList({
     async load({ signal, cursor }) {
@@ -65,6 +47,26 @@ const Account = () => {
     }
   });
 
+  const deleteAccount = async (id: string) => {
+    const result = confirm("Are you sure you want to delete this account?");
+    if (!result) return;
+    const res = await deleteUser({
+      access_token: token.access_token as string,
+      user_id: id
+    });
+    if (res.status === 200) {
+      toast.success("Delete account successfully");
+    }
+  };
+
+  useEffect(() => {
+    const fetch = async () => {
+      const res = await getAllUser(token.access_token as string);
+      setAccounts(res.data.result);
+    };
+    fetch();
+  }, [deleteAccount]);
+
   const hasMore = page < 9;
 
   return (
@@ -91,7 +93,7 @@ const Account = () => {
               </div>
             ) : null
           }
-          selectionMode="multiple"
+          // selectionMode="multiple"
         >
           <TableHeader>
             <TableColumn>No.</TableColumn>
@@ -137,7 +139,7 @@ const Account = () => {
                           aria-hidden="true"
                         ></i>
                       </button>
-                      <button className="btn">
+                      <button className="btn" onClick={() => deleteAccount(id)}>
                         <i className="fa fa-trash-o" aria-hidden="true"></i>
                       </button>
                     </TableCell>

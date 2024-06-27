@@ -7,6 +7,7 @@ import {
   Cart,
   Category,
   Chat,
+  ChatDetail,
   Home,
   Login,
   PageNotFound,
@@ -58,7 +59,10 @@ const authenticatedRoutes: RouteType[] = [
   {
     path: "/me/address",
     element: <Address />
-  },
+  }
+];
+
+const adminRoutes: RouteType[] = [
   { path: "/admin", element: <AdminDashboard /> },
   {
     path: "/admin/products-grid",
@@ -75,6 +79,10 @@ const authenticatedRoutes: RouteType[] = [
   {
     path: "/admin/chats",
     element: <Chat />
+  },
+  {
+    path: "/admin/chats/:user_id",
+    element: <ChatDetail />
   },
   {
     path: "/admin/accounts",
@@ -95,10 +103,12 @@ const unAuthenticatedRoutes: RouteType[] = [
 
 const Router = () => {
   const { token } = useAuth();
+  const user = JSON.parse((localStorage.getItem("user") as string) || "{}");
 
   const router = [
     ...publicRoutes,
     ...(token.access_token ? authenticatedRoutes : unAuthenticatedRoutes),
+    ...(["ADMIN", "STAFF"].includes(user.role) ? adminRoutes : []),
     {
       path: "*",
       element: <Navigate to="/404" />

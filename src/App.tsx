@@ -18,6 +18,7 @@ import Routes from "./routes";
 import { useLocation } from "react-router-dom";
 import { getMe, renewToken } from "./apis/user";
 import { isAxiosError } from "./utils/utils";
+import socket from "./utils/socket";
 
 function App() {
   // const { width } = useWindowSize();
@@ -38,6 +39,18 @@ function App() {
     };
     getCategory();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      socket.auth = { _id: user.id };
+
+      socket.connect();
+    }
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [user]);
 
   useEffect(() => {
     (async () => {
@@ -97,7 +110,7 @@ function App() {
             </div>
           </div>
           {layout.includes("footer") && <Footer />}
-          {layout.includes("chat") && <ChatButton user={user} />}
+          {layout.includes("chat") && <ChatButton />}
         </SidebarProvider>
       </AuthProvider>
     </NextUIProvider>
