@@ -7,8 +7,10 @@ import {
   TableRow
 } from "@nextui-org/react";
 import PageHeader from "../layout/admin/PageHeader";
+import { useNavigate } from "react-router-dom";
 
 const Chat = () => {
+  const nav = useNavigate();
   return (
     <>
       <PageHeader title="Chat List" />
@@ -16,21 +18,22 @@ const Chat = () => {
         className="card no-hover flex flex-col gap-5 !p-5 mb-5 md:mb-[26px] md:!p-[26px] lg:!py-5 lg:flex-row
                  lg:items-center lg:gap-4"
       >
-        <Table aria-label="Example static collection table">
+        <Table
+          aria-label="Example static collection table"
+          onRowAction={(key) => nav(`/admin/chats/${key}`)}
+        >
           <TableHeader>
             <TableColumn>NO.</TableColumn>
             <TableColumn>ID</TableColumn>
             <TableColumn>NAME</TableColumn>
-            <TableColumn>ROLE</TableColumn>
             <TableColumn>STATUS</TableColumn>
           </TableHeader>
           <TableBody>
-            <TableRow key="1">
+            <TableRow key="US240702162">
               <TableCell>1</TableCell>
-              <TableCell>Ahihi</TableCell>
-              <TableCell>Goby</TableCell>
-              <TableCell>Admin</TableCell>
-              <TableCell>Active</TableCell>
+              <TableCell>US240702162</TableCell>
+              <TableCell>Phạm Quốc Quyền</TableCell>
+              <TableCell>SEEN</TableCell>
             </TableRow>
           </TableBody>
         </Table>
