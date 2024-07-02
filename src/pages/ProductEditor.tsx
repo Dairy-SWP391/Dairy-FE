@@ -6,8 +6,29 @@ import { toast } from "react-toastify";
 import Spring from "../components/Spring";
 import PageHeader from "../layout/admin/PageHeader";
 import { useCategoryStore } from "../store/category";
-import { useState } from "react";
 import SingleFileUploader from "../components/SingleFileUploader";
+
+interface ProductEditorForm {
+  images: string[];
+  product_name: string;
+  quantity: number;
+  brand_name: string;
+  origin?: string;
+  producer?: string;
+  manufactured_at?: string;
+  targer?: string;
+  volumn?: number;
+  weight?: number;
+  sold?: number;
+  caution?: string;
+  instruction?: string;
+  preservation?: string;
+  description?: string;
+  status: "ACTIVE" | "INACTIVE";
+  category_id: number;
+  ship_category_id: "BABY" | "MOMY";
+  number_of_packs?: number;
+}
 
 const ProductEditor = () => {
   const categoryOptions = useCategoryStore((state) => state.category);
@@ -41,7 +62,7 @@ const ProductEditor = () => {
     handleSubmit,
     control,
     formState: { errors }
-  } = useForm({
+  } = useForm<ProductEditorForm>({
     defaultValues: defaultValues
   });
 
@@ -66,100 +87,84 @@ const ProductEditor = () => {
           <div>
             <div>
               <span className="block field-label mb-2.5">Product Images</span>
-              <div className="grid grid-cols-2 gap-5 md:grid-cols-4 2xl:grid-cols-[repeat(5,minmax(0,1fr))]">
+              <div className="grid gap-5 grid-cols-4">
                 <SingleFileUploader
                   handleGetUrl={handlePublish}
-                  className="media-dropzone 2xl:col-span-2"
+                  className="media-dropzone"
                   placeholder="Upload Image"
                 />
                 <SingleFileUploader
                   handleGetUrl={handlePublish}
-                  className="media-dropzone 2xl:col-span-2"
+                  className="media-dropzone"
                   placeholder="Upload Image"
                 />
-                <div className="grid grid-cols-2 col-span-2 gap-5 2xl:col-span-1 2xl:grid-cols-1">
-                  <SingleFileUploader
-                    handleGetUrl={handlePublish}
-                    className="media-dropzone"
-                    placeholder="Upload Image"
-                  />
-                  <SingleFileUploader
-                    handleGetUrl={handlePublish}
-                    className="media-dropzone"
-                    placeholder="Upload Image"
-                  />
-                </div>
+                <SingleFileUploader
+                  handleGetUrl={handlePublish}
+                  className="media-dropzone "
+                  placeholder="Upload Image"
+                />
+                <SingleFileUploader
+                  handleGetUrl={handlePublish}
+                  className="media-dropzone"
+                  placeholder="Upload Image"
+                />
               </div>
             </div>
             <div className="flex flex-col gap-4 mt-5">
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,205px)]">
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="productType">
-                    Attributes
-                  </label>
-                  <Controller
-                    name="productType"
-                    control={control}
-                    defaultValue={defaultValues.productType}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <Select
-                        // isInvalid={errors.productType}
-                        id="productType"
-                        placeholder="Product type"
-                        onChange={(value) => field.onChange(value)}
-                        value={field.value}
-                      >
-                        <SelectItem key={"ahihi"}>AHihi</SelectItem>
-                        <SelectItem key={"hehee"}>hehehe</SelectItem>
-                      </Select>
-                    )}
-                  />
-                </div>
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="dimensions">
-                    L * W * H, inches
-                  </label>
-                  <input
-                    className={classNames("field-input", {
-                      "field-input--error": errors.dimensions
-                    })}
-                    id="dimensions"
-                    defaultValue={defaultValues.dimensions}
-                    placeholder="Product dimensions"
-                    {...register("dimensions", { required: true })}
-                  />
-                </div>
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="weight">
-                    Weight, kg
-                  </label>
-                  <input
-                    className={classNames("field-input", {
-                      "field-input--error": errors.weight
-                    })}
-                    id="weight"
-                    defaultValue={defaultValues.weight}
-                    placeholder="Product weight"
-                    {...register("weight", {
-                      required: true,
-                      pattern: /^[0-9]*$/
-                    })}
-                  />
-                </div>
-              </div>
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="description">
                   Description
                 </label>
                 <textarea
                   className={classNames(
-                    `field-input !h-[160px] !py-[15px] !overflow-y-auto`,
+                    `field-input !h-[90px] !py-[15px] !overflow-y-auto`,
                     { "field-input--error": errors.description }
                   )}
                   id="description"
                   defaultValue={defaultValues.description}
                   {...register("description", { required: true })}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="instruction">
+                  Instruction
+                </label>
+                <textarea
+                  className={classNames(
+                    `field-input !h-[90px] !py-[15px] !overflow-y-auto`,
+                    { "field-input--error": errors.instruction }
+                  )}
+                  id="description"
+                  // defaultValue={defaultValues.instruction}
+                  {...register("instruction", { required: true })}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="caution">
+                  Caution
+                </label>
+                <textarea
+                  className={classNames(
+                    `field-input !h-[90px] !py-[15px] !overflow-y-auto`,
+                    { "field-input--error": errors.caution }
+                  )}
+                  id="caution"
+                  // defaultValue={defaultValues.caution}
+                  {...register("caution", { required: true })}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="preservation">
+                  Preservation
+                </label>
+                <textarea
+                  className={classNames(
+                    `field-input !h-[90px] !py-[15px] !overflow-y-auto`,
+                    { "field-input--error": errors.preservation }
+                  )}
+                  id="description"
+                  // defaultValue={defaultValues.preservation}
+                  {...register("preservation", { required: true })}
                 />
               </div>
             </div>
@@ -171,29 +176,15 @@ const ProductEditor = () => {
               </label>
               <input
                 className={classNames("field-input", {
-                  "field-input--error": errors.productName
+                  "field-input--error": errors.product_name
                 })}
                 id="productName"
                 defaultValue={defaultValues.productName}
                 placeholder="Enter product name"
-                {...register("productName", { required: true })}
+                {...register("product_name", { required: true })}
               />
             </div>
             <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
-              <div className="field-wrapper">
-                <label className="field-label" htmlFor="brandName">
-                  Brand Name
-                </label>
-                <input
-                  className={classNames("field-input", {
-                    "field-input--error": errors.brandName
-                  })}
-                  id="brandName"
-                  defaultValue={defaultValues.brandName}
-                  placeholder="Enter brand name"
-                  {...register("brandName", { required: true })}
-                />
-              </div>
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="category">
                   Category
@@ -216,6 +207,147 @@ const ProductEditor = () => {
                   )}
                 />
               </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="subCategory">
+                  Sub Category
+                </label>
+                <Controller
+                  name="subCategory"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Select value={field.value} defaultSelectedKeys={"all"}>
+                      {categoryOptions
+                        .filter((category) => category.name !== "TIN TỨC")
+                        .map((category) => (
+                          <SelectItem key={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                    </Select>
+                  )}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="brandName">
+                  Brand Name
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.brand_name
+                  })}
+                  id="brandName"
+                  defaultValue={defaultValues.brandName}
+                  placeholder="Enter brand name"
+                  {...register("brand_name", { required: true })}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="origin">
+                  Origin
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.origin
+                  })}
+                  id="brandName"
+                  defaultValue={defaultValues.origin}
+                  placeholder="Enter origin"
+                  {...register("origin", { required: true })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="producer">
+                  Producer
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.producer
+                  })}
+                  id="producer"
+                  defaultValue={defaultValues.producer}
+                  placeholder="Enter producer"
+                  {...register("producer", { required: true })}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="manufactured_at">
+                  Manufactured At
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.manufacturedAt
+                  })}
+                  id="manufactured_at"
+                  defaultValue={defaultValues.manufacturedAt}
+                  placeholder="Enter Manufactured Location"
+                  {...register("manufactured_at", { required: true })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="target">
+                  Target
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.target
+                  })}
+                  id="target"
+                  defaultValue={defaultValues.target}
+                  placeholder="Enter target"
+                  {...register("target", { required: true })}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="volumn">
+                  Volumn
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.volumn
+                  })}
+                  id="volumn"
+                  defaultValue={defaultValues.volumn}
+                  placeholder="Enter volumn"
+                  {...register("volumn", { required: true })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="quantity">
+                  Quantity
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.quantity
+                  })}
+                  id="quantity"
+                  defaultValue={defaultValues.quantity}
+                  placeholder="Enter quantity"
+                  {...register("quantity", { required: true })}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="weight">
+                  Weight
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.weight
+                  })}
+                  id="weight"
+                  // defaultValue={defaultValues.weight}
+                  placeholder="Enter weight"
+                  {...register("weight", { required: true })}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
@@ -234,9 +366,6 @@ const ProductEditor = () => {
                   })}
                 />
               </div>
-              <div className="field-wrapper"></div>
-            </div>
-            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="salePrice">
                   Sale Price
@@ -253,6 +382,8 @@ const ProductEditor = () => {
                   })}
                 />
               </div>
+            </div>
+            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="productSchedule">
                   Schedule
@@ -273,126 +404,65 @@ const ProductEditor = () => {
                   )}
                 />
               </div>
-            </div>
-            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
-                <label className="field-label" htmlFor="productType">
-                  Product Type
-                </label>
-                <Controller
-                  name="productType"
-                  control={control}
-                  defaultValue={defaultValues.productType}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Select>
-                      <SelectItem key={"Ahihi"}>Ahihi</SelectItem>
-                      <SelectItem key={"hehee"}>hehee</SelectItem>
-                    </Select>
-                  )}
-                />
-              </div>
-              <div className="field-wrapper">
-                <label className="field-label" htmlFor="stockStatus">
+                <label className="field-label" htmlFor="status">
                   Stock Status
                 </label>
                 <Controller
-                  name="stockStatus"
+                  name="status"
                   control={control}
                   defaultValue={defaultValues.stockStatus}
                   rules={{ required: true }}
                   render={({ field }) => (
                     <Select>
-                      <SelectItem key={"Ahihi"}>Ahihi</SelectItem>
-                      <SelectItem key={"hehee"}>hehee</SelectItem>
+                      <SelectItem key={"ACTIVE"}>ACTIVE</SelectItem>
+                      <SelectItem key={"INACTIVE"}>INACTIVE</SelectItem>
                     </Select>
                   )}
                 />
               </div>
-            </div>
-            <div className="field-wrapper">
-              <label className="field-label" htmlFor="productSKU">
-                SKU
-              </label>
-              <input
-                className={classNames("field-input", {
-                  "field-input--error": errors.productSKU
-                })}
-                id="productSKU"
-                placeholder="SKU"
-                defaultValue={defaultValues.productSKU}
-                {...register("productSKU", { required: true })}
-              />
             </div>
             <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
-                <label className="field-label" htmlFor="stockStatus">
-                  Stock Status
+                <label className="field-label" htmlFor="ship_category_id">
+                  Ship Category
                 </label>
                 <Controller
-                  name="stockStatus"
+                  name="ship_category_id"
                   control={control}
-                  defaultValue={defaultValues.stockStatus}
+                  defaultValue={defaultValues.shipCategory}
                   rules={{ required: true }}
                   render={({ field }) => (
                     <Select>
-                      <SelectItem key={"Ahihi"}>Ahihi</SelectItem>
-                      <SelectItem key={"hehee"}>hehee</SelectItem>
+                      <SelectItem key={"BABY"}>BABY</SelectItem>
+                      <SelectItem key={"MOMY"}>MOMMY</SelectItem>
                     </Select>
                   )}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-[minmax(0,1fr)_,minmax(0,112px)]">
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="qty">
-                    Quantity in Stock
-                  </label>
-                  <input
-                    className={classNames("field-input", {
-                      "field-input--error": errors.qty
-                    })}
-                    id="qty"
-                    placeholder="0"
-                    defaultValue={defaultValues.qty}
-                    {...register("qty", {
-                      required: true,
-                      pattern: /^[0-9]*$/
-                    })}
-                  />
-                </div>
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="unit">
-                    Unit
-                  </label>
-                  <Controller
-                    name="unit"
-                    control={control}
-                    defaultValue={defaultValues.unit}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <Select>
-                        <SelectItem key={"Ahihi"}>Ahihi</SelectItem>
-                        <SelectItem key={"hehee"}>hehee</SelectItem>
-                      </Select>
-                    )}
-                  />
-                </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="number_of_packs">
+                  Number Of Packs
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.number_of_packs
+                  })}
+                  id="number_of_packs"
+                  placeholder="Enter number of packs"
+                  {...register("number_of_packs", {
+                    required: true,
+                    pattern: /^[0-9]*$/
+                  })}
+                />
               </div>
             </div>
-            <div className="grid gap-2 mt-5 sm:grid-cols-2 sm:mt-10 md:mt-11">
-              <button
-                className="btn btn--secondary"
-                onClick={handleSubmit(handleSave)}
-              >
-                Save to Drafts
-              </button>
-              <button
-                className="btn btn--primary"
-                onClick={handleSubmit(handlePublish)}
-              >
-                Publish Product
-              </button>
-            </div>
+            <button
+              className="btn btn--primary w-full"
+              onClick={handleSubmit(handlePublish)}
+            >
+              Publish Product
+            </button>
           </div>
         </form>
       </Spring>

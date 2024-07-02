@@ -20,6 +20,7 @@ import {
   Profile,
   Register
 } from "../pages";
+import BlogDetail from "../pages/BlogDetail";
 
 type RouteType = {
   path: string;
@@ -46,6 +47,10 @@ const publicRoutes: RouteType[] = [
   {
     path: "/:category/:category/:id",
     element: <ProductDetail />
+  },
+  {
+    path: "/blog/blog-detail",
+    element: <BlogDetail />
   },
   {
     path: "/404",

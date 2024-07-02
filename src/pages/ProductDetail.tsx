@@ -16,6 +16,8 @@ import RelatedProductCard from "../components/RelatedProductCard";
 import { getProductByCategory } from "../apis/category";
 import { useCategoryStore } from "../store/category";
 import { ProductType } from "../types/Product";
+import { addWishlist } from "../apis/user";
+import { useAuth } from "../provider/AuthProvider";
 import dayjs from "dayjs";
 // import RelatedProductCard from "../components/RelatedProductCard";
 
@@ -91,6 +93,7 @@ const ProductDetail = () => {
   }, []);
   const addToCart = useCartStore((state) => state.setCart);
   const cart = useCartStore((state) => state.cart);
+  const { token } = useAuth();
   const category = useCategoryStore((state) => state.category);
   const [remainingTime, setRemainingTime] = useState<number>(0);
 
@@ -203,6 +206,20 @@ const ProductDetail = () => {
     }
   };
 
+  const handleAddWishlist = async () => {
+    try {
+      const response = await addWishlist({
+        product_id: product?.id as number,
+        access_token: token.access_token as string
+      });
+      if (response.status === 200) {
+        toast.success("Thêm vào danh sách yêu thích thành công");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <Spring className="mx-auto card flex flex-col lg:col-span-3 xl:col-span-1 w-5/6">
@@ -218,10 +235,12 @@ const ProductDetail = () => {
               </div>
               <p className="mx-7 text-3xl font-thin text-slate-300">|</p>
               <div className="flex items-center">
-                <i
-                  className="fa fa-heart-o text-pink-500 text-3xl hover:cursor-pointer font-bold mr-2"
-                  aria-hidden="true"
-                ></i>
+                <button onClick={handleAddWishlist}>
+                  <i
+                    className="fa fa-heart-o text-pink-500 text-3xl hover:cursor-pointer font-bold mr-2"
+                    aria-hidden="true"
+                  ></i>
+                </button>
                 <p className="mr-1">Đã thích</p>
                 <p className="text-pink-500">(280)</p>
               </div>
