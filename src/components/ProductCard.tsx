@@ -48,7 +48,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <div className="flex items-center mt-1 justify-between w-full">
           <div className="flex items-center">
             <p className="text-base font-semibold tracking-tight">
-              {numberToVND(product.price)}
+              {product.price && numberToVND(product.price)}
             </p>
             {product.sale > 0 && (
               <Chip

@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useContext, useMemo, useState } from "react";
+import http from "../utils/http";
 
 type AuthContextType = {
   token: {
@@ -32,6 +33,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     refresh_token: string | null;
   }>(initialToken);
 
+  http.defaults.headers.common.Authorization = `Bearer ${token.access_token}`;
+
   const addToken = ({
     access_token,
     refresh_token
@@ -40,7 +43,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     refresh_token: string;
   }) => {
     setToken({ access_token, refresh_token });
-    // axios.defaults.headers.common.Authorization = `Bearer ${access_token}`;
+    http.defaults.headers.common.Authorization = `Bearer ${access_token}`;
     localStorage.setItem(
       "token",
       JSON.stringify({ access_token, refresh_token })
@@ -49,7 +52,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const clearToken = () => {
     setToken({ access_token: null, refresh_token: null });
-    // delete axios.defaults.headers.common.Authorization;
+    delete http.defaults.headers.common.Authorization;
     localStorage.removeItem("token");
   };
 

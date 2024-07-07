@@ -133,6 +133,23 @@ export const getMessageByUser = ({
     }
   );
 
+export const addWishlist = ({
+  product_id,
+  access_token
+}: {
+  product_id: number;
+  access_token: string;
+}) =>
+  http.post(
+    "user/add-wishlist",
+    { product_id },
+    {
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
+    }
+  );
+
 type UpdateMeProps = {
   first_name?: string;
   last_name?: string;
@@ -209,4 +226,9 @@ export const getDefaultAddress = (access_token: string) =>
     headers: {
       Authorization: `Bearer ${access_token}`
     }
+  });
+
+export const callAccessToken = (refresh_token: string) =>
+  http.post("user/refresh-token", {
+    refresh_token
   });

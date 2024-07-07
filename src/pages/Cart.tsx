@@ -19,7 +19,7 @@ import {
 import { useCartStore } from "../store/cart";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { AddressType, getDefaultAddress } from "../apis/user";
+import { AddressType, getAllAddress } from "../apis/user";
 import { useAuth } from "../provider/AuthProvider";
 import { getPackageService } from "../apis/ship";
 
@@ -27,6 +27,7 @@ const Cart = () => {
   const cart = useCartStore((state) => state.cart);
   const [address, setAddress] = useState<AddressType | null>(null);
   const [selectedService, setSelectedService] = useState<number>();
+  const [allAddress, setAllAddress] = useState<AddressType[]>([]);
   const [service, setService] = useState<
     { service_id: number; short_name: string }[]
   >([]);
@@ -77,9 +78,15 @@ const Cart = () => {
   useEffect(() => {
     const fetchAddress = async () => {
       try {
-        const response = await getDefaultAddress(token.access_token as string);
+        const response = await getAllAddress(token.access_token as string);
         if (response.status === 200) {
-          setAddress(response.data.result);
+          setAllAddress(response.data.result);
+          const defaultAddress = response.data.result.find(
+            (address) => address.default_address
+          );
+          if (defaultAddress) {
+            setAddress(defaultAddress);
+          }
         }
       } catch (err) {
         console.log(err);

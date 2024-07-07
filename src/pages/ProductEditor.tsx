@@ -1,60 +1,102 @@
-import { DateRangePicker, Select, SelectItem } from "@nextui-org/react";
+import { DatePicker, Select, SelectItem } from "@nextui-org/react";
 import { Controller, useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import classNames from "classnames";
 import { toast } from "react-toastify";
 import Spring from "../components/Spring";
 import PageHeader from "../layout/admin/PageHeader";
-import { useCategoryStore } from "../store/category";
-import { useState } from "react";
+import { Category, useCategoryStore } from "../store/category";
 import SingleFileUploader from "../components/SingleFileUploader";
+import { useEffect, useState } from "react";
+import { addProduct } from "../apis/product";
+
+export interface ProductEditorForm {
+  name: string;
+  quantity: number;
+  rating_number: number;
+  rating_point: number;
+  brand_name: string;
+  producer?: string;
+  manufactured_at?: string;
+  target?: string;
+  volumn?: number;
+  weight?: number;
+  caution?: string;
+  images: string[];
+  origin?: string;
+  preservation?: string;
+  description?: string;
+  instruction?: string;
+  category_id: number;
+  price: number;
+  status: "ACTIVE" | "INACTIVE";
+  sale_price?: number;
+  starting_timestamp: dayjs.Dayjs;
+  ending_timestamp?: dayjs.Dayjs;
+  ship_category_id: "BABY" | "MOMY";
+}
 
 const ProductEditor = () => {
   const categoryOptions = useCategoryStore((state) => state.category);
-  // const [subCategory, setSubCategory] = useState(
-  //   categoryOptions[0].child_category
-  // );
-  const defaultValues = {
-    image1: "",
-    image2: "",
-    image3: "",
-    image4: "",
-    productType: "",
-    dimensions: "10 * 10 * 10",
-    weight: 0.1,
-    description:
-      "Sản phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh",
-    productName: "",
-    brandName: "",
-    category: 1,
-    subCategory: 6,
-    regularPrice: null,
-    salePrice: null,
-    productSchedule: [dayjs().startOf("week"), dayjs().endOf("week")],
-    stockStatus: "In Stock",
-    productSKU: "SKU-123456",
-    qty: 100,
-    unit: "BOX"
-  };
+  const [productImages, setProductImages] = useState<string[]>([]);
+  const [subCategory, setSubCategory] = useState<
+    (Omit<Category, "child_category"> & {
+      parent_category_id: number;
+    })[]
+  >([]);
+
   const {
     register,
     handleSubmit,
     control,
+    setValue,
+    getValues,
     formState: { errors }
-  } = useForm({
-    defaultValues: defaultValues
-  });
+  } = useForm<ProductEditorForm>();
 
-  // do something with the data
-  const handlePublish = (data) => {
-    console.log(data);
-    toast.success("Product published successfully");
+  useEffect(() => {
+    categoryOptions.length > 0 &&
+      setSubCategory(categoryOptions[0].child_category);
+  }, [categoryOptions]);
+
+  const handleGetSubCategory = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const category_id = parseInt(event.target.value);
+    const category = categoryOptions.find(
+      (category) => category.id === category_id
+    );
+    setSubCategory(category?.child_category || []);
+    setValue("category_id", category?.child_category[0].id as number);
   };
 
   // do something with the data
-  const handleSave = (data) => {
-    console.log(data);
-    toast.info("Product saved successfully");
+  const handlePublish = (data: string) => {
+    setProductImages([...productImages, data]);
+  };
+
+  // do something with the data
+  const handleSave = async (data: ProductEditorForm) => {
+    setValue("images", productImages);
+    const starting_timestamp = getValues("starting_timestamp")
+      .toDate()
+      .toISOString();
+    const ending_timestamp = getValues("ending_timestamp")
+      ?.toDate()
+      .toISOString();
+    try {
+      const response = await addProduct({
+        ...data,
+        images: productImages,
+        starting_timestamp,
+        ending_timestamp
+      });
+      if (response.status === 200) {
+        toast.success(response.data.message);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -66,100 +108,132 @@ const ProductEditor = () => {
           <div>
             <div>
               <span className="block field-label mb-2.5">Product Images</span>
-              <div className="grid grid-cols-2 gap-5 md:grid-cols-4 2xl:grid-cols-[repeat(5,minmax(0,1fr))]">
-                <SingleFileUploader
-                  handleGetUrl={handlePublish}
-                  className="media-dropzone 2xl:col-span-2"
-                  placeholder="Upload Image"
-                />
-                <SingleFileUploader
-                  handleGetUrl={handlePublish}
-                  className="media-dropzone 2xl:col-span-2"
-                  placeholder="Upload Image"
-                />
-                <div className="grid grid-cols-2 col-span-2 gap-5 2xl:col-span-1 2xl:grid-cols-1">
+              <div className="grid gap-5 grid-cols-4">
+                <div
+                  className={`min-h-[200px] border-1 border-slate-600 border-dotted flex flex-col items-center ${productImages[0] ? "justify-between" : "justify-center"}`}
+                >
+                  {productImages[0] && (
+                    <div className="max-h-36">
+                      <img
+                        src={productImages[0]}
+                        alt="img1"
+                        className="h-full"
+                      />
+                    </div>
+                  )}
                   <SingleFileUploader
                     handleGetUrl={handlePublish}
-                    className="media-dropzone"
+                    className="max-h-12"
                     placeholder="Upload Image"
                   />
+                </div>
+                <div
+                  className={`max-h-50 border-1 border-slate-600 border-dotted flex flex-col items-center ${productImages[1] ? "justify-between" : "justify-center"}`}
+                >
+                  {productImages[1] && (
+                    <div className="max-h-36">
+                      <img
+                        src={productImages[1]}
+                        alt="img2"
+                        className="h-full"
+                      />
+                    </div>
+                  )}
                   <SingleFileUploader
                     handleGetUrl={handlePublish}
-                    className="media-dropzone"
+                    className="max-h-12"
+                    placeholder="Upload Image"
+                  />
+                </div>
+                <div
+                  className={`max-h-50 border-1 border-slate-600 border-dotted flex flex-col items-center ${productImages[2] ? "justify-between" : "justify-center"}`}
+                >
+                  {productImages[2] && (
+                    <div className="max-h-36">
+                      <img
+                        src={productImages[2]}
+                        alt="img3"
+                        className="h-full"
+                      />
+                    </div>
+                  )}
+                  <SingleFileUploader
+                    handleGetUrl={handlePublish}
+                    className="max-h-12"
+                    placeholder="Upload Image"
+                  />
+                </div>
+                <div
+                  className={`max-h-50 border-1 border-slate-600 border-dotted flex flex-col items-center ${productImages[3] ? "justify-between" : "justify-center"}`}
+                >
+                  {productImages[3] && (
+                    <div className="max-h-36">
+                      <img
+                        src={productImages[3]}
+                        alt="img4"
+                        className="h-full"
+                      />
+                    </div>
+                  )}
+                  <SingleFileUploader
+                    handleGetUrl={handlePublish}
+                    className="max-h-12"
                     placeholder="Upload Image"
                   />
                 </div>
               </div>
             </div>
             <div className="flex flex-col gap-4 mt-5">
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,205px)]">
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="productType">
-                    Attributes
-                  </label>
-                  <Controller
-                    name="productType"
-                    control={control}
-                    defaultValue={defaultValues.productType}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <Select
-                        // isInvalid={errors.productType}
-                        id="productType"
-                        placeholder="Product type"
-                        onChange={(value) => field.onChange(value)}
-                        value={field.value}
-                      >
-                        <SelectItem key={"ahihi"}>AHihi</SelectItem>
-                        <SelectItem key={"hehee"}>hehehe</SelectItem>
-                      </Select>
-                    )}
-                  />
-                </div>
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="dimensions">
-                    L * W * H, inches
-                  </label>
-                  <input
-                    className={classNames("field-input", {
-                      "field-input--error": errors.dimensions
-                    })}
-                    id="dimensions"
-                    defaultValue={defaultValues.dimensions}
-                    placeholder="Product dimensions"
-                    {...register("dimensions", { required: true })}
-                  />
-                </div>
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="weight">
-                    Weight, kg
-                  </label>
-                  <input
-                    className={classNames("field-input", {
-                      "field-input--error": errors.weight
-                    })}
-                    id="weight"
-                    defaultValue={defaultValues.weight}
-                    placeholder="Product weight"
-                    {...register("weight", {
-                      required: true,
-                      pattern: /^[0-9]*$/
-                    })}
-                  />
-                </div>
-              </div>
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="description">
                   Description
                 </label>
                 <textarea
                   className={classNames(
-                    `field-input !h-[160px] !py-[15px] !overflow-y-auto`,
+                    `field-input !h-[90px] !py-[15px] !overflow-y-auto`,
                     { "field-input--error": errors.description }
                   )}
                   id="description"
-                  defaultValue={defaultValues.description}
-                  {...register("description", { required: true })}
+                  {...register("description")}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="instruction">
+                  Instruction
+                </label>
+                <textarea
+                  className={classNames(
+                    `field-input !h-[90px] !py-[15px] !overflow-y-auto`,
+                    { "field-input--error": errors.instruction }
+                  )}
+                  id="description"
+                  {...register("instruction")}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="caution">
+                  Caution
+                </label>
+                <textarea
+                  className={classNames(
+                    `field-input !h-[90px] !py-[15px] !overflow-y-auto`,
+                    { "field-input--error": errors.caution }
+                  )}
+                  id="caution"
+                  {...register("caution")}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="preservation">
+                  Preservation
+                </label>
+                <textarea
+                  className={classNames(
+                    `field-input !h-[90px] !py-[15px] !overflow-y-auto`,
+                    { "field-input--error": errors.preservation }
+                  )}
+                  id="description"
+                  {...register("preservation")}
                 />
               </div>
             </div>
@@ -167,103 +241,208 @@ const ProductEditor = () => {
           <div className="grid grid-cols-1 gap-y-4 gap-x-2">
             <div className="field-wrapper">
               <label className="field-label" htmlFor="productName">
-                Product Name
+                Product Name *
               </label>
               <input
                 className={classNames("field-input", {
-                  "field-input--error": errors.productName
+                  "field-input--error": errors.name
                 })}
                 id="productName"
-                defaultValue={defaultValues.productName}
                 placeholder="Enter product name"
-                {...register("productName", { required: true })}
+                {...register("name", { required: true })}
               />
             </div>
             <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
+                <label className="field-label" htmlFor="category">
+                  Category *
+                </label>
+                <Select
+                  // value={value}
+                  defaultSelectedKeys={"1"}
+                  aria-label="Category"
+                  onChange={(event) => handleGetSubCategory(event)}
+                >
+                  {categoryOptions
+                    .filter((category) => category.name !== "TIN TỨC")
+                    .map((category) => (
+                      <SelectItem key={category.id}>{category.name}</SelectItem>
+                    ))}
+                </Select>
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="subCategory">
+                  Sub Category *
+                </label>
+                <Select
+                  defaultSelectedKeys={""}
+                  {...register("category_id", { required: true })}
+                  aria-label="sub-category"
+                >
+                  {subCategory.map((category) => (
+                    <SelectItem key={category.id}>{category.name}</SelectItem>
+                  ))}
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
+              <div className="field-wrapper">
                 <label className="field-label" htmlFor="brandName">
-                  Brand Name
+                  Brand Name *
                 </label>
                 <input
                   className={classNames("field-input", {
-                    "field-input--error": errors.brandName
+                    "field-input--error": errors.brand_name
                   })}
                   id="brandName"
-                  defaultValue={defaultValues.brandName}
                   placeholder="Enter brand name"
-                  {...register("brandName", { required: true })}
+                  {...register("brand_name", { required: true })}
                 />
               </div>
               <div className="field-wrapper">
-                <label className="field-label" htmlFor="category">
-                  Category
+                <label className="field-label" htmlFor="origin">
+                  Origin
                 </label>
-                <Controller
-                  name="category"
-                  control={control}
-                  defaultValue={defaultValues.category}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Select value={field.value} defaultSelectedKeys={"all"}>
-                      {categoryOptions
-                        .filter((category) => category.name !== "TIN TỨC")
-                        .map((category) => (
-                          <SelectItem key={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                    </Select>
-                  )}
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.origin
+                  })}
+                  id="brandName"
+                  placeholder="Enter origin"
+                  {...register("origin")}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="producer">
+                  Producer
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.producer
+                  })}
+                  id="producer"
+                  placeholder="Enter producer"
+                  {...register("producer")}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="manufactured_at">
+                  Manufactured At
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.manufactured_at
+                  })}
+                  id="manufactured_at"
+                  placeholder="Enter Manufactured Location"
+                  {...register("manufactured_at")}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="target">
+                  Target
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.target
+                  })}
+                  id="target"
+                  placeholder="Enter target"
+                  {...register("target")}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="volumn">
+                  Volumn
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.volumn
+                  })}
+                  id="volumn"
+                  placeholder="Enter volumn"
+                  {...register("volumn")}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="quantity">
+                  Quantity *
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.quantity
+                  })}
+                  id="quantity"
+                  placeholder="Enter quantity"
+                  {...register("quantity", { required: true })}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="weight">
+                  Weight
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.weight
+                  })}
+                  id="weight"
+                  // defaultValue={defaultValues.weight}
+                  placeholder="Enter weight"
+                  {...register("weight")}
                 />
               </div>
             </div>
             <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="regularPrice">
-                  Regular Price
+                  Regular Price *
                 </label>
                 <input
                   className={classNames("field-input", {
-                    "field-input--error": errors.regularPrice
+                    "field-input--error": errors.price
                   })}
                   id="regularPrice"
                   placeholder="$99.99"
-                  {...register("regularPrice", {
+                  {...register("price", {
                     required: true,
                     pattern: /^[0-9]*$/
                   })}
                 />
               </div>
-              <div className="field-wrapper"></div>
-            </div>
-            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="salePrice">
                   Sale Price
                 </label>
                 <input
                   className={classNames("field-input", {
-                    "field-input--error": errors.salePrice
+                    "field-input--error": errors.sale_price
                   })}
                   id="salePrice"
                   placeholder="$99.99"
-                  {...register("salePrice", {
-                    required: true,
+                  {...register("sale_price", {
                     pattern: /^[0-9]*$/
                   })}
                 />
               </div>
+            </div>
+            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="productSchedule">
-                  Schedule
+                  Starting Timestamp *
                 </label>
                 <Controller
-                  name="productSchedule"
+                  name="starting_timestamp"
                   control={control}
-                  defaultValue={defaultValues.productSchedule}
                   render={({ field }) => (
-                    <DateRangePicker
-                      id="productSchedule"
+                    <DatePicker
+                      id="starting_timestamp"
+                      aria-label="Starting Timestamp"
                       // innerRef={field.ref}
                       // value={field.value}
                       onChange={(value) => field.onChange(value)}
@@ -273,126 +452,61 @@ const ProductEditor = () => {
                   )}
                 />
               </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="productSchedule">
+                  Ending Timestamp
+                </label>
+                <Controller
+                  name="ending_timestamp"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      id="ending_timestamp"
+                      aria-label="Ending Timestamp"
+                      // innerRef={field.ref}
+                      // value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      className=""
+                      size="md"
+                    />
+                  )}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
-                <label className="field-label" htmlFor="productType">
-                  Product Type
+                <label className="field-label" htmlFor="status">
+                  Status *
                 </label>
-                <Controller
-                  name="productType"
-                  control={control}
-                  defaultValue={defaultValues.productType}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Select>
-                      <SelectItem key={"Ahihi"}>Ahihi</SelectItem>
-                      <SelectItem key={"hehee"}>hehee</SelectItem>
-                    </Select>
-                  )}
-                />
+                <Select
+                  defaultSelectedKeys={["ACTIVE"]}
+                  {...register("status", { required: true })}
+                  aria-label="status"
+                >
+                  <SelectItem key={"ACTIVE"}>ACTIVE</SelectItem>
+                  <SelectItem key={"INACTIVE"}>INACTIVE</SelectItem>
+                </Select>
               </div>
               <div className="field-wrapper">
-                <label className="field-label" htmlFor="stockStatus">
-                  Stock Status
+                <label className="field-label" htmlFor="ship_category_id">
+                  Ship Category *
                 </label>
-                <Controller
-                  name="stockStatus"
-                  control={control}
-                  defaultValue={defaultValues.stockStatus}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Select>
-                      <SelectItem key={"Ahihi"}>Ahihi</SelectItem>
-                      <SelectItem key={"hehee"}>hehee</SelectItem>
-                    </Select>
-                  )}
-                />
+                <Select
+                  aria-label="ship category id"
+                  {...register("ship_category_id", { required: true })}
+                  defaultSelectedKeys={["BABY"]}
+                >
+                  <SelectItem key={"BABY"}>BABY</SelectItem>
+                  <SelectItem key={"MOMY"}>MOMMY</SelectItem>
+                </Select>
               </div>
             </div>
-            <div className="field-wrapper">
-              <label className="field-label" htmlFor="productSKU">
-                SKU
-              </label>
-              <input
-                className={classNames("field-input", {
-                  "field-input--error": errors.productSKU
-                })}
-                id="productSKU"
-                placeholder="SKU"
-                defaultValue={defaultValues.productSKU}
-                {...register("productSKU", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
-              <div className="field-wrapper">
-                <label className="field-label" htmlFor="stockStatus">
-                  Stock Status
-                </label>
-                <Controller
-                  name="stockStatus"
-                  control={control}
-                  defaultValue={defaultValues.stockStatus}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Select>
-                      <SelectItem key={"Ahihi"}>Ahihi</SelectItem>
-                      <SelectItem key={"hehee"}>hehee</SelectItem>
-                    </Select>
-                  )}
-                />
-              </div>
-              <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-[minmax(0,1fr)_,minmax(0,112px)]">
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="qty">
-                    Quantity in Stock
-                  </label>
-                  <input
-                    className={classNames("field-input", {
-                      "field-input--error": errors.qty
-                    })}
-                    id="qty"
-                    placeholder="0"
-                    defaultValue={defaultValues.qty}
-                    {...register("qty", {
-                      required: true,
-                      pattern: /^[0-9]*$/
-                    })}
-                  />
-                </div>
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="unit">
-                    Unit
-                  </label>
-                  <Controller
-                    name="unit"
-                    control={control}
-                    defaultValue={defaultValues.unit}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <Select>
-                        <SelectItem key={"Ahihi"}>Ahihi</SelectItem>
-                        <SelectItem key={"hehee"}>hehee</SelectItem>
-                      </Select>
-                    )}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="grid gap-2 mt-5 sm:grid-cols-2 sm:mt-10 md:mt-11">
-              <button
-                className="btn btn--secondary"
-                onClick={handleSubmit(handleSave)}
-              >
-                Save to Drafts
-              </button>
-              <button
-                className="btn btn--primary"
-                onClick={handleSubmit(handlePublish)}
-              >
-                Publish Product
-              </button>
-            </div>
+            <button
+              className="btn btn--primary w-full"
+              onClick={handleSubmit(handleSave)}
+            >
+              Publish Product
+            </button>
           </div>
         </form>
       </Spring>
