@@ -275,7 +275,7 @@ const ProductDetail = () => {
               <Card className="mt-7 bg-pink-600 w-2/3 ">
                 <CardBody className="text-white font-normal text-sm">
                   Kết thúc sau:{" "}
-                  {`${remainingTime > 60 * 60 * 24 && Math.floor(remainingTime / (60 * 60 * 24))} ngày ${dayjs.unix(remainingTime).format("HH:mm:ss")}`}
+                  {`${remainingTime > 60 * 60 * 24 ? Math.floor(remainingTime / (60 * 60 * 24)) + "ngày" : ""}  ${dayjs.unix(remainingTime).format("HH:mm:ss")}`}
                 </CardBody>
               </Card>
             )}

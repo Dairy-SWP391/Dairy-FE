@@ -45,6 +45,10 @@ const publicRoutes: RouteType[] = [
     element: <Category />
   },
   {
+    path: "/all-products",
+    element: <Category />
+  },
+  {
     path: "/:category/:category/:id",
     element: <ProductDetail />
   },
