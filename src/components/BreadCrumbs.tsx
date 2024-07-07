@@ -30,6 +30,10 @@ const BreadCrumbs = ({ pathname, classNames }: BreadCrumbsProps) => {
       {
         name: "CONFIRM ORDER",
         path: "confirm-order"
+      },
+      {
+        name: "ALL PRODUCTS",
+        path: "all-products"
       }
     ]
   );
