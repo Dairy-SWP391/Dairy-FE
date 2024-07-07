@@ -227,3 +227,8 @@ export const getDefaultAddress = (access_token: string) =>
       Authorization: `Bearer ${access_token}`
     }
   });
+
+export const callAccessToken = (refresh_token: string) =>
+  http.post("user/refresh-token", {
+    refresh_token
+  });

@@ -1,81 +1,102 @@
-import { DateRangePicker, Select, SelectItem } from "@nextui-org/react";
+import { DatePicker, Select, SelectItem } from "@nextui-org/react";
 import { Controller, useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import classNames from "classnames";
 import { toast } from "react-toastify";
 import Spring from "../components/Spring";
 import PageHeader from "../layout/admin/PageHeader";
-import { useCategoryStore } from "../store/category";
+import { Category, useCategoryStore } from "../store/category";
 import SingleFileUploader from "../components/SingleFileUploader";
+import { useEffect, useState } from "react";
+import { addProduct } from "../apis/product";
 
-interface ProductEditorForm {
-  images: string[];
-  product_name: string;
+export interface ProductEditorForm {
+  name: string;
   quantity: number;
+  rating_number: number;
+  rating_point: number;
   brand_name: string;
-  origin?: string;
   producer?: string;
   manufactured_at?: string;
-  targer?: string;
+  target?: string;
   volumn?: number;
   weight?: number;
-  sold?: number;
   caution?: string;
-  instruction?: string;
+  images: string[];
+  origin?: string;
   preservation?: string;
   description?: string;
-  status: "ACTIVE" | "INACTIVE";
+  instruction?: string;
   category_id: number;
+  price: number;
+  status: "ACTIVE" | "INACTIVE";
+  sale_price?: number;
+  starting_timestamp: dayjs.Dayjs;
+  ending_timestamp?: dayjs.Dayjs;
   ship_category_id: "BABY" | "MOMY";
-  number_of_packs?: number;
 }
 
 const ProductEditor = () => {
   const categoryOptions = useCategoryStore((state) => state.category);
-  // const [subCategory, setSubCategory] = useState(
-  //   categoryOptions[0].child_category
-  // );
-  const defaultValues = {
-    image1: "",
-    image2: "",
-    image3: "",
-    image4: "",
-    productType: "",
-    dimensions: "10 * 10 * 10",
-    weight: 0.1,
-    description:
-      "Sản phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh",
-    productName: "",
-    brandName: "",
-    category: 1,
-    subCategory: 6,
-    regularPrice: null,
-    salePrice: null,
-    productSchedule: [dayjs().startOf("week"), dayjs().endOf("week")],
-    stockStatus: "In Stock",
-    productSKU: "SKU-123456",
-    qty: 100,
-    unit: "BOX"
-  };
+  const [productImages, setProductImages] = useState<string[]>([]);
+  const [subCategory, setSubCategory] = useState<
+    (Omit<Category, "child_category"> & {
+      parent_category_id: number;
+    })[]
+  >([]);
+
   const {
     register,
     handleSubmit,
     control,
+    setValue,
+    getValues,
     formState: { errors }
-  } = useForm<ProductEditorForm>({
-    defaultValues: defaultValues
-  });
+  } = useForm<ProductEditorForm>();
 
-  // do something with the data
-  const handlePublish = (data) => {
-    console.log(data);
-    toast.success("Product published successfully");
+  useEffect(() => {
+    categoryOptions.length > 0 &&
+      setSubCategory(categoryOptions[0].child_category);
+  }, [categoryOptions]);
+
+  const handleGetSubCategory = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const category_id = parseInt(event.target.value);
+    const category = categoryOptions.find(
+      (category) => category.id === category_id
+    );
+    setSubCategory(category?.child_category || []);
+    setValue("category_id", category?.child_category[0].id as number);
   };
 
   // do something with the data
-  const handleSave = (data) => {
-    console.log(data);
-    toast.info("Product saved successfully");
+  const handlePublish = (data: string) => {
+    setProductImages([...productImages, data]);
+  };
+
+  // do something with the data
+  const handleSave = async (data: ProductEditorForm) => {
+    setValue("images", productImages);
+    const starting_timestamp = getValues("starting_timestamp")
+      .toDate()
+      .toISOString();
+    const ending_timestamp = getValues("ending_timestamp")
+      ?.toDate()
+      .toISOString();
+    try {
+      const response = await addProduct({
+        ...data,
+        images: productImages,
+        starting_timestamp,
+        ending_timestamp
+      });
+      if (response.status === 200) {
+        toast.success(response.data.message);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -88,26 +109,78 @@ const ProductEditor = () => {
             <div>
               <span className="block field-label mb-2.5">Product Images</span>
               <div className="grid gap-5 grid-cols-4">
-                <SingleFileUploader
-                  handleGetUrl={handlePublish}
-                  className="media-dropzone"
-                  placeholder="Upload Image"
-                />
-                <SingleFileUploader
-                  handleGetUrl={handlePublish}
-                  className="media-dropzone"
-                  placeholder="Upload Image"
-                />
-                <SingleFileUploader
-                  handleGetUrl={handlePublish}
-                  className="media-dropzone "
-                  placeholder="Upload Image"
-                />
-                <SingleFileUploader
-                  handleGetUrl={handlePublish}
-                  className="media-dropzone"
-                  placeholder="Upload Image"
-                />
+                <div
+                  className={`min-h-[200px] border-1 border-slate-600 border-dotted flex flex-col items-center ${productImages[0] ? "justify-between" : "justify-center"}`}
+                >
+                  {productImages[0] && (
+                    <div className="max-h-36">
+                      <img
+                        src={productImages[0]}
+                        alt="img1"
+                        className="h-full"
+                      />
+                    </div>
+                  )}
+                  <SingleFileUploader
+                    handleGetUrl={handlePublish}
+                    className="max-h-12"
+                    placeholder="Upload Image"
+                  />
+                </div>
+                <div
+                  className={`max-h-50 border-1 border-slate-600 border-dotted flex flex-col items-center ${productImages[1] ? "justify-between" : "justify-center"}`}
+                >
+                  {productImages[1] && (
+                    <div className="max-h-36">
+                      <img
+                        src={productImages[1]}
+                        alt="img2"
+                        className="h-full"
+                      />
+                    </div>
+                  )}
+                  <SingleFileUploader
+                    handleGetUrl={handlePublish}
+                    className="max-h-12"
+                    placeholder="Upload Image"
+                  />
+                </div>
+                <div
+                  className={`max-h-50 border-1 border-slate-600 border-dotted flex flex-col items-center ${productImages[2] ? "justify-between" : "justify-center"}`}
+                >
+                  {productImages[2] && (
+                    <div className="max-h-36">
+                      <img
+                        src={productImages[2]}
+                        alt="img3"
+                        className="h-full"
+                      />
+                    </div>
+                  )}
+                  <SingleFileUploader
+                    handleGetUrl={handlePublish}
+                    className="max-h-12"
+                    placeholder="Upload Image"
+                  />
+                </div>
+                <div
+                  className={`max-h-50 border-1 border-slate-600 border-dotted flex flex-col items-center ${productImages[3] ? "justify-between" : "justify-center"}`}
+                >
+                  {productImages[3] && (
+                    <div className="max-h-36">
+                      <img
+                        src={productImages[3]}
+                        alt="img4"
+                        className="h-full"
+                      />
+                    </div>
+                  )}
+                  <SingleFileUploader
+                    handleGetUrl={handlePublish}
+                    className="max-h-12"
+                    placeholder="Upload Image"
+                  />
+                </div>
               </div>
             </div>
             <div className="flex flex-col gap-4 mt-5">
@@ -121,8 +194,7 @@ const ProductEditor = () => {
                     { "field-input--error": errors.description }
                   )}
                   id="description"
-                  defaultValue={defaultValues.description}
-                  {...register("description", { required: true })}
+                  {...register("description")}
                 />
               </div>
               <div className="field-wrapper">
@@ -135,8 +207,7 @@ const ProductEditor = () => {
                     { "field-input--error": errors.instruction }
                   )}
                   id="description"
-                  // defaultValue={defaultValues.instruction}
-                  {...register("instruction", { required: true })}
+                  {...register("instruction")}
                 />
               </div>
               <div className="field-wrapper">
@@ -149,8 +220,7 @@ const ProductEditor = () => {
                     { "field-input--error": errors.caution }
                   )}
                   id="caution"
-                  // defaultValue={defaultValues.caution}
-                  {...register("caution", { required: true })}
+                  {...register("caution")}
                 />
               </div>
               <div className="field-wrapper">
@@ -163,8 +233,7 @@ const ProductEditor = () => {
                     { "field-input--error": errors.preservation }
                   )}
                   id="description"
-                  // defaultValue={defaultValues.preservation}
-                  {...register("preservation", { required: true })}
+                  {...register("preservation")}
                 />
               </div>
             </div>
@@ -172,74 +241,60 @@ const ProductEditor = () => {
           <div className="grid grid-cols-1 gap-y-4 gap-x-2">
             <div className="field-wrapper">
               <label className="field-label" htmlFor="productName">
-                Product Name
+                Product Name *
               </label>
               <input
                 className={classNames("field-input", {
-                  "field-input--error": errors.product_name
+                  "field-input--error": errors.name
                 })}
                 id="productName"
-                defaultValue={defaultValues.productName}
                 placeholder="Enter product name"
-                {...register("product_name", { required: true })}
+                {...register("name", { required: true })}
               />
             </div>
             <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="category">
-                  Category
+                  Category *
                 </label>
-                <Controller
-                  name="category"
-                  control={control}
-                  defaultValue={defaultValues.category}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Select value={field.value} defaultSelectedKeys={"all"}>
-                      {categoryOptions
-                        .filter((category) => category.name !== "TIN TỨC")
-                        .map((category) => (
-                          <SelectItem key={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                    </Select>
-                  )}
-                />
+                <Select
+                  // value={value}
+                  defaultSelectedKeys={"1"}
+                  aria-label="Category"
+                  onChange={(event) => handleGetSubCategory(event)}
+                >
+                  {categoryOptions
+                    .filter((category) => category.name !== "TIN TỨC")
+                    .map((category) => (
+                      <SelectItem key={category.id}>{category.name}</SelectItem>
+                    ))}
+                </Select>
               </div>
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="subCategory">
-                  Sub Category
+                  Sub Category *
                 </label>
-                <Controller
-                  name="subCategory"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Select value={field.value} defaultSelectedKeys={"all"}>
-                      {categoryOptions
-                        .filter((category) => category.name !== "TIN TỨC")
-                        .map((category) => (
-                          <SelectItem key={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                    </Select>
-                  )}
-                />
+                <Select
+                  defaultSelectedKeys={""}
+                  {...register("category_id", { required: true })}
+                  aria-label="sub-category"
+                >
+                  {subCategory.map((category) => (
+                    <SelectItem key={category.id}>{category.name}</SelectItem>
+                  ))}
+                </Select>
               </div>
             </div>
             <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="brandName">
-                  Brand Name
+                  Brand Name *
                 </label>
                 <input
                   className={classNames("field-input", {
                     "field-input--error": errors.brand_name
                   })}
                   id="brandName"
-                  defaultValue={defaultValues.brandName}
                   placeholder="Enter brand name"
                   {...register("brand_name", { required: true })}
                 />
@@ -253,9 +308,8 @@ const ProductEditor = () => {
                     "field-input--error": errors.origin
                   })}
                   id="brandName"
-                  defaultValue={defaultValues.origin}
                   placeholder="Enter origin"
-                  {...register("origin", { required: true })}
+                  {...register("origin")}
                 />
               </div>
             </div>
@@ -269,9 +323,8 @@ const ProductEditor = () => {
                     "field-input--error": errors.producer
                   })}
                   id="producer"
-                  defaultValue={defaultValues.producer}
                   placeholder="Enter producer"
-                  {...register("producer", { required: true })}
+                  {...register("producer")}
                 />
               </div>
               <div className="field-wrapper">
@@ -280,12 +333,11 @@ const ProductEditor = () => {
                 </label>
                 <input
                   className={classNames("field-input", {
-                    "field-input--error": errors.manufacturedAt
+                    "field-input--error": errors.manufactured_at
                   })}
                   id="manufactured_at"
-                  defaultValue={defaultValues.manufacturedAt}
                   placeholder="Enter Manufactured Location"
-                  {...register("manufactured_at", { required: true })}
+                  {...register("manufactured_at")}
                 />
               </div>
             </div>
@@ -299,9 +351,8 @@ const ProductEditor = () => {
                     "field-input--error": errors.target
                   })}
                   id="target"
-                  defaultValue={defaultValues.target}
                   placeholder="Enter target"
-                  {...register("target", { required: true })}
+                  {...register("target")}
                 />
               </div>
               <div className="field-wrapper">
@@ -313,23 +364,21 @@ const ProductEditor = () => {
                     "field-input--error": errors.volumn
                   })}
                   id="volumn"
-                  defaultValue={defaultValues.volumn}
                   placeholder="Enter volumn"
-                  {...register("volumn", { required: true })}
+                  {...register("volumn")}
                 />
               </div>
             </div>
             <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="quantity">
-                  Quantity
+                  Quantity *
                 </label>
                 <input
                   className={classNames("field-input", {
                     "field-input--error": errors.quantity
                   })}
                   id="quantity"
-                  defaultValue={defaultValues.quantity}
                   placeholder="Enter quantity"
                   {...register("quantity", { required: true })}
                 />
@@ -345,22 +394,22 @@ const ProductEditor = () => {
                   id="weight"
                   // defaultValue={defaultValues.weight}
                   placeholder="Enter weight"
-                  {...register("weight", { required: true })}
+                  {...register("weight")}
                 />
               </div>
             </div>
             <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="regularPrice">
-                  Regular Price
+                  Regular Price *
                 </label>
                 <input
                   className={classNames("field-input", {
-                    "field-input--error": errors.regularPrice
+                    "field-input--error": errors.price
                   })}
                   id="regularPrice"
                   placeholder="$99.99"
-                  {...register("regularPrice", {
+                  {...register("price", {
                     required: true,
                     pattern: /^[0-9]*$/
                   })}
@@ -372,12 +421,11 @@ const ProductEditor = () => {
                 </label>
                 <input
                   className={classNames("field-input", {
-                    "field-input--error": errors.salePrice
+                    "field-input--error": errors.sale_price
                   })}
                   id="salePrice"
                   placeholder="$99.99"
-                  {...register("salePrice", {
-                    required: true,
+                  {...register("sale_price", {
                     pattern: /^[0-9]*$/
                   })}
                 />
@@ -386,15 +434,15 @@ const ProductEditor = () => {
             <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="productSchedule">
-                  Schedule
+                  Starting Timestamp *
                 </label>
                 <Controller
-                  name="productSchedule"
+                  name="starting_timestamp"
                   control={control}
-                  defaultValue={defaultValues.productSchedule}
                   render={({ field }) => (
-                    <DateRangePicker
-                      id="productSchedule"
+                    <DatePicker
+                      id="starting_timestamp"
+                      aria-label="Starting Timestamp"
                       // innerRef={field.ref}
                       // value={field.value}
                       onChange={(value) => field.onChange(value)}
@@ -405,61 +453,57 @@ const ProductEditor = () => {
                 />
               </div>
               <div className="field-wrapper">
-                <label className="field-label" htmlFor="status">
-                  Stock Status
+                <label className="field-label" htmlFor="productSchedule">
+                  Ending Timestamp
                 </label>
                 <Controller
-                  name="status"
+                  name="ending_timestamp"
                   control={control}
-                  defaultValue={defaultValues.stockStatus}
-                  rules={{ required: true }}
                   render={({ field }) => (
-                    <Select>
-                      <SelectItem key={"ACTIVE"}>ACTIVE</SelectItem>
-                      <SelectItem key={"INACTIVE"}>INACTIVE</SelectItem>
-                    </Select>
+                    <DatePicker
+                      id="ending_timestamp"
+                      aria-label="Ending Timestamp"
+                      // innerRef={field.ref}
+                      // value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      className=""
+                      size="md"
+                    />
                   )}
                 />
               </div>
             </div>
             <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
               <div className="field-wrapper">
-                <label className="field-label" htmlFor="ship_category_id">
-                  Ship Category
+                <label className="field-label" htmlFor="status">
+                  Status *
                 </label>
-                <Controller
-                  name="ship_category_id"
-                  control={control}
-                  defaultValue={defaultValues.shipCategory}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Select>
-                      <SelectItem key={"BABY"}>BABY</SelectItem>
-                      <SelectItem key={"MOMY"}>MOMMY</SelectItem>
-                    </Select>
-                  )}
-                />
+                <Select
+                  defaultSelectedKeys={["ACTIVE"]}
+                  {...register("status", { required: true })}
+                  aria-label="status"
+                >
+                  <SelectItem key={"ACTIVE"}>ACTIVE</SelectItem>
+                  <SelectItem key={"INACTIVE"}>INACTIVE</SelectItem>
+                </Select>
               </div>
               <div className="field-wrapper">
-                <label className="field-label" htmlFor="number_of_packs">
-                  Number Of Packs
+                <label className="field-label" htmlFor="ship_category_id">
+                  Ship Category *
                 </label>
-                <input
-                  className={classNames("field-input", {
-                    "field-input--error": errors.number_of_packs
-                  })}
-                  id="number_of_packs"
-                  placeholder="Enter number of packs"
-                  {...register("number_of_packs", {
-                    required: true,
-                    pattern: /^[0-9]*$/
-                  })}
-                />
+                <Select
+                  aria-label="ship category id"
+                  {...register("ship_category_id", { required: true })}
+                  defaultSelectedKeys={["BABY"]}
+                >
+                  <SelectItem key={"BABY"}>BABY</SelectItem>
+                  <SelectItem key={"MOMY"}>MOMMY</SelectItem>
+                </Select>
               </div>
             </div>
             <button
               className="btn btn--primary w-full"
-              onClick={handleSubmit(handlePublish)}
+              onClick={handleSubmit(handleSave)}
             >
               Publish Product
             </button>

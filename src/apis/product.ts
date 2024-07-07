@@ -1,3 +1,4 @@
+import { ProductEditorForm } from "../pages/ProductEditor";
 import { ImageType } from "../types/image";
 import http from "../utils/http";
 
@@ -34,3 +35,14 @@ type ProductResponse = {
 
 export const getProductDetail = (id: string) =>
   http.get<ProductResponse>(`product/${id}`);
+
+type AddProductParam = Omit<
+  ProductEditorForm,
+  "starting_timestamp" | "ending_timestamp"
+> & {
+  starting_timestamp: string;
+  ending_timestamp?: string;
+};
+
+export const addProduct = (product: AddProductParam) =>
+  http.post("product/add-product", product);
