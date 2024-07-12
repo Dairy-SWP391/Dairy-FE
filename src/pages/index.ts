@@ -16,3 +16,8 @@ export { default as Chat } from "./Chat";
 export { default as ChatDetail } from "./ChatDetail";
 export { default as BlogEditor } from "./BlogEditor";
 export { default as ConfirmOrder } from "./ConfirmOrder";
+export { default as PaymentSuccess } from "./PaymentSuccess";
+export { default as Wishlist } from "./Wishlist";
+export { default as Order } from "./Order";
+export { default as OrderList } from "./OrderList";
+export { default as OrderDetail } from "./OrderDetail";

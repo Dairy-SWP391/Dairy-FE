@@ -207,6 +207,8 @@ const ProductDetail = () => {
   };
 
   const handleAddWishlist = async () => {
+    if (!token)
+      return toast.error("Vui lòng đăng nhập để thêm vào danh sách yêu thích");
     try {
       const response = await addWishlist({
         product_id: product?.id as number,

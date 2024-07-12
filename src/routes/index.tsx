@@ -12,13 +12,18 @@ import {
   ConfirmOrder,
   Home,
   Login,
+  Order,
+  OrderDetail,
+  OrderList,
   PageNotFound,
+  PaymentSuccess,
   ProductDetail,
   ProductEditor,
   ProductManagement,
   ProductsGrid,
   Profile,
-  Register
+  Register,
+  Wishlist
 } from "../pages";
 import BlogDetail from "../pages/BlogDetail";
 
@@ -74,6 +79,18 @@ const authenticatedRoutes: RouteType[] = [
   {
     path: "/confirm-order",
     element: <ConfirmOrder />
+  },
+  {
+    path: "/order-success",
+    element: <PaymentSuccess />
+  },
+  {
+    path: "/me/wishlist",
+    element: <Wishlist />
+  },
+  {
+    path: "/me/orders",
+    element: <Order />
   }
 ];
 
@@ -106,6 +123,14 @@ const adminRoutes: RouteType[] = [
   {
     path: "/admin/accounts",
     element: <Account />
+  },
+  {
+    path: "/admin/orders",
+    element: <OrderList />
+  },
+  {
+    path: "/admin/orders/:order_id",
+    element: <OrderDetail />
   }
 ];
 

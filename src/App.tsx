@@ -15,17 +15,18 @@ import { SidebarProvider } from "./context/sidebarContext";
 import Sidebar from "./layout/admin/Sidebar";
 import AuthProvider, { useAuth } from "./provider/AuthProvider";
 import Routes from "./routes";
-import { useLocation } from "react-router-dom";
-import { getMe, renewToken } from "./apis/user";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getMe } from "./apis/user";
 import { isAxiosError } from "./utils/utils";
 import socket from "./utils/socket";
 
 function App() {
   // const { width } = useWindowSize();
   const path = useLocation().pathname;
+  const nav = useNavigate();
   const layout = useLayout();
   const updateCategory = useCategoryStore((state) => state.setCategory);
-  const { token, addToken } = useAuth();
+  const { token, clearToken } = useAuth();
   const [user, setUser] = useState(
     localStorage.getItem("user")
       ? JSON.parse(localStorage.getItem("user") as string)
@@ -52,12 +53,23 @@ function App() {
     };
   }, [user]);
 
+  const logOut = () => {
+    if (user) {
+      localStorage.removeItem("user");
+      clearToken();
+      nav("/");
+    } else {
+      window.location.href = "/login";
+    }
+  };
+
   useEffect(() => {
-    (async () => {
+    const fetchApi = async () => {
       if (token.access_token) {
         try {
-          const user_info = (await getMe(token.access_token)).data.result;
-          localStorage.setItem("user", JSON.stringify(user_info));
+          const user_info = await getMe();
+          console.log(user_info);
+          localStorage.setItem("user", JSON.stringify(user_info.data.result));
           setUser(user_info);
         } catch (error) {
           if (
@@ -65,25 +77,14 @@ function App() {
               message: string;
             }>(error)
           ) {
-            if (
-              error.response?.status === 401 &&
-              error.response?.data.message === "jwt expired"
-            ) {
-              try {
-                console.log(token.refresh_token);
-                const res = await renewToken({
-                  refresh_token: token.refresh_token as string
-                });
-                addToken(res.data.result);
-              } catch (error) {
-                console.log(error);
-              }
-            }
+            console.log(error);
           }
         }
       }
-    })();
-  }, [token]);
+    };
+
+    fetchApi();
+  }, [token.access_token]);
 
   return (
     <NextUIProvider>
@@ -91,7 +92,7 @@ function App() {
         <SidebarProvider>
           <ToastContainer autoClose={2000} style={{ padding: "20px" }} />
 
-          {layout.includes("navbar") && <NavBar user={user} />}
+          {layout.includes("navbar") && <NavBar user={user} logout={logOut} />}
           {layout.includes("breadcrumb") && (
             <BreadCrumbs
               pathname={path}

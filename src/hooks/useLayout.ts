@@ -13,6 +13,8 @@ const useLayout = () => {
       setLayout(["navbar", "footer", "chat"]);
       path !== "/" &&
         !path.startsWith("/me") &&
+        !path.startsWith("/order-success") &&
+        !path.startsWith("/blog") &&
         setLayout((prev) => [...prev, "breadcrumb"]);
     }
   }, [path]);

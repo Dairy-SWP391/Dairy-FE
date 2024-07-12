@@ -12,48 +12,44 @@ import {
 // hooks
 import useWindowSize from "../hooks/useWindowSize";
 import { numFormatter } from "../utils/converter";
-
-const data = [
-  { name: "Jan", revenue: 4000, expense: 2400 },
-  { name: "Feb", revenue: 3000, expense: 1398 },
-  { name: "Mar", revenue: 2000, expense: 9800 },
-  { name: "Apr", revenue: 3450, expense: 3908 },
-  { name: "May", revenue: 8000, expense: 4800 },
-  { name: "Jun", revenue: 2390, expense: 6800 },
-  { name: "Jul", revenue: 1900, expense: 4300 },
-  { name: "Aug", revenue: 8900, expense: 4500 },
-  { name: "Sep", revenue: 5600, expense: 10000 },
-  { name: "Oct", revenue: 6450, expense: 1200 },
-  { name: "Nov", revenue: 7840, expense: 3000 },
-  { name: "Dec", revenue: 3490, expense: 4300 }
-];
-
-// const CustomTooltip = ({ active, payload, label }) => {
-//   if (active && payload && payload.length) {
-//     return (
-//       <div className="chart-tooltip p-4">
-//         <h6 className="mb-1">{label}</h6>
-//         <div className="flex flex-col">
-//           {payload.map((item, index) => (
-//             <div className="flex gap-1.5" key={index}>
-//               <span className="label-text capitalize">{item.name}:</span>
-//               <span className="h6 !text-sm">
-//                 {numFormatter(item.value, 1, "$")}
-//               </span>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return null;
-// };
+import { useEffect, useState } from "react";
+import { getExpensePerMonth } from "../apis/order";
 
 const SalesStats = () => {
   const { width } = useWindowSize();
+  const [data, setData] = useState([
+    { name: "Jan", expense: 0, month: 1 },
+    { name: "Feb", expense: 0, month: 2 },
+    { name: "Mar", expense: 0, month: 3 },
+    { name: "Apr", expense: 0, month: 4 },
+    { name: "May", expense: 0, month: 5 },
+    { name: "Jun", expense: 0, month: 6 },
+    { name: "Jul", expense: 0, month: 7 },
+    { name: "Aug", expense: 0, month: 8 },
+    { name: "Sep", expense: 0, month: 9 },
+    { name: "Oct", expense: 0, month: 10 },
+    { name: "Nov", expense: 0, month: 11 },
+    { name: "Dec", expense: 0, month: 12 }
+  ]);
   const revenueColor = "var(--header)";
   const expenseColor = "var(--input-border)";
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        const response = await getExpensePerMonth();
+        const { result } = response.data;
+        const newData = data.map((item) => ({
+          ...item,
+          expense: result[item.month]
+        }));
+        setData(newData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchApi();
+  });
 
   return (
     <Spring className="card flex flex-col h-[300px] md:h-[494px] lg:col-span-3 xl:col-span-1">
@@ -116,16 +112,10 @@ const SalesStats = () => {
             />
             {/* <Tooltip cursor={false} content={<CustomTooltip />} /> */}
             <Bar
-              dataKey="revenue"
-              fill={revenueColor}
-              maxBarSize={16}
-              radius={10}
-            />
-            <Bar
               dataKey="expense"
-              fill={expenseColor}
-              strokeWidth={2}
-              maxBarSize={16}
+              fill={revenueColor}
+              strokeWidth={4}
+              maxBarSize={25}
               radius={10}
             />
           </BarChart>

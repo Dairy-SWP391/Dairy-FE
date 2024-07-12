@@ -44,7 +44,10 @@ const ROUTES = [
   {
     name: "Blog",
     icon: "fa-clipboard",
-    path: "/admin/blog-editor"
+    links: [
+      { name: "Blog Editor", path: "/admin/blog-editor" },
+      { name: "Blog Management", path: "/admin/blog-management" }
+    ]
   },
   {
     name: "Transactions",

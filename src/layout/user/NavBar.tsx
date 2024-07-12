@@ -8,13 +8,18 @@ import { useNavigate } from "react-router-dom";
 import { useCategoryStore } from "../../store/category";
 import { useCartStore } from "../../store/cart";
 import { UserType } from "../../store/user";
-import { useAuth } from "../../provider/AuthProvider";
 
-const NavBar = ({ user }: { user: UserType | null }) => {
+const NavBar = ({
+  user,
+  logout
+}: {
+  user: UserType | null;
+  logout: () => void;
+}) => {
   const nav = useNavigate();
-  const { clearToken } = useAuth();
   const categories = useCategoryStore((state) => state.category);
   const cart = useCartStore((state) => state.cart);
+  console.log(user);
 
   return (
     <>
@@ -65,17 +70,7 @@ const NavBar = ({ user }: { user: UserType | null }) => {
                   else window.location.href = "/login";
                 }}
               />
-              <button
-                onClick={() => {
-                  if (user) {
-                    localStorage.removeItem("user");
-                    clearToken();
-                    nav("/");
-                  } else {
-                    window.location.href = "/login";
-                  }
-                }}
-              >
+              <button onClick={logout}>
                 <p className="text-base font-medium text-gray-600 ml-6">
                   {user ? "Đăng xuất" : "Đăng nhập"}
                 </p>

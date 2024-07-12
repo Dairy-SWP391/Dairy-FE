@@ -8,7 +8,7 @@ type ImageUploadResponse = {
 
 export const uploadImage = (_data: File) =>
   http.post<ImageUploadResponse>(
-    "/image/upload-image",
+    "image/upload-image",
     { images: _data },
     {
       headers: {

@@ -1,6 +1,5 @@
 import DocumentTitle from "../components/DocumentTitle";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import media from "../assets/login.png";
 import Spring, { SpringType } from "../components/Spring";
 import google from "../assets/icons/google.svg";
@@ -13,11 +12,11 @@ import { login } from "../apis/user";
 import { toast } from "react-toastify";
 import { ResponseApi, isAxiosUnprocessableEntityError } from "../utils/utils";
 import { useAuth } from "../provider/AuthProvider";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const { width } = useWindowSize();
   const { addToken } = useAuth();
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -36,7 +35,13 @@ const Login = () => {
       if (result.status === 200) {
         addToken(result.data.result);
         toast.success("Login successful");
-        navigate("/");
+        // const ahihi = jwtDecode<{ role: "MEMBER" | "STAFF" | "ADMIN" }>(
+        //   result.data.result.access_token
+        // );
+        // console.log(ahihi);
+        // if (role === "MEMBER") navigate("/");
+        // navigate("/admin");
+        window.location.href = "/";
       }
     } catch (err) {
       if (

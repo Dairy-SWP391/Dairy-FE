@@ -5,6 +5,7 @@ import { useCartStore } from "../store/cart";
 import Spring from "../components/Spring";
 import { numberToVND } from "../utils/converter";
 import { Button, Card, CardBody, Divider } from "@nextui-org/react";
+import { checkOut } from "../apis/user";
 
 const ConfirmOrder = () => {
   const location = useLocation();
@@ -20,6 +21,7 @@ const ConfirmOrder = () => {
   useEffect(() => {
     const getFee = async () => {
       try {
+        console.log(address);
         const cart_list = cart.reduce(
           (acc: { product_id: number; quantity: number }[], cur) => {
             acc.push({ product_id: cur.id, quantity: cur.quantity });
@@ -29,6 +31,9 @@ const ConfirmOrder = () => {
         );
         const response = await getFeeShip({
           cart_list,
+          receiver_name: address.name,
+          phone_number: address.phone_number,
+          address: address.address,
           service_id: service_id.toString(),
           to_district_id: address.district_id.toString(),
           to_ward_code: address.ward_code.toString()
@@ -50,6 +55,32 @@ const ConfirmOrder = () => {
     };
     getFee();
   }, []);
+
+  const handleCheckout = async () => {
+    try {
+      const cart_list = cartList.reduce(
+        (acc: { product_id: number; quantity: number }[], cur) => {
+          acc.push({ product_id: cur.id, quantity: cur.quantity });
+          return acc;
+        },
+        []
+      );
+      const response = await checkOut({
+        address: address.address,
+        cart_list,
+        phone_number: address.phone_number,
+        receiver_name: address.name,
+        service_id,
+        to_district_id: address.district_id,
+        to_ward_code: address.ward_code
+      });
+      if (response.status === 200) {
+        window.location.href = response.data.vnpayURL;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className="mx-auto w-5/6 text-lg flex justify-between">
@@ -194,8 +225,7 @@ const ConfirmOrder = () => {
             fullWidth
             isDisabled={cart.length === 0 || !address}
             className="mt-4 bg-zinc-400 font-medium text-white text-lg"
-            // onClick={handleGetService}
-            // onPress={onOpen}
+            onClick={handleCheckout}
           >
             Mua hàng
           </Button>

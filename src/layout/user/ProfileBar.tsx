@@ -1,5 +1,6 @@
 import { Link } from "@nextui-org/react";
 import Spring from "../../components/Spring";
+import { useLocation } from "react-router-dom";
 
 const ProfileNav = [
   {
@@ -33,7 +34,7 @@ const ProfileNav = [
   },
   {
     name: "Ưa Thích",
-    href: "/me/favorites",
+    href: "/me/wishlist",
     icon: "fa fa-heart-o"
   },
   {
@@ -44,13 +45,17 @@ const ProfileNav = [
 ];
 
 const ProfileBar = () => {
+  const location = useLocation().pathname;
+
   return (
     <>
       <Spring className="card">
         <div className="flex flex-col">
           {ProfileNav.map(({ href, name, child, icon }, index) => (
-            <div key={index} className="flex flex-col">
-              <div className="flex items-center mt-3">
+            <div key={index} className={`flex flex-col `}>
+              <div
+                className={`flex items-center mt-3 ${location === href && "font-bold"}`}
+              >
                 <i className={`${icon} pr-3`} aria-hidden="true"></i>
                 <Link href={href} color="foreground">
                   {name}
@@ -61,7 +66,7 @@ const ProfileBar = () => {
                   key={index}
                   href={item.href}
                   color="foreground"
-                  className="pl-9 mt-2"
+                  className={`pl-9 mt-2 ${location === item.href && "font-bold"}`}
                 >
                   {item.name}
                 </Link>

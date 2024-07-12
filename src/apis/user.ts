@@ -30,20 +30,14 @@ type GetMeResponse = {
   };
 };
 
-export const getMe = (access_token: string) =>
-  http.get<GetMeResponse>("user/me", {
-    headers: {
-      Authorization: `Bearer ${access_token}`
-    }
-  });
+export const getMe = () => http.get<GetMeResponse>("user/me");
 
 export const renewToken = (_data: { refresh_token: string }) =>
   http.post<TokenResponse>("user/refresh-token", _data);
 
 export type AccountType = {
   id: string;
-  first_name: string;
-  last_name: string;
+  name: string;
   phone_number: string;
   email: string;
   point: number;
@@ -53,27 +47,18 @@ export type AccountType = {
 
 interface GetAllUserResponse {
   message: string;
-  result: AccountType[];
+  result: {
+    total_page: number;
+    total_account: number;
+    users: AccountType[];
+  };
 }
 
-export const getAllUser = (access_token: string) =>
-  http.get<GetAllUserResponse>("user/users", {
-    headers: {
-      Authorization: `Bearer ${access_token}`
-    }
-  });
+export const getAllUser = (page: number) =>
+  http.get<GetAllUserResponse>(`user/users?page=${page}`);
 
-export const deleteUser = ({
-  access_token,
-  user_id
-}: {
-  access_token: string;
-  user_id: string;
-}) =>
+export const deleteUser = ({ user_id }: { user_id: string }) =>
   http.delete("user/delete-user", {
-    headers: {
-      Authorization: `Bearer ${access_token}`
-    },
     data: {
       user_id
     }
@@ -215,11 +200,15 @@ export const addNewAddress = ({
   access_token: string;
   address: Omit<AddressType, "id">;
 }) =>
-  http.post("user/add-address", address, {
-    headers: {
-      Authorization: `Bearer ${access_token}`
+  http.post<{ message: string; result: AddressType }>(
+    "user/add-address",
+    address,
+    {
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
     }
-  });
+  );
 
 export const getDefaultAddress = (access_token: string) =>
   http.get<{ message: string; result: AddressType }>("user/default-address", {
@@ -232,3 +221,61 @@ export const callAccessToken = (refresh_token: string) =>
   http.post("user/refresh-token", {
     refresh_token
   });
+
+export type CheckOutParams = {
+  service_id: number;
+  to_district_id: number;
+  to_ward_code: number;
+  receiver_name: string;
+  phone_number: string;
+  address: string;
+  cart_list: {
+    product_id: number;
+    quantity: number;
+  }[];
+};
+
+export const checkOut = ({
+  address,
+  cart_list,
+  phone_number,
+  receiver_name,
+  service_id,
+  to_district_id,
+  to_ward_code
+}: CheckOutParams) =>
+  http.post<{ vnpayURL: string }>("pay", {
+    address,
+    cart_list,
+    phone_number,
+    receiver_name,
+    service_id: service_id.toString(),
+    to_district_id: to_district_id.toString(),
+    to_ward_code: to_ward_code.toString()
+  });
+
+export type WishlistType = {
+  id: number;
+  name: string;
+  image_urls: string[];
+  category_id: number;
+  ship_category_id: number;
+  price: number;
+  sale_price: number;
+};
+
+export type GetWishListResponse = {
+  result: {
+    totalPage: number;
+    products: WishlistType[];
+  };
+  message: string;
+};
+
+export const getWishList = (page: number, num_of_items_per_page: number) =>
+  http.get<GetWishListResponse>(
+    `user/wishlist?num_of_items_per_page=${num_of_items_per_page}&page=${page}`
+  );
+
+export const getTotalExpense = () =>
+  http.get<{ message: string; result: number }>("user/total");

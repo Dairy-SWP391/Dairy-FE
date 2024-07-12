@@ -7,6 +7,7 @@ import {
   Card,
   CardBody,
   Divider,
+  Link,
   Modal,
   ModalBody,
   ModalContent,
@@ -28,6 +29,9 @@ const Cart = () => {
   const [address, setAddress] = useState<AddressType | null>(null);
   const [selectedService, setSelectedService] = useState<number>();
   const [allAddress, setAllAddress] = useState<AddressType[]>([]);
+  const [modalContent, setModalContent] = useState<
+    "SERVICE" | "ADDRESS" | "VOUCHER"
+  >();
   const [service, setService] = useState<
     { service_id: number; short_name: string }[]
   >([]);
@@ -101,12 +105,18 @@ const Cart = () => {
         address?.district_id.toString() as string
       );
       if (response.status === 200) {
+        setModalContent("SERVICE");
         setService(response.data);
         onOpen();
       }
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const handleSelectAddress = () => {
+    setModalContent("ADDRESS");
+    onOpen();
   };
 
   const handleSubmit = () => {
@@ -232,7 +242,7 @@ const Cart = () => {
           <h3 className="text-lg text-slate-500">Địa Chỉ Nhận Hàng</h3>
           <button
             className="rounded-lg border-2 border-red-700 mt-2 w-full h-[65%] border-dashed justify-between bg-[url('../assets/map.png')] cursor-pointer"
-            onClick={() => nav("/dia-chi-khach-hang")}
+            onClick={handleSelectAddress}
           >
             {address ? (
               <Card className="w-full bg-transparent h-full">
@@ -299,37 +309,80 @@ const Cart = () => {
           </Button>
         </Spring>
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  Hình Thức Vận Chuyển
-                </ModalHeader>
-                <ModalBody>
-                  <RadioGroup
-                    label="Vui lòng chọn phương thức vận chuyển"
-                    value={selectedService?.toString()}
-                    onChange={(e) => setSelectedService(+e.target.value)}
-                    isRequired
-                  >
-                    {service.map(({ service_id, short_name }) => (
-                      <Radio value={service_id.toString()} key={service_id}>
-                        {short_name}
-                      </Radio>
-                    ))}
-                  </RadioGroup>
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Close
-                  </Button>
-                  <Button color="primary" onPress={handleSubmit}>
-                    Confirm
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
+          {modalContent === "SERVICE" && (
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">
+                    Hình Thức Vận Chuyển
+                  </ModalHeader>
+                  <ModalBody>
+                    <RadioGroup
+                      label="Vui lòng chọn phương thức vận chuyển"
+                      value={selectedService?.toString()}
+                      onChange={(e) => setSelectedService(+e.target.value)}
+                      isRequired
+                    >
+                      {service.map(({ service_id, short_name }) => (
+                        <Radio value={service_id.toString()} key={service_id}>
+                          {short_name}
+                        </Radio>
+                      ))}
+                    </RadioGroup>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="danger" variant="light" onPress={onClose}>
+                      Close
+                    </Button>
+                    <Button color="primary" onPress={handleSubmit}>
+                      Confirm
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          )}
+          {modalContent === "ADDRESS" && (
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">
+                    Địa Chỉ Nhận Hàng
+                  </ModalHeader>
+                  <ModalBody>
+                    <RadioGroup
+                      label="Vui lòng chọn địa chỉ nhận hàng"
+                      value={address?.id.toString()}
+                      onChange={(e) => setSelectedService(+e.target.value)}
+                      isRequired
+                    >
+                      {allAddress.map((item) => (
+                        <Radio value={item.id.toString()} key={item.id}>
+                          <Card>
+                            <CardBody>
+                              <p>
+                                {item.name} - {item.phone_number}
+                              </p>
+                              <p>{item.address}</p>
+                            </CardBody>
+                          </Card>
+                        </Radio>
+                      ))}
+                    </RadioGroup>
+                    <Link href="/me/address">Thêm địa chỉ mới</Link>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="danger" variant="light" onPress={onClose}>
+                      Close
+                    </Button>
+                    <Button color="primary" onPress={console.log}>
+                      Confirm
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          )}
         </Modal>
       </div>
     </div>

@@ -1,26 +1,152 @@
+import { useEffect, useState } from "react";
+import { ProductType } from "../types/Product";
 import Spring from "./Spring";
+import { getProductByCategory } from "../apis/category";
+import {
+  Button,
+  Image,
+  Pagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow
+} from "@nextui-org/react";
+import dayjs from "dayjs";
+import { useCategoryStore } from "../store/category";
+import { numberToVND } from "../utils/converter";
 
 const ProductManagementTable = () => {
+  const [productList, setProductList] = useState<ProductType[]>([]);
+  const category = useCategoryStore().category;
+  const [page, setPage] = useState<number>(1);
+  const [totalPage, setTotalPage] = useState<number>(1);
+  const [categoryObj, setCategoryObj] = useState<
+    { id: number; name: string }[]
+  >([]);
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        const response = await getProductByCategory({
+          parent_category_id: 0,
+          num_of_items_per_page: 10,
+          page: page
+        });
+        if (response.status === 200) {
+          setProductList(response.data.data.products);
+          setTotalPage(response.data.data.totalPage);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchApi();
+
+    const cate = category.reduce(
+      (acc: { id: number; name: string }[], item) => {
+        item.child_category.forEach((child) => {
+          acc.push({ id: child.id, name: child.name });
+        });
+        return acc;
+      },
+      []
+    );
+    setCategoryObj(cate);
+  }, [page, category]);
+
+  const handleDeleteProduct = async (id: number) => {
+    const confirm = window.confirm("Are you sure you want to delete?");
+    if (confirm) {
+      try {
+        // await deleteProduct(id);
+        alert("Deleted");
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+
   return (
     <>
-      <Spring className="w-[98%] card mx-auto">
-        <div className="flex justify-between border-b-2 border-b-black pb-5 mb-7 text-blue-500 font-semibold">
-          <p className="w-[3%] border">Id</p>
-          <p className="w-[30%] border">Name</p>
-          <p className="w-[5%] border">Stock</p>
-          <p className="w-[5%] border">Price</p>
-          <p className="w-[8%] border">Sale Price</p>
-          <p className="w-[20%] border">Category</p>
-          <p className="w-[7%] border">Actions</p>
-        </div>
-        <div className="flex justify-between border-b-black">
-          <p className="w-10 border">1</p>
-          <p className="w-80 border">Name</p>
-          <p className="w-20 border">Stock</p>
-          <p className="w-28 border">Price</p>
-          <p className="w-28 border">Sale Price</p>
-          <p className="w-60 border">Category</p>
-          <p className="w-20 border">Actions</p>
+      <Spring className="w-[98%] card mx-auto ">
+        <Table aria-label="Product Table">
+          <TableHeader>
+            <TableColumn width={20}>ID</TableColumn>
+            <TableColumn width={100}>IMAGE</TableColumn>
+            <TableColumn width={200}>NAME</TableColumn>
+            <TableColumn>PRICE</TableColumn>
+            <TableColumn>SALE PRICE</TableColumn>
+            <TableColumn>START DAY</TableColumn>
+            <TableColumn>END DAY</TableColumn>
+            <TableColumn>CATEGORY</TableColumn>
+            <TableColumn width={80}>QUANTITY</TableColumn>
+            <TableColumn width={50}>SOLD</TableColumn>
+            <TableColumn width={80}>STATUS</TableColumn>
+            <TableColumn width={150}>ACTION</TableColumn>
+          </TableHeader>
+          <TableBody>
+            {productList.length > 0
+              ? productList.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>{item.id}</TableCell>
+                    <TableCell>
+                      <Image src={item.image_urls[0]} />
+                    </TableCell>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>{numberToVND(item.price)}</TableCell>
+                    <TableCell>
+                      {item.sale_price ? numberToVND(item.sale_price) : "NaN"}
+                    </TableCell>
+                    <TableCell>
+                      {item.starting_timestamp
+                        ? dayjs(item.starting_timestamp)
+                            .format("DD/MM/YYYY")
+                            .toString()
+                        : "NaN"}
+                    </TableCell>
+                    <TableCell>
+                      {item.ending_timestamp
+                        ? dayjs(item.ending_timestamp)
+                            .format("DD/MM/YYYY")
+                            .toString()
+                        : "NaN"}
+                    </TableCell>
+                    <TableCell>
+                      {
+                        categoryObj.find((cate) => cate.id === item.category_id)
+                          ?.name
+                      }
+                    </TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell>{item.sold}</TableCell>
+                    <TableCell>{item.status}</TableCell>
+                    <TableCell
+                      className="flex gap-2 items-center min-h-full"
+                      height={90}
+                    >
+                      <Button color="primary">Update</Button>
+                      <Button
+                        color="danger"
+                        onClick={() => handleDeleteProduct(item.id)}
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              : []}
+          </TableBody>
+        </Table>
+        <div className="mt-5">
+          <Pagination
+            showControls
+            total={totalPage}
+            initialPage={page}
+            onChange={setPage}
+          />
         </div>
       </Spring>
     </>

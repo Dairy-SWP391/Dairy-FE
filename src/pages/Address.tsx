@@ -46,12 +46,14 @@ const Address = () => {
   const [defaultAddress, setDefaultAddress] = useState<AddressType | null>(
     null
   );
+  const [address, setAddress] = useState<AddressType | null>(null);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const { token } = useAuth();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
     watch
   } = useForm<AddressForm>();
 
@@ -65,6 +67,7 @@ const Address = () => {
         address: { ...data, user_id: user.id }
       });
       if (response.status === 200) {
+        setAllAddress((prev) => [...prev, response.data.result]);
         toast.success("Thêm mới địa chỉ thành công");
       }
     } catch (err) {
@@ -130,6 +133,11 @@ const Address = () => {
     };
     fetchWard();
   }, [watchDistrict]);
+
+  const handleClickUpdateAddress = (address: AddressType) => {
+    setAddress(address);
+    setValue("name", address.name);
+  };
 
   return (
     <>
@@ -220,8 +228,11 @@ const Address = () => {
             {defaultAddress && (
               <Card className="max-w-[400px]">
                 <CardHeader className="flex gap-3">
-                  <div className="flex flex-col">
-                    <p className="text-md">{defaultAddress.name}</p>
+                  <div className="flex flex-col w-full">
+                    <div className="flex items-center justify-between">
+                      <p className="text-md">{defaultAddress.name}</p>
+                      <button className="text-blue-500">Thay đổi</button>
+                    </div>
                     {defaultAddress.default_address && (
                       <p className="text-blue-500 italic">Địa chỉ mặc định</p>
                     )}
@@ -242,8 +253,16 @@ const Address = () => {
                 <div key={key} className="mt-3">
                   <Card className="max-w-[400px]">
                     <CardHeader className="flex gap-3">
-                      <div className="flex flex-col">
-                        <p className="text-md">{address.name}</p>
+                      <div className="flex flex-col w-full">
+                        <div className="flex items-center justify-between">
+                          <p className="text-md">{address.name}</p>
+                          <button
+                            className="text-blue-500"
+                            onClick={() => handleClickUpdateAddress(address)}
+                          >
+                            Thay đổi
+                          </button>
+                        </div>
                         {address.default_address && (
                           <p className="text-blue-500 italic">
                             Địa chỉ mặc định

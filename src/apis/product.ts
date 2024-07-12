@@ -46,3 +46,8 @@ type AddProductParam = Omit<
 
 export const addProduct = (product: AddProductParam) =>
   http.post("product/add-product", product);
+
+export const addWishList = (product_id: number) =>
+  http.post("user/add-wishlist", {
+    product_id
+  });

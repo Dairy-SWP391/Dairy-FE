@@ -4,9 +4,12 @@ import { jwtDecode } from "jwt-decode";
 import { callAccessToken } from "../apis/user";
 
 const withoutAccessTokenRoute = [
-  "user/register",
-  "user/login",
-  "user/refresh-token"
+  "category/all",
+  "product/get-product",
+  "product/:id",
+  "ship/districts",
+  "ship/wards",
+  "user/login"
 ];
 
 class Http {
