@@ -47,7 +47,7 @@ const BreadCrumbs = ({ pathname, classNames }: BreadCrumbsProps) => {
   const crumbs = pathname
     .split("/")
     .filter((crumb) => crumb !== "")
-    .map((crumb, index) => {
+    .map((crumb) => {
       currentLink += `/${crumb}`;
       const name = categoryPath.find(
         (cate) => cate.path === currentLink.split("/").pop()

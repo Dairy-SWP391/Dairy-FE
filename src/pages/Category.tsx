@@ -43,6 +43,7 @@ const Category = () => {
       setProduct(response.data.data.products);
       setTotalPage(response.data.data.totalPage);
     };
+    setTitle("Category");
     fetchData({ id: 0 });
   }, [page]);
 

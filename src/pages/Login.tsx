@@ -12,7 +12,6 @@ import { login } from "../apis/user";
 import { toast } from "react-toastify";
 import { ResponseApi, isAxiosUnprocessableEntityError } from "../utils/utils";
 import { useAuth } from "../provider/AuthProvider";
-import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const { width } = useWindowSize();
@@ -26,7 +25,8 @@ const Login = () => {
     defaultValues: {
       email: "",
       password: ""
-    }
+    },
+    criteriaMode: "all"
   });
 
   const onSubmit = async (_data: { email: string; password: string }) => {
@@ -112,10 +112,19 @@ const Login = () => {
                     type="text"
                     placeholder="Your E-mail address"
                     {...register("email", {
-                      required: true,
-                      pattern: /^\S+@\S+$/i
+                      required: {
+                        value: true,
+                        message: "This field is required"
+                      },
+                      pattern: {
+                        value: /^\S+@\S+$/i,
+                        message: "Invalid email format"
+                      }
                     })}
                   />
+                  <p className="text-red-500 text-sm ml-3">
+                    {errors.email?.message}
+                  </p>
                 </div>
                 <Controller
                   name="password"

@@ -115,6 +115,7 @@ const Address = () => {
         }
       } catch (err) {
         console.log(err);
+        console.log(address);
       }
     };
     fetchDistrict();

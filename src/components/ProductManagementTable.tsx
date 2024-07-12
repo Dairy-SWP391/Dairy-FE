@@ -57,7 +57,7 @@ const ProductManagementTable = () => {
     setCategoryObj(cate);
   }, [page, category]);
 
-  const handleDeleteProduct = async (id: number) => {
+  const handleDeleteProduct = () => {
     const confirm = window.confirm("Are you sure you want to delete?");
     if (confirm) {
       try {
@@ -130,7 +130,7 @@ const ProductManagementTable = () => {
                       <Button color="primary">Update</Button>
                       <Button
                         color="danger"
-                        onClick={() => handleDeleteProduct(item.id)}
+                        onClick={() => handleDeleteProduct()}
                       >
                         Delete
                       </Button>

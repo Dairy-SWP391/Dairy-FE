@@ -24,6 +24,7 @@ const Wishlist = () => {
         if (response.status === 200) {
           setWishlist(response.data.result.products);
         }
+        setPage(1);
       } catch (err) {
         console.log(err);
       }
