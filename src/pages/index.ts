@@ -21,3 +21,4 @@ export { default as Wishlist } from "./Wishlist";
 export { default as Order } from "./Order";
 export { default as OrderList } from "./OrderList";
 export { default as OrderDetail } from "./OrderDetail";
+export { default as Blog } from "./Blog";

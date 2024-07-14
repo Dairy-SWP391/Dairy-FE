@@ -121,19 +121,19 @@ const Order = () => {
                       <p>SĐT: {detail?.data.phone_number}</p>
                       <p>Địa chỉ: {detail?.data.address}</p>
                     </div>
-                    {/* <div className="text-lg">
-                    <p>Mã đơn hàng: {orderParamInfor?.order_id}</p>
-                    <p>
-                      Mã tra cứu thông tin giao hàng:{" "}
-                      {orderParamInfor?.order_ghn_code}
-                    </p>
-                    <p>
-                      Thời gian giao hàng dự kiến:{" "}
-                      {dayjs(orderParamInfor?.expected_delivery_time)
-                        .format("DD/MM/YYYY")
-                        .toString()}
-                    </p>
-                  </div> */}
+                    <div className="text-lg">
+                      <p>Mã đơn hàng: {detail?.data.id}</p>
+                      <p>
+                        Mã tra cứu thông tin giao hàng:{" "}
+                        {detail?.data.order_ghn_code}
+                      </p>
+                      <p>
+                        Thời gian giao hàng dự kiến:{" "}
+                        {dayjs(detail?.data.expected_delivery_time)
+                          .format("DD/MM/YYYY")
+                          .toString()}
+                      </p>
+                    </div>
                   </div>
                   <Table className="mt-3">
                     <TableHeader>

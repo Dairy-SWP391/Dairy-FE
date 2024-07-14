@@ -42,7 +42,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (user) {
+    if (user?.id) {
       socket.auth = { _id: user.id };
 
       socket.connect();
@@ -70,7 +70,7 @@ function App() {
           const user_info = await getMe();
           console.log(user_info);
           localStorage.setItem("user", JSON.stringify(user_info.data.result));
-          setUser(user_info);
+          setUser(user_info.data.result);
         } catch (error) {
           if (
             isAxiosError<{

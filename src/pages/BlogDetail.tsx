@@ -2,17 +2,26 @@ import Spring from "../components/Spring";
 import "@mdxeditor/editor/style.css";
 import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
-import { BlogType, getBlogDetail } from "../apis/blog";
+import { BlogDetailType, getBlogDetail } from "../apis/blog";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const BlogDetail = () => {
-  const [blog, setBlog] = useState<BlogType>();
+  const [blog, setBlog] = useState<BlogDetailType>();
+  const location = useLocation();
+  const nav = useNavigate();
 
   useEffect(() => {
-    const fetchApi = async () => {
-      const res = await getBlogDetail(1);
-      setBlog(res.data.result);
-    };
-    fetchApi();
+    const id = location.pathname.split("/").pop();
+    console.log(Number.isNaN(Number.parseInt("a")));
+    if (id && !Number.isNaN(Number.parseInt(id))) {
+      const fetchApi = async () => {
+        const res = await getBlogDetail(Number(id));
+        setBlog(res.data.result);
+      };
+      fetchApi();
+    } else {
+      nav("/404");
+    }
   }, []);
 
   return (

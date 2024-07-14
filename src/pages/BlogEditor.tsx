@@ -120,7 +120,7 @@ const BlogEditor = () => {
           <div className="w-1/4 mt-5 flex flex-col items-center">
             <Card>
               <CardBody>
-                <Image src={image} alt="image" />
+                <Image src={image} alt="image" className="min-h-10" />
                 <h6 className="mt-5">{title}</h6>
                 <TruncatedText text={content} width={200} className="mt-2" />
               </CardBody>

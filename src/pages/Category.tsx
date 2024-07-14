@@ -1,11 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import DocumentTitle from "../components/DocumentTitle";
 // import { useCategoryStore } from "../store/category";
 import { useEffect, useState } from "react";
 import { useCategoryStore } from "../store/category";
 import Spring from "../components/Spring";
-import { Button, Checkbox, CheckboxGroup, Pagination } from "@nextui-org/react";
+import {
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  Pagination,
+  Radio,
+  RadioGroup,
+  Select,
+  SelectItem
+} from "@nextui-org/react";
 import { ProductType } from "../types/Product";
 import { getProductByCategory } from "../apis/category";
 import ProductCard from "../components/ProductCard";
@@ -15,7 +24,7 @@ import { getSalesRatio, stringToNomalCase } from "../utils/converter";
 
 const Category = () => {
   const location = useLocation();
-  console.log(location.pathname);
+  const nav = useNavigate();
   const Category = useCategoryStore((state) => state.category);
   const [title, setTitle] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
@@ -49,8 +58,10 @@ const Category = () => {
 
   useEffect(() => {
     const path = location.pathname.split("/");
-    console.log(path);
     const cate = Category.find((cate) => cate.path === path[1]);
+    if (!cate && !path.includes("all-products")) {
+      nav("/404");
+    }
     if (cate) {
       setSelected([cate?.id.toString()]);
     }
@@ -98,6 +109,25 @@ const Category = () => {
                   )
               )}
             </CheckboxGroup>
+            <RadioGroup label="Sort By" color="default" className="mt-5">
+              <Radio value="price">Price</Radio>
+              <Radio value="rating_point">Rating Point</Radio>
+              <Radio value="sold">Sold</Radio>
+              <Radio value="discount">Discount</Radio>
+            </RadioGroup>
+            <Select
+              label="Sắp xếp theo"
+              className="mt-5"
+              size="sm"
+              aria-label="Price"
+            >
+              <SelectItem key="asc" value="asc">
+                Tăng Dần
+              </SelectItem>
+              <SelectItem key="desc" value="desc">
+                Giảm Dần
+              </SelectItem>
+            </Select>
             <Button
               onClick={() => {
                 console.log(selected);

@@ -4,6 +4,7 @@ import {
   Account,
   Address,
   AdminDashboard,
+  Blog,
   BlogEditor,
   Cart,
   Category,
@@ -42,6 +43,10 @@ const publicRoutes: RouteType[] = [
     element: <Cart />
   },
   {
+    path: "/tin-tuc",
+    element: <Blog />
+  },
+  {
     path: "/:category",
     element: <Category />
   },
@@ -58,7 +63,7 @@ const publicRoutes: RouteType[] = [
     element: <ProductDetail />
   },
   {
-    path: "/blog/blog-detail",
+    path: "/tin-tuc/:id",
     element: <BlogDetail />
   },
   {
