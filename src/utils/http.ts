@@ -1,16 +1,16 @@
-import axios, { AxiosInstance, isAxiosError } from "axios";
-import { toast } from "react-toastify";
-import { jwtDecode } from "jwt-decode";
-import { callAccessToken } from "../apis/user";
+import axios, { AxiosInstance } from "axios";
+// import { toast } from "react-toastify";
+// import { jwtDecode } from "jwt-decode";
+// import { callAccessToken } from "../apis/user";
 
-const withoutAccessTokenRoute = [
-  "category/all",
-  "product/get-product",
-  "product/:id",
-  "ship/districts",
-  "ship/wards",
-  "user/login"
-];
+// const withoutAccessTokenRoute = [
+//   "category/all",
+//   "product/get-product",
+//   "product/:id",
+//   "ship/districts",
+//   "ship/wards",
+//   "user/login"
+// ];
 
 class Http {
   instance: AxiosInstance;
