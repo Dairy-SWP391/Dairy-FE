@@ -113,11 +113,6 @@ const Sidebar = () => {
                       <i className={`fa ${route.icon}`} />
                       <span className="text">{route.name}</span>
                     </div>
-                    {route.qty && (
-                      <span className="badge rounded bg-green xl:hidden">
-                        {route.qty}
-                      </span>
-                    )}
                   </NavLink>
                   {index === ROUTES.length - 2 && (
                     <span className="menu_divider" />

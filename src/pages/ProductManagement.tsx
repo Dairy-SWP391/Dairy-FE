@@ -2,7 +2,7 @@
 import ProductManagementTable from "../components/ProductManagementTable";
 import PageHeader from "../layout/admin/PageHeader";
 import { useNavigate } from "react-router-dom";
-import { Button, Select, SelectItem } from "@nextui-org/react";
+import { Select, SelectItem } from "@nextui-org/react";
 import { CategoryType, useCategoryStore } from "../store/category";
 import { useEffect, useState } from "react";
 

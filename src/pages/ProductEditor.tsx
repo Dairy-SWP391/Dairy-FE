@@ -5,7 +5,7 @@ import classNames from "classnames";
 import { toast } from "react-toastify";
 import Spring from "../components/Spring";
 import PageHeader from "../layout/admin/PageHeader";
-import { Category, useCategoryStore } from "../store/category";
+import { CategoryType, useCategoryStore } from "../store/category";
 import SingleFileUploader from "../components/SingleFileUploader";
 import { useEffect, useState } from "react";
 import { addProduct } from "../apis/product";
@@ -40,7 +40,7 @@ const ProductEditor = () => {
   const categoryOptions = useCategoryStore((state) => state.category);
   const [productImages, setProductImages] = useState<string[]>([]);
   const [subCategory, setSubCategory] = useState<
-    (Omit<Category, "child_category"> & {
+    (Omit<CategoryType, "child_category"> & {
       parent_category_id: number;
     })[]
   >([]);
