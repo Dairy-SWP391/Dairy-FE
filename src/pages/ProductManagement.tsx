@@ -3,27 +3,37 @@ import ProductManagementTable from "../components/ProductManagementTable";
 import PageHeader from "../layout/admin/PageHeader";
 import { useNavigate } from "react-router-dom";
 import { Button, Select, SelectItem } from "@nextui-org/react";
-import { Category, useCategoryStore } from "../store/category";
-import { useState } from "react";
+import { CategoryType, useCategoryStore } from "../store/category";
+import { useEffect, useState } from "react";
 
 const ProductsManagement = () => {
   const nav = useNavigate();
   const categoryOptions = useCategoryStore((state) => state.category);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
+  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<number>(0);
   const [subCategory, setSubCategory] = useState<
-    (Omit<Category, "child_category"> & {
+    (Omit<CategoryType, "child_category"> & {
       parent_category_id: number;
     })[]
   >([]);
+
   const handleGetSubCategory = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const category_id = parseInt(event.target.value);
+    setSelectedCategoryId(category_id);
     const category = categoryOptions.find(
       (category) => category.id === category_id
     );
     setSubCategory(category?.child_category || []);
+    setSelectedSubCategoryId(0);
     // setValue("category_id", category?.child_category[0].id as number);
   };
+
+  useEffect(() => {
+    categoryOptions.length > 0 &&
+      setSubCategory(categoryOptions[0].child_category);
+  }, [categoryOptions]);
 
   return (
     <>
@@ -58,19 +68,32 @@ const ProductsManagement = () => {
             <label className="field-label" htmlFor="subCategory">
               Sub Category *
             </label>
-            <Select defaultSelectedKeys={""} aria-label="sub-category">
+            <Select
+              defaultSelectedKeys={""}
+              aria-label="sub-category"
+              onChange={(e) =>
+                setSelectedSubCategoryId(parseInt(e.target.value))
+              }
+            >
               {subCategory.map((category) => (
                 <SelectItem key={category.id}>{category.name}</SelectItem>
               ))}
             </Select>
           </div>
-          <Button className="translate-y-4" color="primary">
+          {/* <Button
+            className="translate-y-4"
+            color="primary"
+            onClick={handleFilterProduct}
+          >
             Filter
-          </Button>
+          </Button> */}
           {/* <Search wrapperClass="lg:w-[326px]" placeholder="Search Product" /> */}
         </div>
       </div>
-      <ProductManagementTable />
+      <ProductManagementTable
+        category_id={selectedCategoryId}
+        subCategory={selectedSubCategoryId}
+      />
     </>
   );
 };

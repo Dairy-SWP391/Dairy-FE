@@ -21,9 +21,9 @@ import {
   ProductDetail,
   ProductEditor,
   ProductManagement,
-  ProductsGrid,
   Profile,
   Register,
+  Vouchers,
   Wishlist
 } from "../pages";
 import BlogDetail from "../pages/BlogDetail";
@@ -102,10 +102,6 @@ const authenticatedRoutes: RouteType[] = [
 const adminRoutes: RouteType[] = [
   { path: "/admin", element: <AdminDashboard /> },
   {
-    path: "/admin/products-grid",
-    element: <ProductsGrid />
-  },
-  {
     path: "/admin/products-management",
     element: <ProductManagement />
   },
@@ -128,6 +124,10 @@ const adminRoutes: RouteType[] = [
   {
     path: "/admin/accounts",
     element: <Account />
+  },
+  {
+    path: "/admin/vouchers",
+    element: <Vouchers />
   },
   {
     path: "/admin/orders",

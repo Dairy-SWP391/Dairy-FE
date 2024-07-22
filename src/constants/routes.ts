@@ -36,11 +36,11 @@ const ROUTES = [
     icon: "fa-users",
     path: "/admin/accounts"
   },
-  // {
-  //   name: "Reviews",
-  //   icon: "fa-star-half-o",
-  //   path: "/admin/reviews"
-  // },
+  {
+    name: "Vouchers",
+    icon: "fa-ticket",
+    path: "/admin/vouchers"
+  },
   {
     name: "Blog",
     icon: "fa-clipboard",

@@ -2,22 +2,39 @@
 import Spring from "./Spring";
 import ReportItem from "./ReportItem";
 import { NavLink } from "react-router-dom";
+import dayjs from "dayjs";
 
-const data = [
-  { dataKey: "revenue", title: "Revenue", amount: 176120, trend: 45 },
-  { dataKey: "expense", title: "Expense", amount: 310452, trend: -12 },
-  { dataKey: "profit", title: "Profit", amount: 342558, trend: 14.56 }
-];
+const TotalReport = ({
+  report
+}: {
+  report: {
+    total_orders: number;
+    successful_orders: number;
+    total_expense: number;
+  };
+}) => {
+  const data = [
+    {
+      dataKey: "totalOrder",
+      title: "Total Orders",
+      amount: report.total_orders
+    },
+    {
+      dataKey: "successfulOrder",
+      title: "Successful Orders",
+      amount: report.successful_orders
+    },
+    { dataKey: "expense", title: "Expense", amount: report.total_expense }
+  ];
 
-const TotalReport = () => {
   return (
     <Spring className="card flex flex-col lg:col-span-3 xl:col-span-1">
       <div>
         <div className="flex items-center justify-between">
-          <h4>Total Report</h4>
+          <h4>Total Order</h4>
         </div>
         <p className="mt-1.5 mb-4 text-sm md:text-base">
-          All Periods per 01/01/2022 - 08/28/2023
+          All Periods per 01/01/2022 - {dayjs().format("DD/MM/YYYY")}
         </p>
       </div>
       <div className="flex flex-col flex-1 gap-6 mb-6">

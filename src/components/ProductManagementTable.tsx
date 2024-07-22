@@ -17,7 +17,13 @@ import dayjs from "dayjs";
 import { useCategoryStore } from "../store/category";
 import { numberToVND } from "../utils/converter";
 
-const ProductManagementTable = ({ category_id }: { category_id?: number }) => {
+const ProductManagementTable = ({
+  category_id,
+  subCategory
+}: {
+  category_id: number;
+  subCategory: number;
+}) => {
   const [productList, setProductList] = useState<ProductType[]>([]);
   const category = useCategoryStore().category;
   const [page, setPage] = useState<number>(1);
@@ -29,18 +35,19 @@ const ProductManagementTable = ({ category_id }: { category_id?: number }) => {
   useEffect(() => {
     const fetchApi = async () => {
       try {
-        const fetchData = category_id
-          ? {
-              parent_category_id: 0,
-              num_of_items_per_page: 10,
-              page: page
-            }
-          : {
-              parent_category_id: 0,
-              num_of_items_per_page: 10,
-              page: page,
-              category_id
-            };
+        const fetchData =
+          subCategory !== 0
+            ? {
+                parent_category_id: category_id,
+                num_of_items_per_page: 10,
+                page: page,
+                category_id: subCategory
+              }
+            : {
+                parent_category_id: 0,
+                num_of_items_per_page: 10,
+                page: page
+              };
 
         const response = await getProductByCategory(fetchData);
         if (response.status === 200) {
@@ -64,7 +71,7 @@ const ProductManagementTable = ({ category_id }: { category_id?: number }) => {
       []
     );
     setCategoryObj(cate);
-  }, [page, category]);
+  }, [page, category, category_id, subCategory]);
 
   const handleDeleteProduct = () => {
     const confirm = window.confirm("Are you sure you want to delete?");

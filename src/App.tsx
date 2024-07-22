@@ -19,6 +19,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getMe } from "./apis/user";
 import { isAxiosError } from "./utils/utils";
 import socket from "./utils/socket";
+import { convertCart } from "./apis/product";
+import { Cart, useCartStore } from "./store/cart";
 
 function App() {
   // const { width } = useWindowSize();
@@ -26,6 +28,7 @@ function App() {
   const nav = useNavigate();
   const layout = useLayout();
   const updateCategory = useCategoryStore((state) => state.setCategory);
+  const { setCart } = useCartStore();
   const { token, clearToken } = useAuth();
   const [user, setUser] = useState(
     localStorage.getItem("user")
@@ -39,6 +42,31 @@ function App() {
       updateCategory(res.data.data);
     };
     getCategory();
+  }, []);
+
+  useEffect(() => {
+    const getInitCart = async (): Promise<Cart[]> => {
+      const cartLocal = localStorage.getItem("cart")
+        ? JSON.parse(localStorage.getItem("cart") as string)
+        : [];
+      const response = await convertCart(cartLocal);
+      if (response) {
+        return response.data.result.products.map((product) => ({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          sale: product.sale_price,
+          quantity:
+            cartLocal.find(
+              (item: { id: number; quantity: number }) => item.id === product.id
+            )?.quantity || 0,
+          max_quantity: product.quantity,
+          image: product.image_url[0]
+        }));
+      }
+      return [];
+    };
+    getInitCart().then((cart) => setCart(cart));
   }, []);
 
   useEffect(() => {
@@ -68,7 +96,6 @@ function App() {
       if (token.access_token) {
         try {
           const user_info = await getMe();
-          console.log(user_info);
           localStorage.setItem("user", JSON.stringify(user_info.data.result));
           setUser(user_info.data.result);
         } catch (error) {

@@ -78,7 +78,8 @@ export const getFeeShip = ({
   to_ward_code,
   receiver_name,
   phone_number,
-  address
+  address,
+  voucher_code
 }: {
   service_id: number;
   to_district_id: number;
@@ -87,6 +88,7 @@ export const getFeeShip = ({
   receiver_name: string;
   phone_number: string;
   address: string;
+  voucher_code?: string;
 }) =>
   http.post<FeeShipResponse>("ship/fee", {
     service_id,
@@ -95,5 +97,6 @@ export const getFeeShip = ({
     cart_list,
     receiver_name,
     phone_number,
-    address
+    address,
+    voucher_code
   });

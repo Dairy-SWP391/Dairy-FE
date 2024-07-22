@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { Category } from "../store/category";
+import { CategoryType } from "../store/category";
 
 interface DropdownItemProps {
   className?: string;
-  category: Category;
+  category: CategoryType;
 }
 
 const DropdownItem = ({ className, category }: DropdownItemProps) => {

@@ -131,6 +131,13 @@ const OrderDetail = () => {
             </div>
           </div>
         </div>
+        {detail?.data.cancel_reason && (
+          <div className="mt-3">
+            <p className="text-red-500 italic font-bold text-lg">
+              Lý do hủy: {detail?.data.cancel_reason}
+            </p>
+          </div>
+        )}
       </Spring>
     </>
   );

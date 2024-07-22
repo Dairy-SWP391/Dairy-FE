@@ -5,17 +5,25 @@ import TotalBalance from "../components/TotalBalance";
 import TotalReport from "../components/TotalReport";
 import useWindowSize from "../hooks/useWindowSize";
 import PageHeader from "../layout/admin/PageHeader";
-import { getTotalExpense } from "../apis/user";
+import { getTotalReport } from "../apis/order";
 
 const AdminDashboard = () => {
   const { width } = useWindowSize();
-  const [income, setIncome] = useState<number>(0);
+  const [orderReport, setOrderReport] = useState<{
+    total_orders: number;
+    successful_orders: number;
+    total_expense: number;
+  }>({
+    total_orders: 0,
+    successful_orders: 0,
+    total_expense: 0
+  });
 
   useEffect(() => {
     const fetchApi = async () => {
       try {
-        const expense = await getTotalExpense();
-        setIncome(expense.data.result);
+        const response = await getTotalReport();
+        setOrderReport(response.data.data);
       } catch (err) {
         console.log(err);
       }
@@ -27,10 +35,10 @@ const AdminDashboard = () => {
     <>
       <PageHeader title="Sales Analytics" />
       <div className="widgets-grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-[minmax(0,_951px)_minmax(0,_1fr)]">
-        <MainProfileInfo income={income} />
-        {width >= 1536 && <TotalBalance income={income} />}
+        <MainProfileInfo income={orderReport.total_expense} />
+        {width >= 1536 && <TotalBalance income={orderReport.total_expense} />}
         <SalesStats />
-        <TotalReport />
+        <TotalReport report={orderReport} />
       </div>
     </>
   );

@@ -75,12 +75,14 @@ interface NumFormatterProps {
   num: number;
   fractionDigits?: number;
   prefix?: string;
+  suffix?: string;
 }
 
 export const numFormatter = ({
   num,
   fractionDigits = 0,
-  prefix = ""
+  prefix = "",
+  suffix = ""
 }: NumFormatterProps) => {
   const options = {
     minimumFractionDigits: fractionDigits,
@@ -89,10 +91,10 @@ export const numFormatter = ({
 
   if (num > 999 && num < 1000000) {
     const formattedNum = (num / 1000).toLocaleString(undefined, options);
-    return `${prefix}${formattedNum}k`;
+    return `${prefix}${formattedNum}k${suffix && ` ${suffix}`}`;
   } else if (num > 1000000) {
     const formattedNum = (num / 1000000).toLocaleString(undefined, options);
-    return `${prefix}${formattedNum}m`;
+    return `${prefix}${formattedNum}m${suffix && ` ${suffix}`}`;
   } else if (num < 900) {
     return `${prefix}${num}`;
   }
@@ -104,3 +106,12 @@ export const commaFormatter = (num: number): string => {
 
 export const getSalesRatio = (total: number, sales: number) =>
   Math.round(((total - sales) / total) * 100);
+
+export const getDateFromISOString = (isoString: string) => {
+  const date = new Date(isoString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
