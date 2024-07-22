@@ -17,7 +17,13 @@ import dayjs from "dayjs";
 import { useCategoryStore } from "../store/category";
 import { numberToVND } from "../utils/converter";
 
-const ProductManagementTable = () => {
+const ProductManagementTable = ({
+  category_id,
+  subCategory
+}: {
+  category_id: number;
+  subCategory: number;
+}) => {
   const [productList, setProductList] = useState<ProductType[]>([]);
   const category = useCategoryStore().category;
   const [page, setPage] = useState<number>(1);
@@ -29,11 +35,21 @@ const ProductManagementTable = () => {
   useEffect(() => {
     const fetchApi = async () => {
       try {
-        const response = await getProductByCategory({
-          parent_category_id: 0,
-          num_of_items_per_page: 10,
-          page: page
-        });
+        const fetchData =
+          subCategory !== 0
+            ? {
+                parent_category_id: category_id,
+                num_of_items_per_page: 10,
+                page: page,
+                category_id: subCategory
+              }
+            : {
+                parent_category_id: 0,
+                num_of_items_per_page: 10,
+                page: page
+              };
+
+        const response = await getProductByCategory(fetchData);
         if (response.status === 200) {
           setProductList(response.data.data.products);
           setTotalPage(response.data.data.totalPage);
@@ -55,7 +71,7 @@ const ProductManagementTable = () => {
       []
     );
     setCategoryObj(cate);
-  }, [page, category]);
+  }, [page, category, category_id, subCategory]);
 
   const handleDeleteProduct = () => {
     const confirm = window.confirm("Are you sure you want to delete?");
@@ -96,7 +112,9 @@ const ProductManagementTable = () => {
                       <Image src={item.image_urls[0]} />
                     </TableCell>
                     <TableCell>{item.name}</TableCell>
-                    <TableCell>{numberToVND(item.price)}</TableCell>
+                    <TableCell>
+                      {item.price ? numberToVND(item.price) : "NaN"}
+                    </TableCell>
                     <TableCell>
                       {item.sale_price ? numberToVND(item.sale_price) : "NaN"}
                     </TableCell>

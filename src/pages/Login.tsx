@@ -71,6 +71,26 @@ const Login = () => {
     e.preventDefault();
   };
 
+  const handleLoginGG = () => {
+    const getGoogleAuthUrl = () => {
+      const url = "https://accounts.google.com/o/oauth2/v2/auth";
+      const query = {
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        redirect_uri: import.meta.env.VITE_GOOGLE_REDIRECT_URI,
+        response_type: "code",
+        scope: [
+          "https://www.googleapis.com/auth/userinfo.email",
+          "https://www.googleapis.com/auth/userinfo.profile"
+        ].join(" "),
+        prompt: "consent",
+        access_type: "offline"
+      };
+      return `${url}?${new URLSearchParams(query)}`;
+    };
+    const googleAuthUrl = getGoogleAuthUrl();
+    window.location.href = googleAuthUrl;
+  };
+
   return (
     <>
       <DocumentTitle title="Login" />
@@ -167,7 +187,7 @@ const Login = () => {
                   <img className="icon" src={google} alt="Google" />
                   Google
                 </LoginSocialGoogle> */}
-                <button className="btn btn--social">
+                <button className="btn btn--social" onClick={handleLoginGG}>
                   <img className="icon" src={google.toString()} alt="Google" />
                   Google
                 </button>

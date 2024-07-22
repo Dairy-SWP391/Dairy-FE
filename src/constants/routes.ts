@@ -37,9 +37,9 @@ const ROUTES = [
     path: "/admin/accounts"
   },
   {
-    name: "Reviews",
-    icon: "fa-star-half-o",
-    path: "/admin/reviews"
+    name: "Vouchers",
+    icon: "fa-ticket",
+    path: "/admin/vouchers"
   },
   {
     name: "Blog",
@@ -49,12 +49,12 @@ const ROUTES = [
       { name: "Blog Management", path: "/admin/blog-management" }
     ]
   },
-  {
-    name: "Transactions",
-    icon: "fa-credit-card-alt",
-    path: "/transactions",
-    qty: 279
-  },
+  // {
+  //   name: "Transactions",
+  //   icon: "fa-credit-card-alt",
+  //   path: "/transactions",
+  //   qty: 279
+  // },
   {
     name: "Settings",
     icon: "fa-cog",

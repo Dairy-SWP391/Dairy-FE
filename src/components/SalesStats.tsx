@@ -31,8 +31,7 @@ const SalesStats = () => {
     { name: "Nov", expense: 0, month: 11 },
     { name: "Dec", expense: 0, month: 12 }
   ]);
-  const revenueColor = "var(--header)";
-  const expenseColor = "var(--input-border)";
+  const expenseColor = "var(--header)";
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -56,15 +55,6 @@ const SalesStats = () => {
       <div className="flex flex-col gap-2.5 mb-5 md:flex-row md:justify-between md:items-center">
         <h4>Sales Statistic 2022</h4>
         <div className="flex items-center gap-5">
-          <div className="flex items-center gap-2.5">
-            <span
-              className="w-4 h-4 rounded-full"
-              style={{ background: revenueColor }}
-            />
-            <span className="font-heading font-semibold text-sm text-header">
-              Revenue
-            </span>
-          </div>
           <div className="flex items-center gap-2.5">
             <span
               className="w-4 h-4 rounded-full"
@@ -101,9 +91,13 @@ const SalesStats = () => {
             <YAxis
               tickLine={false}
               axisLine={false}
+              width={80}
               tickFormatter={(value) =>
-                numFormatter({ num: value, fractionDigits: 0, prefix: "$" }) ||
-                ""
+                numFormatter({
+                  num: value,
+                  fractionDigits: 0,
+                  suffix: "VND"
+                }) || ""
               }
               tick={{
                 fill: "var(--header)"
@@ -113,7 +107,7 @@ const SalesStats = () => {
             {/* <Tooltip cursor={false} content={<CustomTooltip />} /> */}
             <Bar
               dataKey="expense"
-              fill={revenueColor}
+              fill={expenseColor}
               strokeWidth={4}
               maxBarSize={25}
               radius={10}

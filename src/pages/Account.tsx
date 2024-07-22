@@ -17,16 +17,21 @@ const Account = () => {
   const [totalPage, setTotalPage] = useState<number>(1);
   const [page, setPage] = useState<number>(1);
 
-  const deleteAccount = useCallback(async (id: string) => {
-    const result = confirm("Are you sure you want to delete this account?");
-    if (!result) return;
-    const res = await deleteUser({
-      user_id: id
-    });
-    if (res.status === 200) {
-      toast.success("Delete account successfully");
-    }
-  }, []);
+  const deleteAccount = useCallback(
+    async (id: string) => {
+      const result = confirm("Are you sure you want to delete this account?");
+      if (!result) return;
+      const res = await deleteUser({
+        user_id: id
+      });
+      if (res.status === 200) {
+        const newAccounts = accounts?.filter((account) => account.id !== id);
+        setAccounts(newAccounts);
+        toast.success("Delete account successfully");
+      }
+    },
+    [accounts]
+  );
 
   useEffect(() => {
     const fetch = async () => {
@@ -35,7 +40,7 @@ const Account = () => {
       setTotalPage(res.data.result.total_page);
     };
     fetch();
-  }, [deleteAccount, page]);
+  }, [page]);
 
   return (
     <>

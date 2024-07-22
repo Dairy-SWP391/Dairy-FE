@@ -1,21 +1,23 @@
-import { Category } from "../store/category";
+import { CategoryType } from "../store/category";
 import { ProductType } from "../types/Product";
 import http from "../utils/http";
 
 type CategoryResponse = {
   message: string;
-  data: Category[];
+  data: CategoryType[];
 };
 
 export const getAllCategories = () =>
   http.get<CategoryResponse>("category/all");
+
+export type SortType = "price" | "rating_point" | "sold" | "discount";
 
 type GetProductByCateProps = {
   category_id?: number;
   num_of_product?: number;
   num_of_items_per_page?: number;
   page: number;
-  sort_by?: "price" | "rating_point" | "sold" | "discount";
+  sort_by?: SortType;
   order_by?: "ASC" | "DESC";
   parent_category_id: number;
 };

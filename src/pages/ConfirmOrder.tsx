@@ -9,7 +9,7 @@ import { checkOut } from "../apis/user";
 
 const ConfirmOrder = () => {
   const location = useLocation();
-  const { service_id, address } = location.state;
+  const { service_id, address, voucher } = location.state;
   const [cartList, setCartList] = useState<CartItem[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [fee, setFee] = useState<{
@@ -21,7 +21,6 @@ const ConfirmOrder = () => {
   useEffect(() => {
     const getFee = async () => {
       try {
-        console.log(address);
         const cart_list = cart.reduce(
           (acc: { product_id: number; quantity: number }[], cur) => {
             acc.push({ product_id: cur.id, quantity: cur.quantity });
@@ -30,6 +29,7 @@ const ConfirmOrder = () => {
           []
         );
         const response = await getFeeShip({
+          voucher_code: voucher?.code,
           cart_list,
           receiver_name: address.name,
           phone_number: address.phone_number,
@@ -207,6 +207,10 @@ const ConfirmOrder = () => {
             <p className="text-black-500 text-sm italic">
               {numberToVND(fee.insurance_fee)}
             </p>
+          </div>
+          <div className="flex items-center justify-between text-base">
+            <p className="italic ">Voucher Giảm Giá</p>
+            <p className="italic">{numberToVND(voucher?.value || 0)}</p>
           </div>
           <div className="flex items-center justify-between text-base mt-2 pb-2 border-b-1">
             <p className="italic text-pink-500">Điểm Tích Lũy</p>

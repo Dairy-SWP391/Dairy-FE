@@ -4,6 +4,7 @@ import {
   Account,
   Address,
   AdminDashboard,
+  Blog,
   BlogEditor,
   Cart,
   Category,
@@ -20,9 +21,9 @@ import {
   ProductDetail,
   ProductEditor,
   ProductManagement,
-  ProductsGrid,
   Profile,
   Register,
+  Vouchers,
   Wishlist
 } from "../pages";
 import BlogDetail from "../pages/BlogDetail";
@@ -42,6 +43,10 @@ const publicRoutes: RouteType[] = [
     element: <Cart />
   },
   {
+    path: "/tin-tuc",
+    element: <Blog />
+  },
+  {
     path: "/:category",
     element: <Category />
   },
@@ -58,7 +63,7 @@ const publicRoutes: RouteType[] = [
     element: <ProductDetail />
   },
   {
-    path: "/blog/blog-detail",
+    path: "/tin-tuc/:id",
     element: <BlogDetail />
   },
   {
@@ -97,10 +102,6 @@ const authenticatedRoutes: RouteType[] = [
 const adminRoutes: RouteType[] = [
   { path: "/admin", element: <AdminDashboard /> },
   {
-    path: "/admin/products-grid",
-    element: <ProductsGrid />
-  },
-  {
     path: "/admin/products-management",
     element: <ProductManagement />
   },
@@ -123,6 +124,10 @@ const adminRoutes: RouteType[] = [
   {
     path: "/admin/accounts",
     element: <Account />
+  },
+  {
+    path: "/admin/vouchers",
+    element: <Vouchers />
   },
   {
     path: "/admin/orders",

@@ -51,3 +51,18 @@ export const addWishList = (product_id: number) =>
   http.post("user/add-wishlist", {
     product_id
   });
+
+export const convertCart = (cart: { id: number; quantity: number }[]) =>
+  http.post<{
+    message: string;
+    result: {
+      products: {
+        id: number;
+        name: string;
+        quantity: number;
+        image_url: string[];
+        price: number;
+        sale_price: number;
+      }[];
+    };
+  }>("cart/cart", cart);

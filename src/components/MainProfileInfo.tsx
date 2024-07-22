@@ -67,7 +67,7 @@ const MainProfileInfo = ({ income }: { income: number }) => {
                   num={income || 0}
                   // suffix="VND"
                 />
-                <span className="block label-text mb-2">Expense</span>
+                <span className="block label-text mb-2">Expense - VND</span>
               </div>
             </div>
             <div className="flex gap-5">

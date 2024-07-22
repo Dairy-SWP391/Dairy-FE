@@ -23,11 +23,15 @@ import { useEffect, useState } from "react";
 import { AddressType, getAllAddress } from "../apis/user";
 import { useAuth } from "../provider/AuthProvider";
 import { getPackageService } from "../apis/ship";
+import { getAllVouchers, VoucherType } from "../apis/voucher";
+import dayjs from "dayjs";
 
 const Cart = () => {
   const cart = useCartStore((state) => state.cart);
   const [address, setAddress] = useState<AddressType | null>(null);
   const [selectedService, setSelectedService] = useState<number>();
+  const [vouchers, setVouchers] = useState<VoucherType[]>([]);
+  const [selectedVoucher, setSelectedVoucher] = useState<VoucherType>();
   const [allAddress, setAllAddress] = useState<AddressType[]>([]);
   const [modalContent, setModalContent] = useState<
     "SERVICE" | "ADDRESS" | "VOUCHER"
@@ -39,11 +43,7 @@ const Cart = () => {
   const { token } = useAuth();
   const totalPrice = cart.reduce(
     (total, item) =>
-      total +
-      (item.sale
-        ? item.price - ((item.sale as number) * item.price) / 100
-        : item.price) *
-        item.quantity,
+      total + (item.sale ? item.sale : item.price) * item.quantity,
     0
   );
   const nav = useNavigate();
@@ -119,6 +119,23 @@ const Cart = () => {
     onOpen();
   };
 
+  const handleSelectDiscount = async () => {
+    setModalContent("VOUCHER");
+    try {
+      const response = await getAllVouchers({
+        limit: 6,
+        page: 1,
+        status: "ACTIVE"
+      });
+      if (response.status === 200) {
+        setVouchers(response.data.data.items);
+      }
+    } catch (err) {
+      toast.error("Hệ thống đang bận, vui lòng thử lại sau");
+    }
+    onOpen();
+  };
+
   const handleSubmit = () => {
     if (selectedService === undefined) {
       toast.error("Vui lòng chọn phương thức vận chuyển");
@@ -126,8 +143,20 @@ const Cart = () => {
     }
     localStorage.setItem("address", JSON.stringify(address));
     nav("/confirm-order", {
-      state: { service_id: selectedService, address }
+      state: {
+        service_id: selectedService,
+        address,
+        voucher: selectedVoucher
+      }
     });
+  };
+
+  const handleRemoveFromCart = (id: number) => {
+    const confirm = window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?");
+    if (confirm) {
+      const newCart = cart.filter((item) => item.id !== id);
+      useCartStore.setState({ cart: newCart });
+    }
   };
 
   return (
@@ -167,7 +196,7 @@ const Cart = () => {
                         <p
                           className={`text-medium text-black w-[10%] text-center`}
                         >
-                          {numberToVND(price - (price * sale) / 100)}
+                          {numberToVND(sale)}
                         </p>
                       )}
                       <p
@@ -200,18 +229,10 @@ const Cart = () => {
                       </Button>
                     </p>
                     <p className="text-medium text-black w-[10%] text-center tracking-tighter">
-                      {numberToVND(
-                        (sale ? price - (price * sale) / 100 : price) * quantity
-                      )}
+                      {numberToVND((sale ? sale : price) * quantity)}
                     </p>
                     <p className="text-medium text-slate-500 w-[10%] flex justify-end items-center">
-                      <button>
-                        <i
-                          className="fa fa-heart-o text-slate-500 text-xl hover:cursor-pointer mr-2"
-                          aria-hidden="true"
-                        ></i>
-                      </button>
-                      <button>
+                      <button onClick={() => handleRemoveFromCart(id)}>
                         <i
                           className="fa fa-trash-o text-slate-500 text-xl hover:cursor-pointer ml-1"
                           aria-hidden="true"
@@ -268,7 +289,10 @@ const Cart = () => {
         </Spring>
         <Spring className="card row-span-3">
           <h3 className="text-lg text-black">Ưu đãi & mã giảm giá</h3>
-          <button className="rounded-lg border-2 border-yellow-500 mt-3 h-[50%] w-full flex items-center justify-between px-6 cursor-pointer">
+          <button
+            onClick={handleSelectDiscount}
+            className="rounded-lg border-2 border-yellow-500 mt-3 h-[50%] w-full flex items-center justify-between px-6 cursor-pointer"
+          >
             <div className="w-1/12">
               <img
                 src={
@@ -288,8 +312,10 @@ const Cart = () => {
             <p>{numberToVND(totalPrice)}</p>
           </div>
           <div className="flex items-center justify-between text-base mt-2 pb-2 border-b-1">
-            <p>Giảm giá</p>
-            <p className="text-pink-500">{numberToVND(0)}</p>
+            <p className="italic">Giảm giá</p>
+            <p className="text-pink-500">
+              {numberToVND(selectedVoucher?.value || 0)}
+            </p>
           </div>
           <div className="flex items-start justify-between text-base mt-2 font-semibold">
             <p>Tổng tiền</p>
@@ -377,6 +403,74 @@ const Cart = () => {
                     </Button>
                     <Button color="primary" onPress={console.log}>
                       Confirm
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          )}
+          {modalContent === "VOUCHER" && (
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">
+                    Mã Giảm Giá
+                  </ModalHeader>
+                  <ModalBody>
+                    {vouchers.length > 0 ? (
+                      vouchers.map((voucher) => (
+                        <div key={voucher.code} className="flex mx-auto">
+                          <div className="bg-pink-100 w-44 h-16 rounded-l-md py-2 flex flex-col items-center justify-around border-r-red-500 border-dashed border-r-2">
+                            <h5 className="text-red-500">
+                              {numberToVND(voucher.value)}
+                            </h5>
+                            <p className="text-sm">
+                              HSD:{" "}
+                              {dayjs(voucher.expired_at).format("DD/MM/YYYY")}
+                            </p>
+                          </div>
+                          <div className="bg-pink-100 w-52 h-16 rounded-r-md px-2">
+                            <h5 className="flex flex-col justify-between my-2">
+                              <h6 className="text-center text-red-800">
+                                Tất cả sản phẩm
+                              </h6>
+                              <div className="flex justify-between items-center mt-2 px-1">
+                                <div>
+                                  <p className="text-xs font-normal italic">
+                                    {voucher.trading_point} điểm
+                                  </p>
+                                </div>
+                                <button
+                                  className="border text-sm px-2 py-[2px] text-white rounded bg-red-400"
+                                  onClick={() => {
+                                    const user = localStorage.getItem("user")
+                                      ? JSON.parse(
+                                          localStorage.getItem("user") as string
+                                        )
+                                      : null;
+                                    if (user.point < voucher.trading_point) {
+                                      toast.error("Số điểm không đủ để đổi mã");
+                                      return;
+                                    }
+                                    setSelectedVoucher(voucher);
+                                    toast.success("Đổi mã thành công");
+                                    onClose();
+                                  }}
+                                >
+                                  Đổi mã
+                                </button>
+                              </div>
+                            </h5>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div>Không có mã giảm giá nào</div>
+                    )}
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="danger" variant="light" onPress={onClose}>
+                      Close
                     </Button>
                   </ModalFooter>
                 </>

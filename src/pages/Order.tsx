@@ -9,12 +9,14 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Tab,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
+  Tabs,
   useDisclosure
 } from "@nextui-org/react";
 import { numberToVND } from "../utils/converter";
@@ -29,6 +31,7 @@ import dayjs from "dayjs";
 const Order = () => {
   const [order, setOrder] = useState<OrderType[]>([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const orderStatus = ["DELIVERING", "SUCCESS", "CANCELLED", "PENDING", "ALL"];
   const [detail, setDetail] = useState<Pick<
     GetOrderDetailResponse,
     "data"
@@ -67,41 +70,53 @@ const Order = () => {
           <div className="border-b-1 pb-3 border-b-slate-500">
             <h3 className="text-xl">Lịch Sử Đơn Hàng</h3>
           </div>
-          <div>
-            <Table aria-label="Example static collection table">
-              <TableHeader>
-                <TableColumn width={20}>No.</TableColumn>
-                <TableColumn width={150}>NGƯỜI NHẬN</TableColumn>
-                <TableColumn>SĐT</TableColumn>
-                <TableColumn width={200}>ĐỊA CHỈ</TableColumn>
-                <TableColumn width={100}>TỔNG TIỀN</TableColumn>
-                <TableColumn width={100}>THỜI GIAN</TableColumn>
-                <TableColumn width={100}>TRẠNG THÁI</TableColumn>
-              </TableHeader>
-              <TableBody>
-                {order.length > 0
-                  ? order?.map((item, index) => (
-                      <TableRow
-                        key={item.id}
-                        onClick={() => handleOpenOrderDetail(item.id)}
-                        className="hover:bg-gray-100 cursor-pointer"
-                      >
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell>{item.receiver_name}</TableCell>
-                        <TableCell>{item.phone_number}</TableCell>
-                        <TableCell>{item.address}</TableCell>
-                        <TableCell>{numberToVND(item.end_price)}</TableCell>
-                        <TableCell>
-                          {dayjs(item.created_at)
-                            .format("DD/MM/YYYY")
-                            .toString()}
-                        </TableCell>
-                        <TableCell>{item.status}</TableCell>
-                      </TableRow>
-                    ))
-                  : []}
-              </TableBody>
-            </Table>
+          <div className="flex w-full flex-col">
+            <Tabs aria-label="Options" className="mt-5">
+              {orderStatus.map((status) => (
+                <Tab key={status} title={status}>
+                  <Table aria-label="Example static collection table">
+                    <TableHeader>
+                      <TableColumn width={20}>No.</TableColumn>
+                      <TableColumn width={150}>NGƯỜI NHẬN</TableColumn>
+                      <TableColumn>SĐT</TableColumn>
+                      <TableColumn width={200}>ĐỊA CHỈ</TableColumn>
+                      <TableColumn width={100}>TỔNG TIỀN</TableColumn>
+                      <TableColumn width={100}>THỜI GIAN</TableColumn>
+                      <TableColumn width={100}>TRẠNG THÁI</TableColumn>
+                    </TableHeader>
+                    <TableBody>
+                      {order.length > 0
+                        ? order
+                            .filter((item) =>
+                              status === "ALL" ? true : item.status === status
+                            )
+                            ?.map((item, index) => (
+                              <TableRow
+                                key={item.id}
+                                onClick={() => handleOpenOrderDetail(item.id)}
+                                className="hover:bg-gray-100 cursor-pointer"
+                              >
+                                <TableCell>{index + 1}</TableCell>
+                                <TableCell>{item.receiver_name}</TableCell>
+                                <TableCell>{item.phone_number}</TableCell>
+                                <TableCell>{item.address}</TableCell>
+                                <TableCell>
+                                  {numberToVND(item.end_price)}
+                                </TableCell>
+                                <TableCell>
+                                  {dayjs(item.created_at)
+                                    .format("DD/MM/YYYY")
+                                    .toString()}
+                                </TableCell>
+                                <TableCell>{item.status}</TableCell>
+                              </TableRow>
+                            ))
+                        : []}
+                    </TableBody>
+                  </Table>
+                </Tab>
+              ))}
+            </Tabs>
           </div>
         </Spring>
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl">
@@ -121,19 +136,19 @@ const Order = () => {
                       <p>SĐT: {detail?.data.phone_number}</p>
                       <p>Địa chỉ: {detail?.data.address}</p>
                     </div>
-                    {/* <div className="text-lg">
-                    <p>Mã đơn hàng: {orderParamInfor?.order_id}</p>
-                    <p>
-                      Mã tra cứu thông tin giao hàng:{" "}
-                      {orderParamInfor?.order_ghn_code}
-                    </p>
-                    <p>
-                      Thời gian giao hàng dự kiến:{" "}
-                      {dayjs(orderParamInfor?.expected_delivery_time)
-                        .format("DD/MM/YYYY")
-                        .toString()}
-                    </p>
-                  </div> */}
+                    <div className="text-lg">
+                      <p>Mã đơn hàng: {detail?.data.id}</p>
+                      <p>
+                        Mã tra cứu thông tin giao hàng:{" "}
+                        {detail?.data.order_ghn_code}
+                      </p>
+                      <p>
+                        Thời gian giao hàng dự kiến:{" "}
+                        {dayjs(detail?.data.expected_delivery_time)
+                          .format("DD/MM/YYYY")
+                          .toString()}
+                      </p>
+                    </div>
                   </div>
                   <Table className="mt-3">
                     <TableHeader>

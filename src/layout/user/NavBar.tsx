@@ -1,7 +1,6 @@
 import { CartIcon } from "../../components/CartIcon";
 import DropdownItem from "../../components/DropdownItem";
 import Logo from "../../components/Logo";
-import { NotificationIcon } from "../../components/NotificationIcon";
 import Search from "../../components/Search";
 import { Badge, User } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
@@ -19,19 +18,20 @@ const NavBar = ({
   const nav = useNavigate();
   const categories = useCategoryStore((state) => state.category);
   const cart = useCartStore((state) => state.cart);
-  console.log(user);
 
   return (
     <>
       <div className="text-base sticky top-0 z-10 w-full">
         <div className="w-full flex items-center justify-between h-16 px-40 bg-white">
           <Logo />
-          <div className="flex items-center w-8/12">
+          <div className="w-1/2">
             <Search
               wrapperClass="w-full"
               placeholder="Ba mẹ muốn tìm mua gì hôm nay ?"
             />
-            <Badge
+          </div>
+          <div className="flex items-center w-3/12">
+            {/* <Badge
               color="danger"
               content={5}
               // isInvisible={isInvisible}
@@ -41,10 +41,10 @@ const NavBar = ({
               }}
             >
               <NotificationIcon className="fill-current" size={30} />
-            </Badge>
+            </Badge> */}
             <button
-              className="flex items-center cursor-pointer"
-              onClick={() => nav("/cart")}
+              className="flex items-center cursor-pointer "
+              onClick={() => nav(`/${user ? "cart" : "login"}`)}
             >
               <Badge
                 color="danger"

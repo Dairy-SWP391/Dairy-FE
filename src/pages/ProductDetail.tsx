@@ -19,6 +19,8 @@ import { ProductType } from "../types/Product";
 import { addWishlist } from "../apis/user";
 import { useAuth } from "../provider/AuthProvider";
 import dayjs from "dayjs";
+import { FeedbackType, getFeedbacks } from "../apis/feedback";
+import RatingStars from "../components/RatingStars";
 // import RelatedProductCard from "../components/RelatedProductCard";
 
 const relatedPost = {
@@ -33,6 +35,7 @@ const ProductDetail = () => {
   const nav = useNavigate();
   const params = useParams<{ id: string }>().id;
   const [relatedProduct, setRelatedProduct] = useState<ProductType[]>([]);
+  const [feedbacks, setFeedbacks] = useState<FeedbackType[]>([]);
   const setRelatedProductMemoized = useCallback((data: ProductType[]) => {
     setRelatedProduct(data);
   }, []);
@@ -161,6 +164,19 @@ const ProductDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, setRelatedProductMemoized, product?.id, parent_category_id]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getFeedbacks(Number(id));
+        setFeedbacks(response.data.result);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+    console.log(feedbacks);
+  }, [id]);
+
   const handleChangeQuantity = (action: QuantityAction) => {
     if (action === "increase" && product) {
       quantity + 1 > product.quantity
@@ -196,7 +212,7 @@ const ProductDetail = () => {
           id: product?.id as number,
           name: product?.name as string,
           price: product?.price as number,
-          sale: 10,
+          sale: product?.sale_price as number,
           quantity: quantity,
           max_quantity: product?.quantity as number,
           image: product?.images[0].image_url as string
@@ -409,7 +425,7 @@ const ProductDetail = () => {
           <div className="col-span-4 mt-10">
             <Spring className="card">
               <h3>Đánh giá</h3>
-              <Card className="mt-5 bg-orange-100 mb-10">
+              {/* <Card className="mt-5 bg-orange-100 mb-10">
                 <CardBody>
                   <div className="grid grid-cols-9 gap-3">
                     <div className="col-span-3 flex flex-col items-center">
@@ -478,41 +494,51 @@ const ProductDetail = () => {
                     </div>
                   </div>
                 </CardBody>
-              </Card>
-              {productPropsList?.map((_item, index) => {
-                return (
-                  index <= 3 && (
-                    <div className="grid grid-cols-10 gap-5 mt-5 border-b-2 pb-5">
-                      <div className="flex col-span-1 justify-center mt-2">
-                        <Avatar
-                          name="B"
-                          size="lg"
-                          classNames={{
-                            base: "border border-pink-400 bg-pink-200",
-                            name: "text-slate-500 text-2xl font-bold"
-                          }}
-                        />
-                      </div>
-                      <div className="col-span-9">
-                        <p className="text-lg font-bold">Ba Mẹ</p>
-                        <div className="flex items-center">
-                          <span className="fa fa-star checked text-lg text-yellow-400 mr-1"></span>
-                          <span className="fa fa-star checked text-lg text-yellow-400 mr-1"></span>
-                          <span className="fa fa-star checked text-lg text-yellow-400 mr-1"></span>
-                          <span className="fa fa-star checked text-lg text-yellow-400 mr-1"></span>
-                          <span className="fa fa-star checked text-lg text-yellow-400 mr-1"></span>
-                          <p className="text-sm text-slate-500 px-2">
-                            21/05/2024 10:37
-                          </p>
+              </Card> */}
+              {feedbacks.length > 0 ? (
+                feedbacks?.map((_item, index) => {
+                  return (
+                    index <= 3 && (
+                      <div className="grid grid-cols-10 gap-5 mt-5 border-b-2 pb-5">
+                        <div className="flex col-span-1 justify-center mt-2">
+                          <Avatar
+                            name="B"
+                            size="lg"
+                            classNames={{
+                              base: "border border-pink-400 bg-pink-200",
+                              name: "text-slate-500 text-2xl font-bold"
+                            }}
+                            src={_item.user.avatar_url}
+                          />
                         </div>
-                        <div className="min-h-6">
-                          <p>Hàng tốt giá rẻ, nên mua Hàng tốt giá rẻ</p>
+                        <div className="col-span-9">
+                          <p className="text-lg font-bold">{`${_item.user.first_name} ${_item.user.last_name}`}</p>
+                          <div className="flex items-center justify-between">
+                            {/* <span className="fa fa-star checked text-lg text-yellow-400 mr-1"></span>
+                          <span className="fa fa-star checked text-lg text-yellow-400 mr-1"></span>
+                          <span className="fa fa-star checked text-lg text-yellow-400 mr-1"></span>
+                          <span className="fa fa-star checked text-lg text-yellow-400 mr-1"></span>
+                          <span className="fa fa-star checked text-lg text-yellow-400 mr-1"></span> */}
+                            <RatingStars rating={_item.rating_point} readOnly />
+                            <p className="text-sm text-slate-500">
+                              {dayjs(_item.created_at).format(
+                                "DD/MM/YYYY HH:mm"
+                              )}
+                            </p>
+                          </div>
+                          <div className="min-h-6">
+                            <p>{_item.content}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )
-                );
-              })}
+                    )
+                  );
+                })
+              ) : (
+                <h6 className="mt-5 italic">
+                  Chưa có đánh giá, đặt hàng để được để lại bình luận
+                </h6>
+              )}
             </Spring>
           </div>
         </div>
