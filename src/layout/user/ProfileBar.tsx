@@ -28,19 +28,9 @@ const ProfileNav = [
     icon: "fa fa-truck"
   },
   {
-    name: "Thông Báo",
-    href: "/me/reviews",
-    icon: "fa fa-bell-o"
-  },
-  {
     name: "Ưa Thích",
     href: "/me/wishlist",
     icon: "fa fa-heart-o"
-  },
-  {
-    name: "Ví Voucher",
-    href: "/me/vouchers",
-    icon: "fa fa-ticket"
   }
 ];
 

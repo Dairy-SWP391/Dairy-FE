@@ -22,3 +22,4 @@ export { default as OrderList } from "./OrderList";
 export { default as OrderDetail } from "./OrderDetail";
 export { default as Blog } from "./Blog";
 export { default as Vouchers } from "./Vouchers";
+export { default as ChangePassword } from "./ChangePassword";

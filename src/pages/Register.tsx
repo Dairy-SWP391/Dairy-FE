@@ -9,6 +9,10 @@ import facebook from "../assets/icons/facebook.svg";
 import classNames from "classnames";
 import PasswordInput from "../components/PasswordInput";
 import useWindowSize from "../hooks/useWindowSize";
+import { registerApi } from "../apis/user";
+import { isAxiosError, isAxiosUnprocessableEntityError } from "../utils/utils";
+import { useAuth } from "../provider/AuthProvider";
+import { toast } from "react-toastify";
 
 const DefaultValues = {
   first_name: "",
@@ -26,7 +30,7 @@ interface RegisterFormProps {
 
 const Login = () => {
   const { width } = useWindowSize();
-  const navigate = useNavigate();
+  const { addToken } = useAuth();
   const {
     register,
     handleSubmit,
@@ -36,13 +40,35 @@ const Login = () => {
     defaultValues: DefaultValues
   });
 
-  const onSubmit = () => {
-    navigate("/");
+  const onSubmit = async (data: RegisterFormProps) => {
+    try {
+      const response = await registerApi(data);
+      console.log(response.status === 200);
+      if (response.status === 200) {
+        addToken(response.data.result);
+        toast.success("Login successful");
+        setTimeout(() => (window.location.href = "/"), 1000);
+      }
+    } catch (err) {
+      if (isAxiosError(err)) {
+        if (
+          isAxiosUnprocessableEntityError<{
+            message: string;
+            data: {
+              first_name: string;
+              last_name: string;
+              email: string;
+              password: string;
+            };
+          }>(err)
+        ) {
+          toast.error(err.response?.data.data.email);
+        }
+      }
+      // }
+      console.log(err);
+    }
   };
-
-  // const onReject = (err) => {
-  //   toast.error(err);
-  // };
 
   return (
     <>

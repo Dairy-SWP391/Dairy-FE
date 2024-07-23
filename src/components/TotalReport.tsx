@@ -42,7 +42,7 @@ const TotalReport = ({
           <ReportItem key={index} data={item} />
         ))}
       </div>
-      <NavLink className="btn btn--primary" to="/revenue-by-period">
+      <NavLink className="btn btn--primary" to="/admin/orders">
         More Details
       </NavLink>
     </Spring>

@@ -8,7 +8,10 @@ import PageHeader from "../layout/admin/PageHeader";
 import { CategoryType, useCategoryStore } from "../store/category";
 import SingleFileUploader from "../components/SingleFileUploader";
 import { useEffect, useState } from "react";
-import { addProduct } from "../apis/product";
+import { addProduct, getBrandName, updateProduct } from "../apis/product";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ProductType } from "../types/Product";
+import _ from "lodash";
 
 export interface ProductEditorForm {
   name: string;
@@ -38,34 +41,72 @@ export interface ProductEditorForm {
 
 const ProductEditor = () => {
   const categoryOptions = useCategoryStore((state) => state.category);
+  const location = useLocation();
   const [productImages, setProductImages] = useState<string[]>([]);
   const [subCategory, setSubCategory] = useState<
     (Omit<CategoryType, "child_category"> & {
       parent_category_id: number;
     })[]
   >([]);
+  const [productId, setProductId] = useState<number>(0);
+  const nav = useNavigate();
 
   const {
     register,
     handleSubmit,
     control,
+    reset,
     setValue,
     getValues,
+    watch,
     formState: { errors }
   } = useForm<ProductEditorForm>();
+
+  useEffect(() => {
+    const product: ProductType = location.state.product;
+    if (product) {
+      const fetchBrand = async () => {
+        const brand = await getBrandName(product.brand_id);
+        setValue("brand_name", brand.data.data.name);
+      };
+      fetchBrand();
+      handleGetSubCategory(product.parent_category_id);
+      setValue("name", product.name);
+      setValue("quantity", product.quantity);
+      setValue("rating_number", product.rating_number);
+      setValue("rating_point", product.rating_point);
+      // setValue("brand_name", product.description || "");
+      setValue("producer", product.producer || "");
+      setValue("manufactured_at", product.manufactured_at || "");
+      setValue("target", product.target || "");
+      setValue("volumn", product.volumn || 0);
+      setValue("weight", product.weight || 0);
+      setValue("caution", product.caution || "");
+      setValue("images", product.image_urls);
+      setValue("origin", product.origin || "");
+      setValue("preservation", product.preservation || "");
+      setValue("description", product.description || "");
+      setValue("instruction", product.instruction || "");
+      setValue("category_id", product.category_id);
+      setValue("price", product.price);
+      setValue("status", product.status);
+      setValue("sale_price", product.sale_price || 0);
+      setValue("starting_timestamp", dayjs(product.starting_timestamp));
+      console.log(product.starting_timestamp);
+      setValue("ending_timestamp", dayjs(product.ending_timestamp));
+      setValue("ship_category_id", "BABY");
+      setProductImages(product.image_urls);
+      setProductId(product.id);
+    }
+  }, []);
 
   useEffect(() => {
     categoryOptions.length > 0 &&
       setSubCategory(categoryOptions[0].child_category);
   }, [categoryOptions]);
 
-  const handleGetSubCategory = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const category_id = parseInt(event.target.value);
-    const category = categoryOptions.find(
-      (category) => category.id === category_id
-    );
+  const handleGetSubCategory = (value: number) => {
+    const category = categoryOptions.find((category) => category.id === value);
     setSubCategory(category?.child_category || []);
     setValue("category_id", category?.child_category[0].id as number);
   };
@@ -78,24 +119,56 @@ const ProductEditor = () => {
   // do something with the data
   const handleSave = async (data: ProductEditorForm) => {
     setValue("images", productImages);
-    const starting_timestamp = getValues("starting_timestamp")
-      .toDate()
-      .toISOString();
-    const ending_timestamp = getValues("ending_timestamp")
-      ?.toDate()
-      .toISOString();
-    try {
-      const response = await addProduct({
-        ...data,
-        images: productImages,
-        starting_timestamp,
-        ending_timestamp
-      });
-      if (response.status === 200) {
-        toast.success(response.data.message);
+    const starting_timestamp = getValues("starting_timestamp").isValid()
+      ? getValues("starting_timestamp").toDate().toISOString()
+      : dayjs().toISOString();
+    const ending_timestamp = getValues("ending_timestamp")?.isValid()
+      ? getValues("ending_timestamp")?.toDate().toISOString()
+      : undefined;
+    if (productId !== 0) {
+      // update
+      try {
+        const body = ending_timestamp
+          ? {
+              ...data,
+              images: productImages,
+              starting_timestamp,
+              ending_timestamp,
+              id: productId
+            }
+          : {
+              ..._.omit(data, ["ending_timestamp"]),
+              starting_timestamp,
+              images: productImages,
+              id: productId
+            };
+        const response = await updateProduct(body);
+        if (response.status === 200) {
+          toast.success(
+            "Update product successfully, redirecting to product management"
+          );
+          nav("/admin/products-management");
+          reset();
+        }
+      } catch (e) {
+        console.log(e);
       }
-    } catch (e) {
-      console.log(e);
+    } else {
+      // create
+      try {
+        const response = await addProduct({
+          ...data,
+          images: productImages,
+          starting_timestamp,
+          ending_timestamp
+        });
+        if (response.status === 200) {
+          toast.success("Add product successfully");
+          reset();
+        }
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
@@ -261,7 +334,9 @@ const ProductEditor = () => {
                   // value={value}
                   defaultSelectedKeys={"1"}
                   aria-label="Category"
-                  onChange={(event) => handleGetSubCategory(event)}
+                  onChange={(event) =>
+                    handleGetSubCategory(Number(event.target.value))
+                  }
                 >
                   {categoryOptions
                     .filter((category) => category.name !== "TIN TỨC")
@@ -278,6 +353,7 @@ const ProductEditor = () => {
                   defaultSelectedKeys={""}
                   {...register("category_id", { required: true })}
                   aria-label="sub-category"
+                  selectedKeys={[watch("category_id")]}
                 >
                   {subCategory.map((category) => (
                     <SelectItem key={category.id}>{category.name}</SelectItem>
@@ -479,7 +555,7 @@ const ProductEditor = () => {
                   Status *
                 </label>
                 <Select
-                  defaultSelectedKeys={["ACTIVE"]}
+                  selectedKeys={[watch("status")]}
                   {...register("status", { required: true })}
                   aria-label="status"
                 >

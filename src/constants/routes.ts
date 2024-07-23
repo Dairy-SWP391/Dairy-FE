@@ -48,21 +48,21 @@ const ROUTES = [
       { name: "Blog Editor", path: "/admin/blog-editor" },
       { name: "Blog Management", path: "/admin/blog-management" }
     ]
-  },
+  }
   // {
   //   name: "Transactions",
   //   icon: "fa-credit-card-alt",
   //   path: "/transactions",
   //   qty: 279
   // },
-  {
-    name: "Settings",
-    icon: "fa-cog",
-    links: [
-      { name: "General Settings", path: "/general-settings" },
-      { name: "Connected Apps", path: "/connected-apps" }
-    ]
-  }
+  // {
+  //   name: "Settings",
+  //   icon: "fa-cog",
+  //   links: [
+  //     { name: "General Settings", path: "/general-settings" },
+  //     { name: "Connected Apps", path: "/connected-apps" }
+  //   ]
+  // }
 ];
 
 export default ROUTES;

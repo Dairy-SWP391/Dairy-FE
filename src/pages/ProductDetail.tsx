@@ -1,5 +1,15 @@
 import Spring from "../components/Spring";
-import { Avatar, Button, Card, CardBody, Chip, Image } from "@nextui-org/react";
+import {
+  Avatar,
+  Button,
+  Card,
+  CardBody,
+  Chip,
+  Image,
+  Input,
+  Select,
+  SelectItem
+} from "@nextui-org/react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
@@ -99,6 +109,9 @@ const ProductDetail = () => {
   const { token } = useAuth();
   const category = useCategoryStore((state) => state.category);
   const [remainingTime, setRemainingTime] = useState<number>(0);
+  const user = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user") as string)
+    : null;
 
   useEffect(() => {
     if (product) {
@@ -131,6 +144,7 @@ const ProductDetail = () => {
         setProduct(response.data.data);
       } catch (err) {
         console.log(err);
+        nav("/404");
       }
     };
 
@@ -187,39 +201,125 @@ const ProductDetail = () => {
     }
   };
 
-  const handleAddToCart = () => {
-    const ahihi = cart.find((item) => item.id === product?.id);
-    if (ahihi) {
-      const newCart = cart.map((item) => {
-        if (item.id === product?.id) {
-          if (item.quantity + quantity > item.max_quantity) {
-            toast.error("Số lượng sản phẩm không đủ");
-            return item;
-          }
-          return {
-            ...item,
-            quantity: item.quantity + quantity
-          };
-        }
-        return item;
-      });
-      addToCart(newCart);
-      toast.success("Thêm sản phẩm vào giỏ hàng thành công");
-    } else {
-      addToCart([
-        ...cart,
-        {
-          id: product?.id as number,
-          name: product?.name as string,
-          price: product?.price as number,
-          sale: product?.sale_price as number,
-          quantity: quantity,
-          max_quantity: product?.quantity as number,
-          image: product?.images[0].image_url as string
-        }
-      ]);
-      toast.success("Thêm sản phẩm vào giỏ hàng thành công");
+  const handleBuyNow = () => {
+    if (product?.quantity === 0) {
+      toast.error("Sản phẩm đã hết hàng");
+      return;
     }
+    const fetchData = async () => {
+      try {
+        const response = await getProductDetail(id as string);
+        if (response.status === 200) {
+          const ahihi = cart.find((item) => item.id === product?.id);
+          if (ahihi) {
+            const newCart = cart.map((item) => {
+              if (item.id === product?.id) {
+                if (item.quantity + quantity > item.max_quantity) {
+                  toast.error("Số lượng sản phẩm không đủ");
+                  return item;
+                }
+                return {
+                  ...item,
+                  quantity: item.quantity + quantity
+                };
+              }
+              return item;
+            });
+            addToCart(newCart);
+            if (user) {
+              toast.success("Thêm sản phẩm vào giỏ hàng thành công");
+              nav("/cart");
+            } else {
+              toast.error("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
+              nav("/login");
+            }
+          } else {
+            addToCart([
+              ...cart,
+              {
+                id: product?.id as number,
+                name: product?.name as string,
+                price: product?.price as number,
+                sale: product?.sale_price as number,
+                quantity: quantity,
+                max_quantity: product?.quantity as number,
+                image: product?.images[0].image_url as string
+              }
+            ]);
+            if (!user) {
+              toast.error("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
+              nav("/login");
+            } else {
+              toast.success("Thêm sản phẩm vào giỏ hàng thành công");
+              nav("/cart");
+            }
+          }
+        }
+      } catch (err) {
+        toast.error("Sản phẩm không tồn tại");
+        nav("/404");
+      }
+    };
+    fetchData();
+  };
+
+  const handleAddToCart = () => {
+    if (product?.quantity === 0) {
+      toast.error("Sản phẩm đã hết hàng");
+      return;
+    }
+    const fetchData = async () => {
+      try {
+        const response = await getProductDetail(id as string);
+        if (response.status === 200) {
+          const ahihi = cart.find((item) => item.id === product?.id);
+          if (ahihi) {
+            const newCart = cart.map((item) => {
+              if (item.id === product?.id) {
+                if (item.quantity + quantity > item.max_quantity) {
+                  toast.error("Số lượng sản phẩm không đủ");
+                  return item;
+                }
+                return {
+                  ...item,
+                  quantity: item.quantity + quantity
+                };
+              }
+              return item;
+            });
+            addToCart(newCart);
+            if (user) toast.success("Thêm sản phẩm vào giỏ hàng thành công");
+            else {
+              toast.error("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
+              nav("/login");
+            }
+          } else {
+            addToCart([
+              ...cart,
+              {
+                id: product?.id as number,
+                name: product?.name as string,
+                price: product?.price as number,
+                sale: product?.sale_price as number,
+                quantity: quantity,
+                max_quantity: product?.quantity as number,
+                image: product?.images[0].image_url as string
+              }
+            ]);
+            if (!user) {
+              toast.error("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
+              nav("/login");
+            } else {
+              toast.success("Thêm sản phẩm vào giỏ hàng thành công");
+            }
+          }
+        }
+      } catch (err) {
+        toast.error("Sản phẩm không tồn tại");
+        nav("/404");
+      }
+    };
+    fetchData();
   };
 
   const handleAddWishlist = async () => {
@@ -332,6 +432,7 @@ const ProductDetail = () => {
                 onClick={() => handleChangeQuantity("decrease")}
                 size="sm"
                 isIconOnly
+                disabled={product?.quantity === 0}
               >
                 -
               </Button>
@@ -341,10 +442,16 @@ const ProductDetail = () => {
                 onClick={() => handleChangeQuantity("increase")}
                 size="sm"
                 isIconOnly
+                disabled={product?.quantity === 0}
               >
                 +
               </Button>
             </div>
+            {product?.quantity === 0 && (
+              <p className="mt-3 text-red-500 italic font-bold text-xl">
+                Sản phẩm đã hết
+              </p>
+            )}
             <div className="w-2/3 grid grid-cols-2 gap-5 mt-7 ">
               <Button
                 className="text-white text-xl"
@@ -355,7 +462,12 @@ const ProductDetail = () => {
               >
                 Thêm Vào Giỏ Hàng
               </Button>
-              <Button className="text-white text-xl" size="lg" color="danger">
+              <Button
+                className="text-white text-xl"
+                size="lg"
+                color="danger"
+                onClick={handleBuyNow}
+              >
                 Mua Ngay
               </Button>
             </div>
@@ -425,6 +537,21 @@ const ProductDetail = () => {
           <div className="col-span-4 mt-10">
             <Spring className="card">
               <h3>Đánh giá</h3>
+              <div className="mt-5">
+                <div className="flex gap-5 items-center">
+                  <Input label="Feedback" className="w-[78%]" />
+                  <Select label="Rating" className="w-[10%]">
+                    <SelectItem key={5}>5</SelectItem>
+                    <SelectItem key={4}>4</SelectItem>
+                    <SelectItem key={3}>3</SelectItem>
+                    <SelectItem key={2}>2</SelectItem>
+                    <SelectItem key={1}>1</SelectItem>
+                  </Select>
+                  <Button className="w-[12%]" size="lg" color="primary">
+                    Submit
+                  </Button>
+                </div>
+              </div>
               {/* <Card className="mt-5 bg-orange-100 mb-10">
                 <CardBody>
                   <div className="grid grid-cols-9 gap-3">

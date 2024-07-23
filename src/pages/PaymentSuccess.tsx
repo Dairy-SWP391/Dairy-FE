@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import Spring from "../components/Spring";
 import { getOrderDetail, GetOrderDetailResponse } from "../apis/order";
 import {
+  Link,
   Table,
   TableBody,
   TableCell,
@@ -13,9 +14,11 @@ import {
 import { numberToVND } from "../utils/converter";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
+import { useCartStore } from "../store/cart";
 
 const PaymentSuccess = () => {
   const location = useLocation();
+  const { setCart } = useCartStore();
   const [detail, setDetail] = useState<Pick<
     GetOrderDetailResponse,
     "data"
@@ -32,7 +35,8 @@ const PaymentSuccess = () => {
     };
 
     fetchOrderDetail();
-
+    setCart([]);
+    localStorage.removeItem("cart");
     toast.success("Thanh toán thành công!");
   }, [location.search]);
 
@@ -133,6 +137,9 @@ const PaymentSuccess = () => {
             </p>
           </div>
         </div>
+      </div>
+      <div className="flex items-center justify-center">
+        <Link className="mt-5 text-xl">Về Trang Chủ</Link>
       </div>
     </Spring>
   );

@@ -118,7 +118,7 @@ const ConfirmOrder = () => {
                         <p
                           className={`text-medium text-black w-[10%] text-center`}
                         >
-                          {numberToVND(price - (price * sale) / 100)}
+                          {numberToVND(sale)}
                         </p>
                       )}
                       <p
@@ -131,9 +131,7 @@ const ConfirmOrder = () => {
                       {quantity}
                     </p>
                     <p className="text-medium text-black w-[10%] text-center tracking-tighter">
-                      {numberToVND(
-                        (sale ? price - (price * sale) / 100 : price) * quantity
-                      )}
+                      {numberToVND((sale ? sale : price) * quantity)}
                     </p>
                   </div>
                 );

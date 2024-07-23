@@ -8,7 +8,7 @@ import classNames from "classnames";
 import PasswordInput from "../components/PasswordInput";
 import { MouseEvent } from "react";
 import useWindowSize from "../hooks/useWindowSize";
-import { login } from "../apis/user";
+import { getMe, login } from "../apis/user";
 import { toast } from "react-toastify";
 import { ResponseApi, isAxiosUnprocessableEntityError } from "../utils/utils";
 import { useAuth } from "../provider/AuthProvider";
@@ -35,13 +35,21 @@ const Login = () => {
       if (result.status === 200) {
         addToken(result.data.result);
         toast.success("Login successful");
+        const user_info = await getMe();
+        if (user_info.status === 200) {
+          if (user_info.data.result.role === "MEMBER") {
+            setTimeout(() => (window.location.href = "/"), 2000);
+          } else {
+            setTimeout(() => (window.location.href = "/admin"), 2000);
+          }
+        }
         // const ahihi = jwtDecode<{ role: "MEMBER" | "STAFF" | "ADMIN" }>(
         //   result.data.result.access_token
         // );
         // console.log(ahihi);
         // if (role === "MEMBER") navigate("/");
         // navigate("/admin");
-        window.location.href = "/";
+        // window.location.href = "/";
       }
     } catch (err) {
       if (

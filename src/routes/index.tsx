@@ -8,6 +8,7 @@ import {
   BlogEditor,
   Cart,
   Category,
+  ChangePassword,
   Chat,
   ChatDetail,
   ConfirmOrder,
@@ -69,6 +70,10 @@ const publicRoutes: RouteType[] = [
   {
     path: "/404",
     element: <PageNotFound />
+  },
+  {
+    path: "/login",
+    element: <Login />
   }
 ];
 
@@ -96,6 +101,10 @@ const authenticatedRoutes: RouteType[] = [
   {
     path: "/me/orders",
     element: <Order />
+  },
+  {
+    path: "/me/password",
+    element: <ChangePassword />
   }
 ];
 
@@ -140,10 +149,6 @@ const adminRoutes: RouteType[] = [
 ];
 
 const unAuthenticatedRoutes: RouteType[] = [
-  {
-    path: "/login",
-    element: <Login />
-  },
   {
     path: "/register",
     element: <Register />

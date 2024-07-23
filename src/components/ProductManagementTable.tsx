@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ProductType } from "../types/Product";
 import Spring from "./Spring";
-import { getProductByCategory } from "../apis/category";
+import { getProductByCategoryAdmin } from "../apis/category";
 import {
   Button,
   Image,
@@ -16,6 +16,7 @@ import {
 import dayjs from "dayjs";
 import { useCategoryStore } from "../store/category";
 import { numberToVND } from "../utils/converter";
+import { useNavigate } from "react-router-dom";
 
 const ProductManagementTable = ({
   category_id,
@@ -31,12 +32,14 @@ const ProductManagementTable = ({
   const [categoryObj, setCategoryObj] = useState<
     { id: number; name: string }[]
   >([]);
+  const nav = useNavigate();
+  console.log(productList[0]);
 
   useEffect(() => {
     const fetchApi = async () => {
       try {
         const fetchData =
-          subCategory !== 0
+          subCategory !== 0 && subCategory !== undefined
             ? {
                 parent_category_id: category_id,
                 num_of_items_per_page: 10,
@@ -44,12 +47,12 @@ const ProductManagementTable = ({
                 category_id: subCategory
               }
             : {
-                parent_category_id: 0,
+                parent_category_id: category_id || 0,
                 num_of_items_per_page: 10,
                 page: page
               };
 
-        const response = await getProductByCategory(fetchData);
+        const response = await getProductByCategoryAdmin(fetchData);
         if (response.status === 200) {
           setProductList(response.data.data.products);
           setTotalPage(response.data.data.totalPage);
@@ -72,18 +75,6 @@ const ProductManagementTable = ({
     );
     setCategoryObj(cate);
   }, [page, category, category_id, subCategory]);
-
-  const handleDeleteProduct = () => {
-    const confirm = window.confirm("Are you sure you want to delete?");
-    if (confirm) {
-      try {
-        // await deleteProduct(id);
-        alert("Deleted");
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
 
   return (
     <>
@@ -145,12 +136,15 @@ const ProductManagementTable = ({
                       className="flex gap-2 items-center min-h-full"
                       height={90}
                     >
-                      <Button color="primary">Update</Button>
                       <Button
-                        color="danger"
-                        onClick={() => handleDeleteProduct()}
+                        color="primary"
+                        onClick={() =>
+                          nav("/admin/product-editor", {
+                            state: { product: item }
+                          })
+                        }
                       >
-                        Delete
+                        Update
                       </Button>
                     </TableCell>
                   </TableRow>

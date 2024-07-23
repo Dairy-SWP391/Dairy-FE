@@ -25,9 +25,10 @@ import { useAuth } from "../provider/AuthProvider";
 import { getPackageService } from "../apis/ship";
 import { getAllVouchers, VoucherType } from "../apis/voucher";
 import dayjs from "dayjs";
+import { convertCart } from "../apis/product";
 
 const Cart = () => {
-  const cart = useCartStore((state) => state.cart);
+  const { cart, setCart } = useCartStore();
   const [address, setAddress] = useState<AddressType | null>(null);
   const [selectedService, setSelectedService] = useState<number>();
   const [vouchers, setVouchers] = useState<VoucherType[]>([]);
@@ -67,16 +68,28 @@ const Cart = () => {
             quantity: item.quantity + 1
           };
         } else {
-          return {
-            ...item,
-            quantity: item.quantity - 1
-          };
+          if (item.quantity - 1 === 0) {
+            const confirm = window.confirm(
+              "Bạn có chắc chắn muốn xóa sản phẩm này?"
+            );
+            if (confirm) {
+              return {
+                ...item,
+                quantity: item.quantity - 1
+              };
+            }
+          } else {
+            return {
+              ...item,
+              quantity: item.quantity - 1
+            };
+          }
         }
       }
       return item;
     });
     const finalCart = newCart.filter((item) => item.quantity > 0);
-    useCartStore.setState({ cart: finalCart });
+    setCart(finalCart);
   };
 
   useEffect(() => {
@@ -99,7 +112,34 @@ const Cart = () => {
     fetchAddress();
   }, []);
 
+  const getInitCart = async () => {
+    const cartLocal = localStorage.getItem("cart")
+      ? JSON.parse(localStorage.getItem("cart") as string)
+      : [];
+    const response = await convertCart(cartLocal);
+    if (response) {
+      return response.data.result.products.map((product) => ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        sale: product.sale_price,
+        quantity:
+          cartLocal.find(
+            (item: { id: number; quantity: number }) => item.id === product.id
+          )?.quantity || 0,
+        max_quantity: product.quantity,
+        image: product.image_url[0]
+      }));
+    }
+    return [];
+  };
+
+  useEffect(() => {
+    getInitCart().then((cart) => setCart(cart));
+  });
+
   const handleGetService = async () => {
+    getInitCart().then((cart) => setCart(cart));
     try {
       const response = await getPackageService(
         address?.district_id.toString() as string
@@ -155,7 +195,7 @@ const Cart = () => {
     const confirm = window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?");
     if (confirm) {
       const newCart = cart.filter((item) => item.id !== id);
-      useCartStore.setState({ cart: newCart });
+      setCart(newCart);
     }
   };
 
@@ -378,8 +418,14 @@ const Cart = () => {
                   <ModalBody>
                     <RadioGroup
                       label="Vui lòng chọn địa chỉ nhận hàng"
-                      value={address?.id.toString()}
-                      onChange={(e) => setSelectedService(+e.target.value)}
+                      defaultValue={address?.id.toString()}
+                      onChange={(e) =>
+                        setAddress(
+                          allAddress.find(
+                            (item) => item.id === Number(e.target.value)
+                          ) as AddressType
+                        )
+                      }
                       isRequired
                     >
                       {allAddress.map((item) => (
@@ -401,7 +447,7 @@ const Cart = () => {
                     <Button color="danger" variant="light" onPress={onClose}>
                       Close
                     </Button>
-                    <Button color="primary" onPress={console.log}>
+                    <Button color="primary" onPress={onClose}>
                       Confirm
                     </Button>
                   </ModalFooter>

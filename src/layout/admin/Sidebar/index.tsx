@@ -114,9 +114,9 @@ const Sidebar = () => {
                       <span className="text">{route.name}</span>
                     </div>
                   </NavLink>
-                  {index === ROUTES.length - 2 && (
+                  {/* {index === ROUTES.length - 2 && (
                     <span className="menu_divider" />
-                  )}
+                  )} */}
                 </>
               )}
             </Fragment>

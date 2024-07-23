@@ -15,7 +15,7 @@ import { SidebarProvider } from "./context/sidebarContext";
 import Sidebar from "./layout/admin/Sidebar";
 import AuthProvider, { useAuth } from "./provider/AuthProvider";
 import Routes from "./routes";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { getMe } from "./apis/user";
 import { isAxiosError } from "./utils/utils";
 import socket from "./utils/socket";
@@ -24,12 +24,11 @@ import { Cart, useCartStore } from "./store/cart";
 
 function App() {
   // const { width } = useWindowSize();
-  const path = useLocation().pathname;
-  const nav = useNavigate();
+  const path = useLocation();
   const layout = useLayout();
   const updateCategory = useCategoryStore((state) => state.setCategory);
   const { setCart } = useCartStore();
-  const { token, clearToken } = useAuth();
+  const { token, clearToken, addToken } = useAuth();
   const [user, setUser] = useState(
     localStorage.getItem("user")
       ? JSON.parse(localStorage.getItem("user") as string)
@@ -43,6 +42,25 @@ function App() {
     };
     getCategory();
   }, []);
+
+  useEffect(() => {
+    if (path.pathname === "/oauth") {
+      const query = path.search
+        .slice(1, path.search.length)
+        .split("&")
+        .splice(0, 2);
+      const token = query.reduce(
+        (acc, item) => {
+          const [key, value] = item.split("=");
+          return { ...acc, [key]: value };
+        },
+        { access_token: "", refresh_token: "" }
+      );
+      addToken(token);
+      localStorage.setItem("token", JSON.stringify(token));
+      window.location.href = "/";
+    }
+  }, [path, addToken]);
 
   useEffect(() => {
     const getInitCart = async (): Promise<Cart[]> => {
@@ -84,8 +102,9 @@ function App() {
   const logOut = () => {
     if (user) {
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
       clearToken();
-      nav("/");
+      window.location.href = "/";
     } else {
       window.location.href = "/login";
     }
@@ -122,7 +141,7 @@ function App() {
           {layout.includes("navbar") && <NavBar user={user} logout={logOut} />}
           {layout.includes("breadcrumb") && (
             <BreadCrumbs
-              pathname={path}
+              pathname={path.pathname}
               classNames="mx-auto w-5/6 mt-6 text-lg"
             />
           )}

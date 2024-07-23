@@ -17,12 +17,12 @@ export type WardType = {
 
 export const getProvince = () => http.get<ProvinceType[]>("ship/provinces");
 
-export const getDistrict = (province_id: number) =>
+export const getDistrict = (province_id: string) =>
   http.post<DistrictType[]>("ship/districts", {
     province_id
   });
 
-export const getWard = (district_id: number) =>
+export const getWard = (district_id: string) =>
   http.post<WardType[]>("ship/wards", {
     district_id
   });

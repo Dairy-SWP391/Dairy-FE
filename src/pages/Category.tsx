@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import DocumentTitle from "../components/DocumentTitle";
 // import { useCategoryStore } from "../store/category";
 import { useEffect, useState } from "react";
@@ -17,10 +17,11 @@ import { ProductType } from "../types/Product";
 import { getProductByCategory, SortType } from "../apis/category";
 import ProductCard from "../components/ProductCard";
 import { getSalesRatio, stringToNomalCase } from "../utils/converter";
+import { categoryLocal } from "../constants/category";
 
 const Category = () => {
   const location = useLocation();
-  // const nav = useNavigate();
+  const nav = useNavigate();
   const categoryOptions = useCategoryStore((state) => state.category);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
   const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<number>();
@@ -38,6 +39,23 @@ const Category = () => {
     })[]
   >([]);
 
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+  const subCates = categoryOptions.reduce(
+    (
+      acc: {
+        id: number;
+        name: string;
+        path: string;
+        parent_category_id: number;
+      }[],
+      res
+    ) => {
+      return [...acc, ...res.child_category];
+    },
+    []
+  );
+
   const handleGetSubCategory = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -47,6 +65,7 @@ const Category = () => {
     const category = categoryOptions.find(
       (category) => category.id === category_id
     );
+    console.log(category);
     setSubCategory(category?.child_category || []);
     // setValue("category_id", category?.child_category[0].id as number);
   };
@@ -55,7 +74,7 @@ const Category = () => {
     categoryOptions.length > 0 &&
       selectedCategoryId !== 0 &&
       setSubCategory(categoryOptions[0].child_category);
-  }, [categoryOptions]);
+  }, [categoryOptions, selectedCategoryId]);
 
   useEffect(() => {
     const fetchData = async ({
@@ -106,14 +125,20 @@ const Category = () => {
 
   useEffect(() => {
     const path = location.pathname.split("/");
-    const cate = categoryOptions.find((cate) => cate.path === path[1]);
-    // if (!cate && !path.includes("all-products")) {
-    //   nav("/404");
-    // }
-    if (path.pop() === "all-products") {
+    console.log(path[1]);
+    const cate = categoryLocal.find((cate) => cate.path === path[1]);
+    console.log(cate);
+    if (user.role === "MEMBER" && path.includes("admin")) {
+      nav("/404");
+    }
+    if (!cate && !path.includes("all-products") && !path.includes("admin")) {
+      nav("/404");
+    }
+    if (path[path.length - 1] === "all-products") {
       setSelectedCategoryId(0);
       setSelectedSubCategoryId(undefined);
     }
+    console.log(cate);
     if (cate) {
       setSelectedCategoryId(cate?.id);
       setSubCategory(cate?.child_category);
@@ -245,9 +270,10 @@ const Category = () => {
                 total={totalPage}
                 initialPage={page}
                 onChange={(page) => setPage(page)}
+                className="z-0"
               />
             </div>
-            <div className="flex flex-wrap gap-5 justify-around">
+            <div className="grid grid-cols-4 gap-5">
               {product.map((item) => (
                 <ProductCard
                   product={{
@@ -261,7 +287,7 @@ const Category = () => {
                       item.price,
                       item.sale_price || item.price
                     ),
-                    url_detail: `/${categoryOptions.find((cate) => cate.id === item.parent_category_id)?.path}/${categoryOptions.find((cate) => cate.id === item.parent_category_id)?.child_category.find((subCate) => (subCate.id = item.category_id))?.path}/${stringToNomalCase({ str: item.name, id: item.id })}`
+                    url_detail: `/${categoryOptions.find((cate) => cate.id === item.parent_category_id)?.path}/${subCates.find((cate) => cate.id === item.category_id)?.path}/${stringToNomalCase({ str: item.name, id: item.id })}`
                   }}
                   key={item.id}
                 />

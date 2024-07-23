@@ -48,3 +48,22 @@ export const getProductByCategory = ({
     order_by,
     parent_category_id
   });
+
+export const getProductByCategoryAdmin = ({
+  num_of_items_per_page,
+  num_of_product,
+  order_by,
+  page,
+  sort_by,
+  category_id,
+  parent_category_id
+}: GetProductByCateProps) =>
+  http.post<GetProductByCateResponse>(`product/get-product-admin`, {
+    category_id,
+    num_of_product,
+    num_of_items_per_page,
+    page,
+    sort_by,
+    order_by,
+    parent_category_id
+  });

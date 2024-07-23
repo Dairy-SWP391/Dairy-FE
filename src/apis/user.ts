@@ -11,6 +11,13 @@ type TokenResponse = {
   };
 };
 
+export const registerApi = (_data: {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+}) => http.post<TokenResponse>("user/register", _data);
+
 export const login = (_data: { email: string; password: string }) =>
   http.post<TokenResponse>("user/login", _data);
 
@@ -42,7 +49,8 @@ export type AccountType = {
   email: string;
   point: number;
   role: "MEMBER" | "STAFF" | "ADMIN";
-  status: "UNVERIFIED" | "VERIFIED";
+  status: "UNVERIFIED" | "VERIFIED" | "BANNED";
+  ban_reason: string;
 };
 
 interface GetAllUserResponse {
@@ -210,6 +218,27 @@ export const addNewAddress = ({
     }
   );
 
+export const updateAddress = ({
+  id,
+  address,
+  default_address,
+  district_id,
+  name,
+  phone_number,
+  province_id,
+  ward_code
+}: Omit<AddressType, "user_id">) =>
+  http.patch("user/address", {
+    id,
+    name,
+    phone_number,
+    address,
+    default_address,
+    district_id,
+    province_id,
+    ward_code
+  });
+
 export const getDefaultAddress = (access_token: string) =>
   http.get<{ message: string; result: AddressType }>("user/default-address", {
     headers: {
@@ -277,5 +306,18 @@ export const getWishList = (page: number, num_of_items_per_page: number) =>
     `user/wishlist?num_of_items_per_page=${num_of_items_per_page}&page=${page}`
   );
 
+export const removeFromWishlist = (product_id: number) =>
+  http.delete(`user/delete-wishlist?product_id=${product_id}`);
+
 export const getTotalExpense = () =>
   http.get<{ message: string; result: number }>("user/total");
+
+export const banUser = ({
+  user_id,
+  reason,
+  status = "banned"
+}: {
+  user_id: string;
+  reason?: string;
+  status?: "banned" | "verified";
+}) => http.patch("user/update-user", { user_id, status, ban_reason: reason });

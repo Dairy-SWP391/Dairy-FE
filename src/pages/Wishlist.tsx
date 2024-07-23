@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import DocumentTitle from "../components/DocumentTitle";
 import Spring from "../components/Spring";
 import ProfileBar from "../layout/user/ProfileBar";
-import { getWishList, WishlistType } from "../apis/user";
+import { getWishList, removeFromWishlist, WishlistType } from "../apis/user";
 import {
+  Button,
   Table,
   TableBody,
   TableCell,
@@ -12,6 +13,7 @@ import {
   TableRow
 } from "@nextui-org/react";
 import { numberToVND } from "../utils/converter";
+import { toast } from "react-toastify";
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState<WishlistType[]>([]);
@@ -33,6 +35,22 @@ const Wishlist = () => {
     console.log(wishlist);
   }, []);
 
+  const handleRemoveWishlist = async (id: number) => {
+    const confirm = window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này ?");
+    if (confirm) {
+      try {
+        const response = await removeFromWishlist(id);
+        if (response.status === 200) {
+          toast.success("Xóa sản phẩm khỏi danh sách yêu thích thành công");
+          const newWishlist = wishlist.filter((item) => item.id !== id);
+          setWishlist(newWishlist);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+
   return (
     <>
       <DocumentTitle title="Thông Tin Cá Nhân" />
@@ -51,6 +69,7 @@ const Wishlist = () => {
                 <TableColumn width={100}>ẢNH</TableColumn>
                 <TableColumn>TÊN SẢN PHẨM</TableColumn>
                 <TableColumn width={200}>GIÁ THÀNH</TableColumn>
+                <TableColumn width={100}>ACTION</TableColumn>
               </TableHeader>
               <TableBody>
                 {wishlist.length > 0
@@ -68,6 +87,14 @@ const Wishlist = () => {
                         </TableCell>
                         <TableCell>{item.name}</TableCell>
                         <TableCell>{numberToVND(item.price)}</TableCell>
+                        <TableCell>
+                          <Button
+                            color="danger"
+                            onClick={() => handleRemoveWishlist(item.id)}
+                          >
+                            Remove
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))
                   : []}

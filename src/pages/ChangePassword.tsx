@@ -2,7 +2,7 @@ import Spring from "../components/Spring";
 import DocumentTitle from "../components/DocumentTitle";
 import { SubmitHandler, useForm } from "react-hook-form";
 import InputControl from "../components/InputControl";
-import { Avatar, Button, Card, CardBody, Input } from "@nextui-org/react";
+import { Avatar, Button, Input } from "@nextui-org/react";
 import SingleFileUploader from "../components/SingleFileUploader";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
@@ -18,7 +18,7 @@ type ProfileForm = {
   avatar_url: string;
 };
 
-const Profile = () => {
+const ChangePassword = () => {
   const location = useLocation();
   const {
     register,
@@ -27,9 +27,6 @@ const Profile = () => {
     watch,
     formState: { errors }
   } = useForm<ProfileForm>();
-  const user = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user") as string)
-    : null;
 
   const { token } = useAuth();
 
@@ -68,14 +65,8 @@ const Profile = () => {
           <ProfileBar />
         </div>
         <Spring className="card col-span-9">
-          <div className="border-b-1 pb-3 border-b-slate-500 flex justify-between">
-            <div>
-              <h3 className="text-xl">Hồ Sơ Của Tôi</h3>
-              <p className="">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
-            </div>
-            <Card className="bg-pink-100">
-              <CardBody>Điểm Tích Lũy: {user?.point || 0}</CardBody>
-            </Card>
+          <div className="border-b-1 pb-3 border-b-slate-500">
+            <h3 className="text-xl">Thay Đổi Mật Khẩu</h3>
           </div>
           <form
             className="grid grid-cols-6 gap-10 mt-5"
@@ -84,7 +75,7 @@ const Profile = () => {
             <div className="col-span-4 pl-3">
               <div className="">
                 <p className="pl-2">Email</p>
-                <Input disabled value={user.email} />
+                <Input disabled value="ahihi123@gmail.com" />
               </div>
 
               <div className="grid grid-cols-2 gap-3 mt-3">
@@ -93,7 +84,6 @@ const Profile = () => {
                   <InputControl
                     register={register}
                     name="first_name"
-                    defaultValue={user.first_name}
                     isError={!!errors.first_name}
                     errorMessage={errors.first_name?.message}
                   />
@@ -102,7 +92,6 @@ const Profile = () => {
                   <p className="pl-2">Tên</p>
                   <InputControl
                     register={register}
-                    defaultValue={user.last_name}
                     name="last_name"
                     isError={!!errors.last_name}
                     errorMessage={errors.last_name?.message}
@@ -143,4 +132,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default ChangePassword;

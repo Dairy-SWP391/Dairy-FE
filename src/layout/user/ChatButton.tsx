@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { LuMessageCircle } from "react-icons/lu";
 import { FaXmark } from "react-icons/fa6";
 import { AiOutlineSend } from "react-icons/ai";
@@ -21,6 +21,7 @@ const ChatButton = () => {
   const nav = useNavigate();
   const { token } = useAuth();
   const [conversations, setConversations] = useState<ConversationType[]>([]);
+  const chatRef = useRef<HTMLDivElement>(null);
   const user = JSON.parse((localStorage.getItem("user") as string) || "{}");
   useEffect(() => {
     const fetchConversations = async () => {
@@ -38,7 +39,11 @@ const ChatButton = () => {
       }
     };
     fetchConversations();
-  }, []);
+  }, [token.access_token]);
+
+  useEffect(() => {
+    chatRef.current?.scroll(0, 1000);
+  }, [conversations]);
 
   useEffect(() => {
     if (user?.id) {
@@ -82,7 +87,7 @@ const ChatButton = () => {
   };
 
   return (
-    <div className="sticky bottom-0 px-5 flex py-5 justify-end items-end">
+    <div className="sticky bottom-0 px-5 flex py-5 justify-end items-end z-10">
       {isOpen && (
         <div className="w-80 h-96 border border-red-500 mr-5 rounded-xl">
           <div className="w-full h-12 flex items-center justify-between bg-pink-400 rounded-t-xl">
@@ -91,7 +96,10 @@ const ChatButton = () => {
               <FaXmark className="text-lg text-white" />
             </button>
           </div>
-          <div className="w-full h-72 flex-col bg-white px-2 overflow-auto pb-2">
+          <div
+            className="w-full h-72 flex-col bg-white px-2 overflow-auto pb-2 scroll-y-"
+            ref={chatRef}
+          >
             <p className="text-center py-3">Bạn cần hỗ trợ?</p>
             {conversations.map((conversation) => (
               <div key={conversation.id}>

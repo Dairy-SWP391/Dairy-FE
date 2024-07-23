@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { getProductByCategory } from "../apis/category";
 import { ProductType } from "../types/Product";
 import { getSalesRatio, stringToNomalCase } from "../utils/converter";
+import { useNavigate } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 
 const Home = () => {
@@ -16,7 +17,7 @@ const Home = () => {
   const [productsByCate3, setProductsByCate3] = useState<ProductType[]>();
   const [productsByCate4, setProductsByCate4] = useState<ProductType[]>();
 
-  // const nav = useNavigate();
+  const nav = useNavigate();
 
   const category = useCategoryStore((state) => state.category);
 
@@ -108,9 +109,9 @@ const Home = () => {
             <h3>
               Giá <p className="inline text-red-500">Sốc</p>
             </h3>
-            <p className="text-lg text-pink-500 font-medium cursor-pointer">
+            {/* <p className="text-lg text-pink-500 font-medium cursor-pointer">
               Xem tất cả {`>>`}
-            </p>
+            </p> */}
           </div>
           <div className="mt-3 grid grid-cols-5 gap-2">
             {hotDeal?.map((product) => {
@@ -139,9 +140,9 @@ const Home = () => {
         <Spring className="card mt-6">
           <div className="flex items-center justify-between">
             <h3 className="text-pink-500">Bán Chạy</h3>
-            <p className="text-lg text-pink-500 font-medium cursor-pointer">
+            {/* <p className="text-lg text-pink-500 font-medium cursor-pointer">
               Xem tất cả {`>>`}
-            </p>
+            </p> */}
           </div>
           <div className="mt-3 grid grid-cols-5 gap-2">
             {bestSeller?.map((product) => {
@@ -173,9 +174,12 @@ const Home = () => {
               <Spring className="card mt-6" key={index}>
                 <div className="flex items-center justify-between">
                   <h3 className="text-pink-500">{cate.name}</h3>
-                  <p className="text-lg text-pink-500 font-medium cursor-pointer">
+                  <button
+                    className="text-lg text-pink-500 font-medium cursor-pointer"
+                    onClick={() => nav(`${cate.path}`)}
+                  >
                     Xem tất cả {`>>`}
-                  </p>
+                  </button>
                 </div>
                 <div className="mt-3 grid grid-cols-5 gap-2">
                   {cate.id === 1 &&
