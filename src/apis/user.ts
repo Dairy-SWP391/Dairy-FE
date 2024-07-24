@@ -321,3 +321,11 @@ export const banUser = ({
   reason?: string;
   status?: "banned" | "verified";
 }) => http.patch("user/update-user", { user_id, status, ban_reason: reason });
+
+export const updateRole = ({
+  id,
+  role
+}: {
+  id: string;
+  role: "MEMBER" | "STAFF" | "ADMIN";
+}) => http.patch("user/role", { id, role });
