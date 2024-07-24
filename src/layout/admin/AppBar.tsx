@@ -7,16 +7,28 @@ import Headroom from "react-headroom";
 // hooks
 import { useSidebar } from "../../context/sidebarContext";
 import useWindowSize from "../../hooks/useWindowSize";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../../provider/AuthProvider";
 
 const AppBar = () => {
-  const navigate = useNavigate();
   // const [notificationsPanelOpen, setNotificationsPanelOpen] =
   useState<boolean>(false);
   // const [messagesPanelOpen, setMessagesPanelOpen] = useState<boolean>(false);
   const { width } = useWindowSize();
   const { setOpen } = useSidebar();
+  const { clearToken } = useAuth();
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+  const logOut = () => {
+    if (user) {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      clearToken();
+      window.location.href = "/";
+    } else {
+      window.location.href = "/login";
+    }
+  };
 
   return (
     <>
@@ -73,7 +85,7 @@ const AppBar = () => {
               <button
                 className="h-8 w-8 rounded-full bg-[#035ECF] text-widget text-sm flex items-center
                                     justify-center relative xl:w-11 xl:h-11 xl:text-lg"
-                onClick={() => navigate("/general-settings")}
+                onClick={logOut}
                 aria-label="Account menu"
               >
                 <i className="fa fa-user text-white" aria-hidden="true"></i>

@@ -10,7 +10,11 @@ import { MouseEvent } from "react";
 import useWindowSize from "../hooks/useWindowSize";
 import { getMe, login } from "../apis/user";
 import { toast } from "react-toastify";
-import { ResponseApi, isAxiosUnprocessableEntityError } from "../utils/utils";
+import {
+  ResponseApi,
+  isAxiosError,
+  isAxiosUnprocessableEntityError
+} from "../utils/utils";
 import { useAuth } from "../provider/AuthProvider";
 
 const Login = () => {
@@ -67,6 +71,8 @@ const Login = () => {
         //     });
         //   });
         // }
+      } else if (isAxiosError(err) && err.status === 401) {
+        toast.error("Your Account is Banned");
       }
     }
   };

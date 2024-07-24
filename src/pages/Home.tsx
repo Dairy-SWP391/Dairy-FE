@@ -291,9 +291,12 @@ const Home = () => {
         <div className="mt-10">
           <div className="flex items-center justify-between">
             <h3 className="pl-5 text-pink-500">THÔNG TIN BỔ ÍCH</h3>
-            <p className="text-lg text-pink-500 font-medium cursor-pointer">
+            <Link
+              className="text-lg text-pink-500 font-medium cursor-pointer"
+              href="/tin-tuc"
+            >
               Xem tất cả {`>>`}
-            </p>
+            </Link>
           </div>
           <div className="w-full flex justify-between h-[60vh] mt-4">
             <div className="w-[63%] h-full">
