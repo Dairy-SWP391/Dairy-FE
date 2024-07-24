@@ -8,7 +8,7 @@ export type GetOrderDetailResponse = {
     estimate_price: number;
     ship_fee: number;
     end_price: number;
-    status: "SUCCESS";
+    status: "SUCCESS" | "DELIVERING";
     created_at: string;
     discount: number;
     receiver_name: string;
@@ -90,3 +90,6 @@ export const cancelOrder = ({
   order_id: number;
   cancel_reason: string;
 }) => http.post("order/cancel", { order_id, cancel_reason });
+
+export const deliverSuccess = (order_id: number) =>
+  http.post(`/order/deliver-success?order_id=${order_id}`);

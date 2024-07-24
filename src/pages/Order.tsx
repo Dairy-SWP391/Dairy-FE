@@ -21,12 +21,14 @@ import {
 } from "@nextui-org/react";
 import { numberToVND } from "../utils/converter";
 import {
+  deliverSuccess,
   getAllOrder,
   getOrderDetail,
   GetOrderDetailResponse,
   OrderType
 } from "../apis/order";
 import dayjs from "dayjs";
+import { toast } from "react-toastify";
 
 const Order = () => {
   const [order, setOrder] = useState<OrderType[]>([]);
@@ -57,6 +59,19 @@ const Order = () => {
       setDetail(response.data);
     }
     onOpen();
+  };
+
+  const handleDeliverSuccess = async (id: number) => {
+    const response = await deliverSuccess(id);
+    if (response.status === 200) {
+      toast.success("Đã xác nhận nhận hàng thành công");
+    }
+    onOpenChange();
+    order.forEach((item) => {
+      if (item.id === id) {
+        item.status = "SUCCESS";
+      }
+    });
   };
 
   return (
@@ -240,6 +255,14 @@ const Order = () => {
                   <Button color="danger" variant="light" onPress={onClose}>
                     Close
                   </Button>
+                  {detail?.data.status === "DELIVERING" && (
+                    <Button
+                      color="primary"
+                      onPress={() => handleDeliverSuccess(detail.data.id)}
+                    >
+                      Đã nhận được hàng
+                    </Button>
+                  )}
                 </ModalFooter>
               </>
             )}
