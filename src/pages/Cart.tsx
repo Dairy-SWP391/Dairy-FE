@@ -48,7 +48,6 @@ const Cart = () => {
     0
   );
   const nav = useNavigate();
-  const sale = 0;
   const handleChangeQuantity = ({
     type,
     id
@@ -360,7 +359,7 @@ const Cart = () => {
           <div className="flex items-start justify-between text-base mt-2 font-semibold">
             <p>Tổng tiền</p>
             <div className="text-right">
-              <p>{numberToVND(totalPrice - sale)}</p>
+              <p>{numberToVND(totalPrice - (selectedVoucher?.value || 0))}</p>
               <p className="font-normal italic">(Đã bao gồm VAT)</p>
             </div>
           </div>

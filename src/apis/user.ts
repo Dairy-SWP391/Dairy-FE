@@ -256,6 +256,7 @@ export type CheckOutParams = {
   to_district_id: number;
   to_ward_code: number;
   receiver_name: string;
+  voucher_code: string;
   phone_number: string;
   address: string;
   cart_list: {
@@ -271,12 +272,14 @@ export const checkOut = ({
   receiver_name,
   service_id,
   to_district_id,
+  voucher_code,
   to_ward_code
 }: CheckOutParams) =>
   http.post<{ vnpayURL: string }>("pay", {
     address,
     cart_list,
     phone_number,
+    voucher_code,
     receiver_name,
     service_id: service_id.toString(),
     to_district_id: to_district_id.toString(),

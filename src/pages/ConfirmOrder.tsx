@@ -47,7 +47,8 @@ const ConfirmOrder = () => {
         setTotalPrice(
           response.data.totalMoney +
             response.data.fee.service_fee +
-            response.data.fee.insurance_fee
+            response.data.fee.insurance_fee -
+            (voucher?.value || 0)
         );
       } catch (err) {
         console.log(err);
@@ -68,6 +69,7 @@ const ConfirmOrder = () => {
       const response = await checkOut({
         address: address.address,
         cart_list,
+        voucher_code: voucher.code,
         phone_number: address.phone_number,
         receiver_name: address.name,
         service_id,
