@@ -16,7 +16,6 @@ const ROUTES = [
     name: "Products",
     icon: "fa-archive",
     links: [
-      { name: "Products Grid", path: "/admin/products-grid" },
       { name: "Products Management", path: "/admin/products-management" },
       { name: "Product Editor", path: "/admin/product-editor" }
     ]
@@ -45,8 +44,7 @@ const ROUTES = [
     name: "Blog",
     icon: "fa-clipboard",
     links: [
-      { name: "Blog Editor", path: "/admin/blog-editor" },
-      { name: "Blog Management", path: "/admin/blog-management" }
+      { name: "Blog Editor", path: "/admin/blog-editor" }
     ]
   }
   // {
