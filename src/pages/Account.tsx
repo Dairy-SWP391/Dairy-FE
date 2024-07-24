@@ -7,6 +7,8 @@ import {
   ModalFooter,
   ModalHeader,
   Pagination,
+  Select,
+  SelectItem,
   Table,
   TableBody,
   TableCell,
@@ -17,7 +19,7 @@ import {
 } from "@nextui-org/react";
 import PageHeader from "../layout/admin/PageHeader";
 import { useEffect, useState } from "react";
-import { AccountType, banUser, getAllUser } from "../apis/user";
+import { AccountType, banUser, getAllUser, updateRole } from "../apis/user";
 import { toast } from "react-toastify";
 // import { toast } from "react-toastify";
 
@@ -28,6 +30,9 @@ const Account = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedAccountId, setSelectedAccountId] = useState<string>("");
   const [reason, setReason] = useState<string>("");
+  const [role, setRole] = useState<"ADMIN" | "STAFF" | "MEMBER">("MEMBER");
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const [action, setAction] = useState<"BAN" | "SET_ROLE">();
 
   useEffect(() => {
     const fetch = async () => {
@@ -39,6 +44,7 @@ const Account = () => {
   }, [page]);
 
   const handleInputBanReason = (id: string) => {
+    setAction("BAN");
     setReason("");
     setSelectedAccountId(id);
     onOpen();
@@ -70,6 +76,29 @@ const Account = () => {
     }
   };
 
+  const handleSetRole = (id: string) => {
+    setSelectedAccountId(id);
+    setAction("SET_ROLE");
+    onOpen();
+  };
+
+  const handleChangeRole = async () => {
+    console.log(selectedAccountId, role);
+    try {
+      const response = await updateRole({ id: selectedAccountId, role });
+      if (response.status === 200) {
+        toast.success("Change role successfully");
+        const res = await getAllUser(page);
+        setAccounts(res.data.result.users);
+        setTotalPage(res.data.result.total_page);
+        onOpenChange();
+      }
+    } catch (err) {
+      toast.error("Có lỗi xảy ra, vui lòng thử lại sau");
+      console.log(err);
+    }
+  };
+
   // const handleUpdateAccount = async (account: AccountType) => {
   //   onOpen();
   //   try {
@@ -88,102 +117,206 @@ const Account = () => {
   return (
     <>
       <PageHeader title="Accounts Management" />
-      <div className="card no-hover flex flex-col gap-5 ">
-        <Table isHeaderSticky aria-label="Accounts List">
-          <TableHeader>
-            <TableColumn width={120}>ID</TableColumn>
-            <TableColumn width={150}>NAME</TableColumn>
-            <TableColumn width={100}>PHONE NUMBER</TableColumn>
-            <TableColumn width={150}>EMAIL</TableColumn>
-            <TableColumn width={80}>POINT</TableColumn>
-            <TableColumn width={100}>ROLE</TableColumn>
-            <TableColumn width={100}>STATUS</TableColumn>
-            <TableColumn>BAN REASON</TableColumn>
-            <TableColumn width={50}>ACTIONS</TableColumn>
-          </TableHeader>
+      {user?.role !== "ADMIN" && (
+        <div className="card no-hover flex flex-col gap-5 ">
+          <Table isHeaderSticky aria-label="Accounts List">
+            <TableHeader>
+              <TableColumn width={120}>ID</TableColumn>
+              <TableColumn width={150}>NAME</TableColumn>
+              <TableColumn width={100}>PHONE NUMBER</TableColumn>
+              <TableColumn width={150}>EMAIL</TableColumn>
+              <TableColumn width={80}>POINT</TableColumn>
+              <TableColumn width={100}>ROLE</TableColumn>
+              <TableColumn width={100}>STATUS</TableColumn>
+              <TableColumn>BAN REASON</TableColumn>
+              <TableColumn width={50}>ACTIONS</TableColumn>
+            </TableHeader>
 
-          {accounts ? (
-            <TableBody>
-              {accounts.map(
-                ({
-                  id,
-                  name,
-                  email,
-                  phone_number,
-                  role,
-                  ban_reason,
-                  status,
-                  point
-                }) => (
-                  <TableRow key={id}>
-                    <TableCell>{id}</TableCell>
-                    <TableCell>{name}</TableCell>
-                    <TableCell>{phone_number}</TableCell>
-                    <TableCell>{email}</TableCell>
-                    <TableCell>{point}</TableCell>
-                    <TableCell>{role}</TableCell>
-                    <TableCell>
-                      {status !== "BANNED" ? "ACTIVE" : "BANNED"}
-                    </TableCell>
-                    <TableCell>{ban_reason}</TableCell>
-                    <TableCell className="flex items-center">
-                      <Button
-                        onClick={() => handleInputBanReason(id)}
-                        color={status === "BANNED" ? "success" : "danger"}
-                      >
-                        {/* <i
+            {accounts ? (
+              <TableBody>
+                {accounts.map(
+                  ({
+                    id,
+                    name,
+                    email,
+                    phone_number,
+                    role,
+                    ban_reason,
+                    status,
+                    point
+                  }) => (
+                    <TableRow key={id}>
+                      <TableCell>{id}</TableCell>
+                      <TableCell>{name}</TableCell>
+                      <TableCell>{phone_number}</TableCell>
+                      <TableCell>{email}</TableCell>
+                      <TableCell>{point}</TableCell>
+                      <TableCell>{role}</TableCell>
+                      <TableCell>
+                        {status !== "BANNED" ? "ACTIVE" : "BANNED"}
+                      </TableCell>
+                      <TableCell>{ban_reason}</TableCell>
+                      <TableCell className="flex items-center">
+                        <Button
+                          onClick={() => handleInputBanReason(id)}
+                          color={status === "BANNED" ? "success" : "danger"}
+                        >
+                          {/* <i
                           className="fa fa-pencil-square-o"
                           aria-hidden="true"
                         ></i> */}
-                        {status !== "BANNED" ? "BAN" : "UNBAN"}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                )
-              )}
-            </TableBody>
-          ) : (
-            <TableBody emptyContent={"No rows to display."}>{[]}</TableBody>
-          )}
-        </Table>
-        <Pagination
-          showControls
-          total={totalPage}
-          initialPage={page}
-          onChange={setPage}
-        />
-      </div>
+                          {status !== "BANNED" ? "BAN" : "UNBAN"}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  )
+                )}
+              </TableBody>
+            ) : (
+              <TableBody emptyContent={"No rows to display."}>{[]}</TableBody>
+            )}
+          </Table>
+          <Pagination
+            showControls
+            total={totalPage}
+            initialPage={page}
+            onChange={setPage}
+          />
+        </div>
+      )}
+      {user?.role === "ADMIN" && (
+        <div className="card no-hover flex flex-col gap-5 ">
+          <Table isHeaderSticky aria-label="Accounts List">
+            <TableHeader>
+              <TableColumn width={120}>ID</TableColumn>
+              <TableColumn width={150}>NAME</TableColumn>
+              <TableColumn width={100}>PHONE NUMBER</TableColumn>
+              <TableColumn width={150}>EMAIL</TableColumn>
+              <TableColumn width={80}>POINT</TableColumn>
+              <TableColumn width={100}>ROLE</TableColumn>
+              <TableColumn width={100}>STATUS</TableColumn>
+              <TableColumn>BAN REASON</TableColumn>
+              <TableColumn width={220}>ACTIONS</TableColumn>
+            </TableHeader>
+
+            {accounts ? (
+              <TableBody>
+                {accounts.map(
+                  ({
+                    id,
+                    name,
+                    email,
+                    phone_number,
+                    role,
+                    ban_reason,
+                    status,
+                    point
+                  }) => (
+                    <TableRow key={id}>
+                      <TableCell>{id}</TableCell>
+                      <TableCell>{name}</TableCell>
+                      <TableCell>{phone_number}</TableCell>
+                      <TableCell>{email}</TableCell>
+                      <TableCell>{point}</TableCell>
+                      <TableCell>{role}</TableCell>
+                      <TableCell>
+                        {status !== "BANNED" ? "ACTIVE" : "BANNED"}
+                      </TableCell>
+                      <TableCell>{ban_reason}</TableCell>
+                      <TableCell className="flex items-center gap-5">
+                        <Button
+                          onClick={() => handleInputBanReason(id)}
+                          color={status === "BANNED" ? "success" : "danger"}
+                        >
+                          {status !== "BANNED" ? "BAN" : "UNBAN"}
+                        </Button>
+                        <Button
+                          onClick={() => handleSetRole(id)}
+                          color="primary"
+                        >
+                          SET ROLE
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  )
+                )}
+              </TableBody>
+            ) : (
+              <TableBody emptyContent={"No rows to display."}>{[]}</TableBody>
+            )}
+          </Table>
+          <Pagination
+            showControls
+            total={totalPage}
+            initialPage={page}
+            onChange={setPage}
+          />
+        </div>
+      )}
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
+        {action === "BAN" ? (
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  {accounts?.find((item) => item.id === selectedAccountId)
+                    ?.status === "BANNED"
+                    ? "UNBAN USER"
+                    : "BAN USER"}
+                </ModalHeader>
                 {accounts?.find((item) => item.id === selectedAccountId)
-                  ?.status === "BANNED"
-                  ? "UNBAN USER"
-                  : "BAN USER"}
-              </ModalHeader>
-              {accounts?.find((item) => item.id === selectedAccountId)
-                ?.status !== "BANNED" && (
+                  ?.status !== "BANNED" && (
+                  <ModalBody>
+                    <Input
+                      label="Reason"
+                      value={reason}
+                      onChange={(e) => setReason(e.target.value)}
+                    />
+                  </ModalBody>
+                )}
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Close
+                  </Button>
+                  <Button color="primary" onPress={handleBanUser}>
+                    Submit
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        ) : (
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  SET ROLE
+                </ModalHeader>
                 <ModalBody>
-                  <Input
-                    label="Reason"
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                  />
+                  <Select
+                    label="Select Role"
+                    selectedKeys={[role]}
+                    onChange={(e) =>
+                      setRole(e.target.value as "ADMIN" | "STAFF" | "MEMBER")
+                    }
+                  >
+                    <SelectItem key="MEMBER">MEMBER</SelectItem>
+                    <SelectItem key="STAFF">STAFF</SelectItem>
+                    <SelectItem key="ADMIN">ADMIN</SelectItem>
+                  </Select>
                 </ModalBody>
-              )}
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={handleBanUser}>
-                  Submit
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Close
+                  </Button>
+                  <Button color="primary" onPress={handleChangeRole}>
+                    Submit
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        )}
       </Modal>
     </>
   );

@@ -65,16 +65,22 @@ const Category = () => {
     const category = categoryOptions.find(
       (category) => category.id === category_id
     );
-    console.log(category);
-    setSubCategory(category?.child_category || []);
+    console.log(category?.child_category);
+    setSubCategory([]);
+    setSubCategory(
+      category?.child_category as (Omit<CategoryType, "child_category"> & {
+        parent_category_id: number;
+      })[]
+    );
+    console.log(subCategory);
     // setValue("category_id", category?.child_category[0].id as number);
   };
 
-  useEffect(() => {
-    categoryOptions.length > 0 &&
-      selectedCategoryId !== 0 &&
-      setSubCategory(categoryOptions[0].child_category);
-  }, [categoryOptions, selectedCategoryId]);
+  // useEffect(() => {
+  //   categoryOptions.length > 0 &&
+  //     selectedCategoryId !== 0 &&
+  //     setSubCategory(categoryOptions[0].child_category);
+  // }, [categoryOptions, selectedCategoryId]);
 
   useEffect(() => {
     const fetchData = async ({
