@@ -1,8 +1,8 @@
 // components
 import Search from "../../components/Search";
 import Headroom from "react-headroom";
-import NotificationsPanel from "../../components/NotificationsPanel";
-import MessagesPanel from "../../components/MessagesPanel";
+// import NotificationsPanel from "../../components/NotificationsPanel";
+// import MessagesPanel from "../../components/MessagesPanel";
 
 // hooks
 import { useSidebar } from "../../context/sidebarContext";
@@ -12,9 +12,9 @@ import { useState } from "react";
 
 const AppBar = () => {
   const navigate = useNavigate();
-  const [notificationsPanelOpen, setNotificationsPanelOpen] =
-    useState<boolean>(false);
-  const [messagesPanelOpen, setMessagesPanelOpen] = useState<boolean>(false);
+  // const [notificationsPanelOpen, setNotificationsPanelOpen] =
+  useState<boolean>(false);
+  // const [messagesPanelOpen, setMessagesPanelOpen] = useState<boolean>(false);
   const { width } = useWindowSize();
   const { setOpen } = useSidebar();
 
@@ -35,7 +35,7 @@ const AppBar = () => {
             <Search wrapperClass="flex-1 max-w-[1054px] ml-5 mr-auto 4xl:ml-0" />
           )}
           <div className="flex items-center gap-5 md:ml-5 xl:gap-[26px]">
-            <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 xl:mr-1.5">
+            {/* <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 xl:mr-1.5">
               <button
                 className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
                 onClick={() => setNotificationsPanelOpen(true)}
@@ -51,8 +51,8 @@ const AppBar = () => {
                   7
                 </span>
               </span>
-            </div>
-            <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 xl:mr-1.5">
+            </div> */}
+            {/* <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 xl:mr-1.5">
               <button
                 className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
                 onClick={() => setMessagesPanelOpen(true)}
@@ -68,7 +68,7 @@ const AppBar = () => {
                   2
                 </span>
               </span>
-            </div>
+            </div> */}
             <div className="relative">
               <button
                 className="h-8 w-8 rounded-full bg-[#035ECF] text-widget text-sm flex items-center
@@ -83,7 +83,7 @@ const AppBar = () => {
           </div>
         </div>
       </Headroom>
-      <NotificationsPanel
+      {/* <NotificationsPanel
         open={notificationsPanelOpen}
         onOpen={() => setNotificationsPanelOpen(true)}
         onClose={() => setNotificationsPanelOpen(false)}
@@ -92,7 +92,7 @@ const AppBar = () => {
         open={messagesPanelOpen}
         onOpen={() => setMessagesPanelOpen(true)}
         onClose={() => setMessagesPanelOpen(false)}
-      />
+      /> */}
     </>
   );
 };

@@ -64,7 +64,7 @@ const ChatButton = () => {
 
     const conversation = {
       sender_id: user?.id,
-      receiver_id: "staff001",
+      receiver_id: null,
       content: value,
       sender: "MEMBER"
     };
