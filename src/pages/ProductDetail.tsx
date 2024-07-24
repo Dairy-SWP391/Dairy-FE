@@ -201,6 +201,8 @@ const ProductDetail = () => {
     }
   };
 
+  const handleSendFeedback = () => {};
+
   const handleBuyNow = () => {
     if (product?.quantity === 0) {
       toast.error("Sản phẩm đã hết hàng");
@@ -547,7 +549,12 @@ const ProductDetail = () => {
                     <SelectItem key={2}>2</SelectItem>
                     <SelectItem key={1}>1</SelectItem>
                   </Select>
-                  <Button className="w-[12%]" size="lg" color="primary">
+                  <Button
+                    className="w-[12%]"
+                    size="lg"
+                    color="primary"
+                    onClick={handleSendFeedback}
+                  >
                     Submit
                   </Button>
                 </div>
