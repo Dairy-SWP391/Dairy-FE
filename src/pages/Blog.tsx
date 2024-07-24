@@ -8,7 +8,7 @@ import {
   Image,
   Pagination
 } from "@nextui-org/react";
-import TruncatedText from "../components/TruncatedText";
+// import TruncatedText from "../components/TruncatedText";
 import { useNavigate } from "react-router-dom";
 import Markdown from "react-markdown";
 
