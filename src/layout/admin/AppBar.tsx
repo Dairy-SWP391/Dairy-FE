@@ -1,5 +1,4 @@
 // components
-import Search from "../../components/Search";
 import Headroom from "react-headroom";
 // import NotificationsPanel from "../../components/NotificationsPanel";
 // import MessagesPanel from "../../components/MessagesPanel";
@@ -43,9 +42,9 @@ const AppBar = () => {
               <i className="fa fa-bars" aria-hidden="true"></i>
             </button>
           )}
-          {width >= 768 && (
+          {/* {width >= 768 && (
             <Search wrapperClass="flex-1 max-w-[1054px] ml-5 mr-auto 4xl:ml-0" />
-          )}
+          )} */}
           <div className="flex items-center gap-5 md:ml-5 xl:gap-[26px]">
             {/* <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 xl:mr-1.5">
               <button
