@@ -115,6 +115,7 @@ const Profile = () => {
                   <InputControl
                     register={register}
                     name="phone_number"
+                    defaultValue={user.phone_number}
                     isError={!!errors.phone_number}
                     errorMessage={errors.phone_number?.message}
                   />
