@@ -63,7 +63,7 @@ const ProductEditor = () => {
   } = useForm<ProductEditorForm>();
 
   useEffect(() => {
-    const product: ProductType = location.state.product;
+    const product: ProductType = location.state?.product;
     if (product) {
       const fetchBrand = async () => {
         const brand = await getBrandName(product.brand_id);
@@ -119,12 +119,19 @@ const ProductEditor = () => {
   // do something with the data
   const handleSave = async (data: ProductEditorForm) => {
     setValue("images", productImages);
-    const starting_timestamp = getValues("starting_timestamp").isValid()
-      ? getValues("starting_timestamp").toDate().toISOString()
-      : dayjs().toISOString();
-    const ending_timestamp = getValues("ending_timestamp")?.isValid()
-      ? getValues("ending_timestamp")?.toDate().toISOString()
-      : undefined;
+    console.log(getValues("starting_timestamp"));
+    const starting_timestamp = getValues("starting_timestamp")
+      .toDate()
+      .toISOString();
+    // const starting_timestamp = getValues("starting_timestamp").isValid()
+    //   ? getValues("starting_timestamp").toDate().toISOString()
+    //   : dayjs().toISOString();
+    const ending_timestamp = getValues("ending_timestamp")
+      ?.toDate()
+      .toISOString();
+    // const ending_timestamp = getValues("ending_timestamp")?.isValid()
+    //   ? getValues("ending_timestamp")?.toDate().toISOString()
+    //   : undefined;
     if (productId !== 0) {
       // update
       try {
@@ -165,6 +172,7 @@ const ProductEditor = () => {
         if (response.status === 200) {
           toast.success("Add product successfully");
           reset();
+          setProductImages([]);
         }
       } catch (e) {
         console.log(e);

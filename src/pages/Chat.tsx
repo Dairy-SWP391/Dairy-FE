@@ -40,20 +40,28 @@ const Chat = () => {
         <Table aria-label="Example static collection table">
           <TableHeader>
             <TableColumn>ID</TableColumn>
-            <TableColumn>USER ID</TableColumn>
-            <TableColumn>DATE</TableColumn>
+            <TableColumn>USER</TableColumn>
+            <TableColumn>STAFF</TableColumn>
+            <TableColumn>NEWEST MESSAGE</TableColumn>
+            <TableColumn>SENDER</TableColumn>
+            <TableColumn>TIMESTAMP</TableColumn>
           </TableHeader>
           <TableBody>
             {chatList.length > 0
               ? chatList.map((item) => (
                   <TableRow
                     key={item.id}
-                    onClick={() => nav(`/admin/chats/${item.member_id}`)}
+                    onClick={() => nav(`/admin/chats/${item.member.id}`)}
                   >
                     <TableCell>{item.id}</TableCell>
-                    <TableCell>{item.member_id}</TableCell>
+                    <TableCell>{`${item.member.first_name} ${item.member.last_name}`}</TableCell>
+                    <TableCell>{`${item.staff.first_name} ${item.staff.last_name}`}</TableCell>
+                    <TableCell>{item.ChatLine[0].content}</TableCell>
+                    <TableCell>{item.ChatLine[0].sender}</TableCell>
                     <TableCell>
-                      {dayjs(item.updated_at).format("YYYY-MM-DD HH:mm:ss")}
+                      {dayjs(item.ChatLine[0].created_at).format(
+                        "YYYY-MM-DD HH:mm:ss"
+                      )}
                     </TableCell>
                   </TableRow>
                 ))

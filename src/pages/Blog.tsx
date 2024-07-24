@@ -10,6 +10,7 @@ import {
 } from "@nextui-org/react";
 import TruncatedText from "../components/TruncatedText";
 import { useNavigate } from "react-router-dom";
+import Markdown from "react-markdown";
 
 const Blog = () => {
   const [blogs, setBlogs] = useState<BlogType[]>([]);
@@ -45,15 +46,21 @@ const Blog = () => {
               shadow="md"
               onPress={() => nav(`${blog.id}`)}
             >
-              <CardHeader className="z-0">
-                <Image src={blog.image} className="z-0" />
+              <CardHeader className="z-0 h-60 flex items-center justify-center">
+                <Image
+                  src={blog.image}
+                  className="z-0 h-full w-full object-fill"
+                />
               </CardHeader>
               <CardBody>
                 <h5 className="">{blog.title}</h5>
-                <TruncatedText
+                {/* <TruncatedText
                   text={blog.content.replace(/[^a-z0-9- ]/g, "")}
                   width={720}
-                />
+                /> */}
+                <Markdown className="max-h-[75px] overflow-hidden">
+                  {blog?.content}
+                </Markdown>
               </CardBody>
             </Card>
           ))}

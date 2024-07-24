@@ -1,4 +1,4 @@
-import { Card, Image } from "@nextui-org/react";
+import { Card, Image, Link } from "@nextui-org/react";
 import Spring from "../components/Spring";
 import ProductCard from "../components/ProductCard";
 import { useCategoryStore } from "../store/category";
@@ -7,6 +7,7 @@ import { getProductByCategory } from "../apis/category";
 import { ProductType } from "../types/Product";
 import { getSalesRatio, stringToNomalCase } from "../utils/converter";
 import { useNavigate } from "react-router-dom";
+import { BlogType, getAllBlog } from "../apis/blog";
 // import { useNavigate } from "react-router-dom";
 
 const Home = () => {
@@ -16,7 +17,7 @@ const Home = () => {
   const [productsByCate2, setProductsByCate2] = useState<ProductType[]>();
   const [productsByCate3, setProductsByCate3] = useState<ProductType[]>();
   const [productsByCate4, setProductsByCate4] = useState<ProductType[]>();
-
+  const [blogs, setBlogs] = useState<BlogType[]>([]);
   const nav = useNavigate();
 
   const category = useCategoryStore((state) => state.category);
@@ -55,6 +56,21 @@ const Home = () => {
     fetchData({ id: 0, order_by: "DESC", sort_by: "discount" });
     fetchData({ id: 0, order_by: "DESC", sort_by: "sold" });
   }, [category]);
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        const response = await getAllBlog({ limit: 3, page: 1 });
+        if (response.status === 200) {
+          setBlogs(response.data.result.posts);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchApi();
+  }, []);
 
   return (
     <>
@@ -286,12 +302,15 @@ const Home = () => {
                   removeWrapper
                   alt="Card background"
                   className="z-0 w-full h-full object-fill"
-                  src="https://cdn1.concung.com/img/news/2023/1030-1684377364-cover.webp"
+                  src={blogs[0]?.image}
                 />
                 <div className="bg-gradient-to-t from-black absolute w-full bottom-0 px-5 pb-3 pt-16">
-                  <h4 className="text-white font-semibold text-large z-10">
-                    Top 5 loại đồ chơi cho bé 2 tuổi phát triển trí thông minh
-                  </h4>
+                  <Link
+                    className="text-white font-semibold text-large z-10 hover:text-blue-500"
+                    href={`/tin-tuc/${blogs[0]?.id}`}
+                  >
+                    {blogs[0]?.title}
+                  </Link>
                 </div>
               </Card>
             </div>
@@ -302,12 +321,15 @@ const Home = () => {
                     removeWrapper
                     alt="Card background"
                     className="z-0 w-full h-full object-fill"
-                    src="https://cdn1.concung.com/img/news/2023/1030-1684377364-cover.webp"
+                    src={blogs[1]?.image}
                   />
                   <div className="bg-gradient-to-t from-black absolute w-full bottom-0 px-5 pb-3 pt-16">
-                    <h4 className="text-white font-semibold text-base z-10">
-                      Top 5 loại đồ chơi cho bé 2 tuổi phát triển trí thông minh
-                    </h4>
+                    <Link
+                      className="text-white font-semibold text-base z-10 hover:text-blue-500"
+                      href={`/tin-tuc/${blogs[1]?.id}`}
+                    >
+                      {blogs[1]?.title}
+                    </Link>
                   </div>
                 </Card>
               </div>
@@ -317,12 +339,15 @@ const Home = () => {
                     removeWrapper
                     alt="Card background"
                     className="z-0 w-full h-full object-fill"
-                    src="https://cdn1.concung.com/img/news/2023/1030-1684377364-cover.webp"
+                    src={blogs[2]?.image}
                   />
                   <div className="bg-gradient-to-t from-black absolute w-full bottom-0 px-5 pb-3 pt-16">
-                    <h4 className="text-white font-semibold text-base z-10">
-                      Top 5 loại đồ chơi cho bé 2 tuổi phát triển trí thông minh
-                    </h4>
+                    <Link
+                      className="text-white font-semibold text-base z-10 hover:text-blue-500"
+                      href={`/tin-tuc/${blogs[1]?.id}`}
+                    >
+                      {blogs[2]?.title}
+                    </Link>
                   </div>
                 </Card>
               </div>

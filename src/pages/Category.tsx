@@ -252,7 +252,7 @@ const Category = () => {
                     selectedKeys={
                       selectedSubCategoryId?.toString()
                         ? [selectedSubCategoryId?.toString()]
-                        : subCategory[0]?.id.toString()
+                        : undefined
                     }
                     aria-label="sub-category"
                     onChange={(e) =>

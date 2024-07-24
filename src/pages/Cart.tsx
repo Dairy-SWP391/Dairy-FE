@@ -136,7 +136,7 @@ const Cart = () => {
 
   useEffect(() => {
     getInitCart().then((cart) => setCart(cart));
-  });
+  }, []);
 
   const handleGetService = async () => {
     getInitCart().then((cart) => setCart(cart));

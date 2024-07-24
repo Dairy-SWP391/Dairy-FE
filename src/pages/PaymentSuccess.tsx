@@ -139,7 +139,9 @@ const PaymentSuccess = () => {
         </div>
       </div>
       <div className="flex items-center justify-center">
-        <Link className="mt-5 text-xl">Về Trang Chủ</Link>
+        <Link className="mt-5 text-xl" href="/">
+          Về Trang Chủ
+        </Link>
       </div>
     </Spring>
   );
