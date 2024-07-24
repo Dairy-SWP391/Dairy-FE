@@ -226,7 +226,10 @@ const Order = () => {
                       <div>
                         <p className="">
                           {detail
-                            ? numberToVND(detail.data.end_price as number)
+                            ? numberToVND(
+                                (detail.data.end_price -
+                                  detail.data.discount) as number
+                              )
                             : "Đang tải..."}
                         </p>
                       </div>
