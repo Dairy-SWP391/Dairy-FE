@@ -52,7 +52,7 @@ const OrderList = () => {
   }, []);
 
   const handleOnclickAction = (item: OrderType) => {
-    if (item.status === "SUCCESS") {
+    if (item.status === "SUCCESS" || item.status === "DELIVERING") {
       nav(`/admin/orders/${item.id}`);
     }
     if (item.status === "PENDING") {

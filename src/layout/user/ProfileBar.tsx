@@ -15,11 +15,11 @@ const ProfileNav = [
       {
         name: "Địa chỉ",
         href: "/me/address"
-      },
-      {
-        name: "Đổi mật khẩu",
-        href: "/me/password"
       }
+      // {
+      //   name: "Đổi mật khẩu",
+      //   href: "/me/password"
+      // }
     ]
   },
   {
