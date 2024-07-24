@@ -29,7 +29,7 @@ import { ProductType } from "../types/Product";
 import { addWishlist } from "../apis/user";
 import { useAuth } from "../provider/AuthProvider";
 import dayjs from "dayjs";
-import { FeedbackType, getFeedbacks } from "../apis/feedback";
+import { FeedbackType, getFeedbacks, sendFeedback } from "../apis/feedback";
 import RatingStars from "../components/RatingStars";
 // import RelatedProductCard from "../components/RelatedProductCard";
 
@@ -46,6 +46,8 @@ const ProductDetail = () => {
   const params = useParams<{ id: string }>().id;
   const [relatedProduct, setRelatedProduct] = useState<ProductType[]>([]);
   const [feedbacks, setFeedbacks] = useState<FeedbackType[]>([]);
+  const [feedback, setFeedback] = useState<string>("");
+  const [rating, setRating] = useState<number>(0);
   const setRelatedProductMemoized = useCallback((data: ProductType[]) => {
     setRelatedProduct(data);
   }, []);
@@ -201,7 +203,37 @@ const ProductDetail = () => {
     }
   };
 
-  const handleSendFeedback = () => {};
+  const handleSendFeedback = async () => {
+    console.log(product?.id, feedback, rating);
+    try {
+      const response = await sendFeedback({
+        content: feedback,
+        product_id: product?.id as number,
+        rating_point: rating
+      });
+      if (response.status === 200) {
+        toast.success("Gửi đánh giá thành công");
+        setFeedbacks([
+          {
+            user_id: user?.id as string,
+            content: feedback,
+            created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+            rating_point: rating,
+            user: {
+              avatar_url: user?.avatar_url as string,
+              first_name: user?.first_name as string,
+              last_name: user?.last_name as string
+            }
+          },
+          ...feedbacks
+        ]);
+        setFeedback("");
+        setRating(0);
+      }
+    } catch (err) {
+      toast.error("Vui lòng mua hàng để được để lại đánh giá");
+    }
+  };
 
   const handleBuyNow = () => {
     if (product?.quantity === 0) {
@@ -536,13 +568,24 @@ const ProductDetail = () => {
               <div className="mt-5">{product?.description}</div>
             )}
           </Spring>
+
           <div className="col-span-4 mt-10">
             <Spring className="card">
               <h3>Đánh giá</h3>
               <div className="mt-5">
                 <div className="flex gap-5 items-center">
-                  <Input label="Feedback" className="w-[78%]" />
-                  <Select label="Rating" className="w-[10%]">
+                  <Input
+                    label="Feedback"
+                    className="w-[78%]"
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                  />
+                  <Select
+                    label="Rating"
+                    className="w-[10%]"
+                    selectedKeys={[rating]}
+                    onChange={(e) => setRating(Number(e.target.value))}
+                  >
                     <SelectItem key={5}>5</SelectItem>
                     <SelectItem key={4}>4</SelectItem>
                     <SelectItem key={3}>3</SelectItem>
